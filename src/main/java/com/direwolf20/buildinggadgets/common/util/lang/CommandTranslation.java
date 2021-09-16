@@ -2,8 +2,8 @@ package com.direwolf20.buildinggadgets.common.util.lang;
 
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.Range;
+import org.jetbrains.annotations.NotNull;
 
 public enum CommandTranslation implements ITranslationProvider {
     FORCE_UNLOADED_NO_PLAYER("force_unloaded.no_player", 0),
@@ -19,7 +19,7 @@ public enum CommandTranslation implements ITranslationProvider {
     private final String key;
     private final int argCount;
 
-    CommandTranslation(@Nonnull String key, @Nonnegative int argCount) {
+    CommandTranslation(@NotNull String key, @Range(from = 0, to = Integer.MAX_VALUE) int argCount) {
         this.key = PREFIX + key;
         this.argCount = argCount;
     }

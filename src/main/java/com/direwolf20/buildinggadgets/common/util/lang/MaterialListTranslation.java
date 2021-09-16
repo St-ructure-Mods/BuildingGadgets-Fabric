@@ -1,9 +1,8 @@
 package com.direwolf20.buildinggadgets.common.util.lang;
 
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
-
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 public enum MaterialListTranslation implements ITranslationProvider {
     BUTTON_CLOSE("button.close", 0),
@@ -25,7 +24,7 @@ public enum MaterialListTranslation implements ITranslationProvider {
     private final String key;
     private final int argCount;
 
-    MaterialListTranslation(@Nonnull String key, @Nonnegative int argCount) {
+    MaterialListTranslation(@NotNull String key, @Range(from = 0, to = Integer.MAX_VALUE) int argCount) {
         this.key = PREFIX + key;
         this.argCount = argCount;
     }

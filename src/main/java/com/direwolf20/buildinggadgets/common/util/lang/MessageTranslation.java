@@ -2,8 +2,8 @@ package com.direwolf20.buildinggadgets.common.util.lang;
 
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.Range;
+import org.jetbrains.annotations.NotNull;
 
 public enum MessageTranslation implements ITranslationProvider {
     AREA_COPIED("copied"),
@@ -59,11 +59,11 @@ public enum MessageTranslation implements ITranslationProvider {
     private final String key;
     private final int argCount;
 
-    MessageTranslation(@Nonnull String key) {
+    MessageTranslation(@NotNull String key) {
         this(key, 0);
     }
 
-    MessageTranslation(@Nonnull String key, @Nonnegative int argCount) {
+    MessageTranslation(@NotNull String key, @Range(from = 0, to = Integer.MAX_VALUE) int argCount) {
         this.key = PREFIX + key;
         this.argCount = argCount;
     }

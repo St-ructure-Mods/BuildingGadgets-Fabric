@@ -51,7 +51,7 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
         BlockState renderBlockState = renderData.getState();
 
         if (tile.isUsingPaste() && toolMode == EffectBlock.Mode.PLACE)
-            renderBlockState = OurBlocks.CONSTRUCTION_DENSE_BLOCK.get().defaultBlockState();
+            renderBlockState = OurBlocks.CONSTRUCTION_DENSE_BLOCK.defaultBlockState();
 
         OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
         try {
@@ -91,42 +91,42 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
         Matrix4f matrix = stack.last().pose();
 
         // Down
-        if (tile.getLevel().getBlockState(tile.getBlockPos().below()).getBlock() != OurBlocks.EFFECT_BLOCK.get()) {
+        if (tile.getLevel().getBlockState(tile.getBlockPos().below()).getBlock() != OurBlocks.EFFECT_BLOCK) {
             builder.vertex(matrix, x, y, z).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, y, z).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, x, y, maxZ).color(red, green, blue, alpha).endVertex();
         }
         // Up
-        if (tile.getLevel().getBlockState(tile.getBlockPos().above()).getBlock() != OurBlocks.EFFECT_BLOCK.get()) {
+        if (tile.getLevel().getBlockState(tile.getBlockPos().above()).getBlock() != OurBlocks.EFFECT_BLOCK) {
             builder.vertex(matrix, x, maxY, z).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, x, maxY, maxZ).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, maxY, z).color(red, green, blue, alpha).endVertex();
         }
         // North
-        if (tile.getLevel().getBlockState(tile.getBlockPos().north()).getBlock() != OurBlocks.EFFECT_BLOCK.get()) {
+        if (tile.getLevel().getBlockState(tile.getBlockPos().north()).getBlock() != OurBlocks.EFFECT_BLOCK) {
             builder.vertex(matrix, x, y, z).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, x, maxY, z).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, maxY, z).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, y, z).color(red, green, blue, alpha).endVertex();
         }
         // South
-        if (tile.getLevel().getBlockState(tile.getBlockPos().south()).getBlock() != OurBlocks.EFFECT_BLOCK.get()) {
+        if (tile.getLevel().getBlockState(tile.getBlockPos().south()).getBlock() != OurBlocks.EFFECT_BLOCK) {
             builder.vertex(matrix, x, y, maxZ).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, x, maxY, maxZ).color(red, green, blue, alpha).endVertex();
         }
         // East
-        if (tile.getLevel().getBlockState(tile.getBlockPos().east()).getBlock() != OurBlocks.EFFECT_BLOCK.get()) {
+        if (tile.getLevel().getBlockState(tile.getBlockPos().east()).getBlock() != OurBlocks.EFFECT_BLOCK) {
             builder.vertex(matrix, maxX, y, z).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, maxY, z).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
         }
         // West
-        if (tile.getLevel().getBlockState(tile.getBlockPos().west()).getBlock() != OurBlocks.EFFECT_BLOCK.get()) {
+        if (tile.getLevel().getBlockState(tile.getBlockPos().west()).getBlock() != OurBlocks.EFFECT_BLOCK) {
             builder.vertex(matrix, x, y, z).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, x, y, maxZ).color(red, green, blue, alpha).endVertex();
             builder.vertex(matrix, x, maxY, maxZ).color(red, green, blue, alpha).endVertex();

@@ -12,10 +12,10 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.Constants.NBT;
+//import net.minecraftforge.common.util.Constants.NBT;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Tainted(reason = "Used blockData and a stupid non-centralised callback system")
 public class EffectBlockTileEntity extends BlockEntity {
@@ -34,7 +34,7 @@ public class EffectBlockTileEntity extends BlockEntity {
     private int ticks;
 
     public EffectBlockTileEntity(BlockPos pos, BlockState state) {
-        super(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY.get(), pos, state);
+        super(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY, pos, state);
     }
 
     public void initializeData(BlockState curState, @Nullable BlockEntity te, BlockData replacementBlock, Mode mode, boolean usePaste) {
@@ -97,7 +97,7 @@ public class EffectBlockTileEntity extends BlockEntity {
         return new ClientboundBlockEntityDataPacket(worldPosition, 0, getUpdateTag());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public CompoundTag getUpdateTag() {
         return save(new CompoundTag());
@@ -113,9 +113,9 @@ public class EffectBlockTileEntity extends BlockEntity {
         deserializeNBT(pkt.getTag());
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public CompoundTag save(@Nonnull CompoundTag compound) {
+    public CompoundTag save(@NotNull CompoundTag compound) {
         if (mode != null && renderedBlock != null && sourceBlock != null) {
             compound.putInt(NBTKeys.GADGET_TICKS, ticks);
             compound.putInt(NBTKeys.GADGET_MODE, mode.ordinal());

@@ -14,7 +14,7 @@ import java.util.function.IntFunction;
  * was read in the constructor.
  * <p>
  * This class implements {@link IntFunction} for cases, where another int mapping may be used sometimes.
- * For example if the Data is associated with an {@link net.minecraftforge.registries.IForgeRegistry} and the
+ * For example if the Data is associated with an {@link //net.minecraftforge.registries.IForgeRegistry} and the
  * integer id's might be used, it is of course more efficient to use those directly.
  *
  * @param <T> The type of Data to decompress

@@ -35,7 +35,7 @@ public class DestructionRender extends BaseRenderer {
 
         BlockPos startBlock = (anchor == null) ? lookingAt.getBlockPos() : anchor;
         Direction facing = (GadgetDestruction.getAnchorSide(heldItem) == null) ? lookingAt.getDirection() : GadgetDestruction.getAnchorSide(heldItem);
-        if (world.getBlockState(startBlock) == OurBlocks.EFFECT_BLOCK.get().defaultBlockState())
+        if (world.getBlockState(startBlock) == OurBlocks.EFFECT_BLOCK.defaultBlockState())
             return;
 
         Vec3 playerPos = getMc().gameRenderer.getMainCamera().getPosition();

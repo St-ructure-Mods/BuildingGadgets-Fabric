@@ -10,7 +10,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@EventBusSubscriber(modid = Reference.MODID, bus = Bus.MOD)
 public class OurEntities {
     private OurEntities() {}
 
@@ -31,7 +30,6 @@ public class OurEntities {
         );
     }
 
-    @SubscribeEvent
     public static void registerModels(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ConstructionBlockEntity.TYPE, ConstructionBlockEntityRender::new);
     }

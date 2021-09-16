@@ -2,6 +2,8 @@ package com.direwolf20.buildinggadgets.common.blocks;
 
 import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,10 +24,8 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 //@Optional.Interface(iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
 public class ConstructionBlock extends Block implements EntityBlock /*implements IFacade*/ {
@@ -97,10 +97,12 @@ public class ConstructionBlock extends Block implements EntityBlock /*implements
         builder.add(BRIGHT, NEIGHBOR_BRIGHTNESS, AMBIENT_OCCLUSION);
     }
 
+    //TODO: Fix and return a new instance of a construction block entity.
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return OurTileEntities.CONSTRUCTION_BLOCK_TILE_ENTITY.get().create(blockPos, blockState);
+        return OurTileEntities.CONSTRUCTION_BLOCK_TILE_ENTITY;
     }
 
     public boolean isMimicNull(BlockState mimicBlock) {
@@ -275,7 +277,7 @@ public class ConstructionBlock extends Block implements EntityBlock /*implements
 //    }
 
     @Deprecated
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos) {
         Boolean bright = state.getValue(ConstructionBlock.BRIGHT);
         Boolean neighborBrightness = state.getValue(ConstructionBlock.NEIGHBOR_BRIGHTNESS);

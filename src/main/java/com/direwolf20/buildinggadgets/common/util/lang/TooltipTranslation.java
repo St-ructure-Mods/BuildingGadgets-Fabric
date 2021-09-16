@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.util.lang;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 public enum TooltipTranslation implements ITranslationProvider {
     CONSTRUCTIONBLOCKPOWDER_HELPTEXT("constructionblockpowder.helptext", 0),
@@ -35,7 +35,7 @@ public enum TooltipTranslation implements ITranslationProvider {
     private final String key;
     private final int argCount;
 
-    TooltipTranslation(@Nonnull String key, @Nonnegative int argCount) {
+    TooltipTranslation(@NotNull String key, @Range(from = 0, to = Integer.MAX_VALUE) int argCount) {
         this.key = PREFIX + key;
         this.argCount = argCount;
     }

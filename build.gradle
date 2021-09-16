@@ -1,98 +1,56 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        mavenCentral()
+plugins {
+    id 'fabric-loom' version '0.9-SNAPSHOT'
+    id 'maven-publish'
+}
+
+repositories {
+    maven {
+        name = "Technici4n"
+        url = "https://raw.githubusercontent.com/Technici4n/Technici4n-maven/master/"
+        content {
+            includeGroup "net.fabricmc.fabric-api" // until PR # is merged
+            includeGroup "dev.technici4n"
+        }
     }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+    maven {
+        name = "BuildCraft"
+        url = "https://mod-buildcraft.com/maven"
+    }
+    maven {
+        url "https://maven.shedaniel.me/"
+        content {
+            includeGroup "me.shedaniel"
+            includeGroup "me.shedaniel.cloth"
+            includeGroup "dev.architectury"
+        }
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'maven-publish'
-apply plugin: 'net.minecraftforge.gradle'
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
-version = "$version"
-group = 'com.direwolf20.buildinggadgets'
-archivesBaseName = "buildinggadgets-${minecraft_version}"
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
 
-def forge_major = forge_version.tokenize('.')[0]
-
-// Used for CI/CD
-def env = System.getenv()
-if (env.GITHUB_RUN_NUMBER) {
-    version = version + "-SNAPSHOT-" + "${env.GITHUB_RUN_NUMBER}"
-}
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
-
-minecraft {
-    mappings channel: 'official', version: "${minecraft_version}"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                buildinggadgets {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                buildinggadgets {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'buildinggadgets', '--all', '--output', file('src/generated/resources/')
-            mods {
-                buildinggadgets {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
+loom {
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-repositories {
-    maven {
-        // JEI
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
-    maven {
-        url = "https://www.cursemaven.com"
-    }
-}
-
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-//    implementation('cpw.mods:securejarhandler') { version { strictly '0.9.45' } }
-    //JEI
-//    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-//    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-//    runtimeOnly fg.deobf("curse.maven:create-328085:3158185")
-    // deobfCompile "team.chisel.ctm:CTM:MC${minecraft_version}-${ctm_version}:api"
-    // deobfCompile "refinedstorage:refinedstorage:${rs_version}:api"
-    // runtime "team.chisel.ctm:CTM:MC${minecraft_version}-${ctm_version}"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings minecraft.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    modApi include("dev.technici4n:FastTransferLib:${project.ftl_version}")
+
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    modApi("dev.architectury:architectury-fabric:${project.architectury_version}")
+    modApi("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
 }
 
 // Processes main only resources
@@ -111,17 +69,7 @@ dependencies {
 //}
 
 jar {
-    group = 'artifact'
-    manifest {
-        attributes(["Specification-Title": "BuildingGadgets",
-                    "Specification-Version": forge_major, // We are version 1 of the modlauncher specification
-                    "Implementation-Title": project.archivesBaseName,
-                    "Implementation-Version": project.version,
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
-    }
-
-    from sourceSets.main.output
-    dependsOn classes
+    from "LICENSE"
 }
 
 task deobfJar(type: Jar) {
@@ -133,6 +81,47 @@ task sourcesJar(type: Jar) {
     from(sourceSets.main.allSource)
     archiveName = "${baseName}-${version}-sources.${extension}"
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(jar) {
+                builtBy remapJar
+            }
+            artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar"){
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
+
+    // select the repositories you want to publish to
+    repositories {
+        // uncomment to publish to the local maven
+        // mavenLocal()
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand "version": project.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
 
 artifacts {
     archives deobfJar

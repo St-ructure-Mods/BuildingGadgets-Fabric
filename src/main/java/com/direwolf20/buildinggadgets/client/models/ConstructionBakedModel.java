@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class ConstructionBakedModel implements IDynamicBakedModel {
+public class ConstructionBakedModel implements BakedModel {
     private BlockState facadeState;
     @Override
     public boolean isGui3d() {

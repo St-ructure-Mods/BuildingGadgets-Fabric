@@ -1,17 +1,8 @@
 package com.direwolf20.buildinggadgets.common.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import me.shedaniel.autoconfig.ConfigData;
 
-import static net.minecraftforge.common.ForgeConfigSpec.*;
-
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-
-@EventBusSubscriber
-public class Config {
+public class Config implements ConfigData{
     private static final Builder SERVER_BUILDER = new Builder();
     private static final Builder CLIENT_BUILDER = new Builder();
 
@@ -54,8 +45,8 @@ public class Config {
     }
 
     public static final class CategoryGadgets {
-        public final IntValue maxRange;
-        public final IntValue placeSteps;
+        public final int maxRange;
+        public final int placeSteps;
 
         public final GadgetConfig GADGET_BUILDING;
         public final GadgetConfig GADGET_EXCHANGER;
@@ -140,9 +131,9 @@ public class Config {
         }
 
         public static final class CategoryGadgetCopyPaste extends GadgetConfig {
-            public final IntValue copySteps;
-            public final IntValue maxCopySize;
-            public final IntValue maxBuildSize;
+            public final int copySteps;
+            public final int maxCopySize;
+            public final int maxBuildSize;
 
             private CategoryGadgetCopyPaste() {
                 super("Copy-Paste Gadget", 500000, 50, 1);
@@ -174,7 +165,7 @@ public class Config {
 
     public static final class CategoryPasteContainers {
 
-        public final IntValue capacityT1, capacityT2, capacityT3;
+        public final int capacityT1, capacityT2, capacityT3;
 
         private CategoryPasteContainers() {
             SERVER_BUILDER
@@ -188,7 +179,7 @@ public class Config {
             SERVER_BUILDER.pop();
         }
 
-        private static IntValue getMaxCapacity(int tier) {
+        private static int getMaxCapacity(int tier) {
             return SERVER_BUILDER
                     .comment(String.format("The maximum capacity of a tier %s (iron) Construction Paste Container", tier))
                     .defineInRange(String.format("T%s Container Capacity", tier), (int) (512 * Math.pow(4, tier - 1)), 1, Integer.MAX_VALUE);

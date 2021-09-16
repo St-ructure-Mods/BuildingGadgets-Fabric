@@ -1,19 +1,15 @@
 package com.direwolf20.buildinggadgets.common.tileentities;
 
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.fmllegacy.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public final class OurTileEntities {
-    public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, Reference.MODID);
 
-    public static final RegistryObject<BlockEntityType<EffectBlockTileEntity>> EFFECT_BLOCK_TILE_ENTITY =
-            TILE_ENTITIES.register("effect_block_tile", () -> BlockEntityType.Builder.of(EffectBlockTileEntity::new, OurBlocks.EFFECT_BLOCK.get()).build(null));
-    public static final RegistryObject<BlockEntityType<ConstructionBlockTileEntity>> CONSTRUCTION_BLOCK_TILE_ENTITY =
-            TILE_ENTITIES.register("construction_tile", () -> BlockEntityType.Builder.of(ConstructionBlockTileEntity::new, OurBlocks.CONSTRUCTION_BLOCK.get()).build(null));
-    public static final RegistryObject<BlockEntityType<TemplateManagerTileEntity>> TEMPLATE_MANAGER_TILE_ENTITY =
-            TILE_ENTITIES.register("template_manager_tile", () -> BlockEntityType.Builder.of(TemplateManagerTileEntity::new, OurBlocks.TEMPLATE_MANGER_BLOCK.get()).build(null));
+    public static final BlockEntityType<EffectBlockTileEntity> EFFECT_BLOCK_TILE_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, BuildingGadgets.id("effect_block_tile"), FabricBlockEntityTypeBuilder.create(EffectBlockTileEntity::new, OurBlocks.EFFECT_BLOCK).build());
+    public static final BlockEntityType<ConstructionBlockTileEntity> CONSTRUCTION_BLOCK_TILE_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, BuildingGadgets.id("construction_tile"), FabricBlockEntityTypeBuilder.create(ConstructionBlockTileEntity::new, OurBlocks.CONSTRUCTION_BLOCK).build());
+    public static final BlockEntityType<TemplateManagerTileEntity> TEMPLATE_MANAGER_TILE_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, BuildingGadgets.id("template_manager_tile"), FabricBlockEntityTypeBuilder.create(TemplateManagerTileEntity::new, OurBlocks.TEMPLATE_MANGER_BLOCK).build());
+
 }

@@ -1,19 +1,23 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
-import com.direwolf20.buildinggadgets.common.util.ref.Reference;
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.fmllegacy.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public final class OurBlocks {
     private OurBlocks() {}
 
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Reference.MODID);
+    public static void registerBlocks() {
+        Registry.register(Registry.BLOCK, BuildingGadgets.id("effect_block"), EFFECT_BLOCK);
+        Registry.register(Registry.BLOCK, BuildingGadgets.id("construction_block"), CONSTRUCTION_BLOCK);
+        Registry.register(Registry.BLOCK, BuildingGadgets.id("construction_block_dense"), CONSTRUCTION_DENSE_BLOCK);
+        Registry.register(Registry.BLOCK, BuildingGadgets.id("construction_block_powder"), CONSTRUCTION_POWDER_BLOCK);
+        Registry.register(Registry.BLOCK, BuildingGadgets.id("template_manager"), TEMPLATE_MANGER_BLOCK);
+    }
 
-    public static final RegistryObject<Block> EFFECT_BLOCK = BLOCKS.register("effect_block", EffectBlock::new);
-    public static final RegistryObject<Block> CONSTRUCTION_BLOCK = BLOCKS.register("construction_block", ConstructionBlock::new);
-    public static final RegistryObject<Block> CONSTRUCTION_DENSE_BLOCK = BLOCKS.register("construction_block_dense", ConstructionBlockDense::new);
-    public static final RegistryObject<Block> CONSTRUCTION_POWDER_BLOCK = BLOCKS.register("construction_block_powder", ConstructionBlockPowder::new);
-    public static final RegistryObject<Block> TEMPLATE_MANGER_BLOCK = BLOCKS.register("template_manager", TemplateManager::new);
+    public static final Block EFFECT_BLOCK = new EffectBlock();
+    public static final Block CONSTRUCTION_BLOCK = new ConstructionBlock();
+    public static final Block CONSTRUCTION_DENSE_BLOCK = new ConstructionBlockDense();
+    public static final Block CONSTRUCTION_POWDER_BLOCK = new ConstructionBlockPowder();
+    public static final Block TEMPLATE_MANGER_BLOCK = new TemplateManager();
 }

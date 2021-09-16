@@ -10,6 +10,7 @@ import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.config.RecipeConstructionPaste.Serializer;
 import com.direwolf20.buildinggadgets.common.containers.OurContainers;
+import com.direwolf20.buildinggadgets.common.entities.OurEntities;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
@@ -18,6 +19,9 @@ import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.impl.item.group.FabricCreativeGuiComponents;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.commands.Commands;
 import net.minecraft.resources.ResourceLocation;
@@ -39,8 +43,7 @@ import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(Reference.MODID)
-public final class BuildingGadgets {
+public final class BuildingGadgets implements ModInitializer {
 
     public static Logger LOG = LogManager.getLogger();
 
@@ -49,14 +52,16 @@ public final class BuildingGadgets {
      * building gadget to remove the damage / energy indicator from the creative
      * tabs icon.
      */
-    public static CreativeModeTab creativeTab = new CreativeModeTab(Reference.MODID) {
-        @Override
-        public ItemStack makeIcon() {
-            ItemStack stack = new ItemStack(OurItems.BUILDING_GADGET_ITEM.get());
-            stack.getOrCreateTag().putByte(NBTKeys.CREATIVE_MARKER, (byte) 0);
-            return stack;
-        }
-    };
+
+    public static CreativeModeTab creativeTab = FabricItemGroupBuilder.build(BuildingGadgets.id("tab"), () -> {
+        ItemStack stack = new ItemStack(OurItems.BUILDING_GADGET_ITEM);
+        stack.getOrCreateTag().putByte(NBTKeys.CREATIVE_MARKER, (byte) 0);
+        return stack;
+    });
+
+    public static ResourceLocation id(String path) {
+        return new ResourceLocation(Reference.MODID, path);
+    }
 
     private static BuildingGadgets theMod = null;
 
@@ -71,8 +76,6 @@ public final class BuildingGadgets {
         ModLoadingContext.get().registerConfig(Type.SERVER, Config.SERVER_CONFIG);
         ModLoadingContext.get().registerConfig(Type.CLIENT, Config.CLIENT_CONFIG);
 
-        OurBlocks.BLOCKS.register(eventBus);
-        OurItems.ITEMS.register(eventBus);
         OurTileEntities.TILE_ENTITIES.register(eventBus);
         OurContainers.CONTAINERS.register(eventBus);
 
@@ -92,7 +95,7 @@ public final class BuildingGadgets {
 
     private void clientSetup(final FMLClientSetupEvent event) {
 //        ClientRegistry.bindTileEntityRenderer(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY.get(), EffectBlockTER::new);
-        BlockEntityRenderers.register(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY.get(), EffectBlockTER::new);
+        BlockEntityRenderers.register(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY, EffectBlockTER::new);
         ClientProxy.clientSetup(FMLJavaModLoadingContext.get().getModEventBus());
 //        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> GuiMod::openScreen);
     }
@@ -153,5 +156,11 @@ public final class BuildingGadgets {
 
     private void onEnqueueIMC(InterModEnqueueEvent event) {
         InventoryHelper.registerHandleProviders();
+    }
+
+    @Override
+    public void onInitialize() {
+        OurBlocks.registerBlocks();
+        OurItems.registerItems();
     }
 }

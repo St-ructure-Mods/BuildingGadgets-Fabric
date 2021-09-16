@@ -66,7 +66,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -379,7 +379,7 @@ public class GadgetCopyPaste extends AbstractGadget {
                 return false;
             }
         }
-        int maxDimension = Config.GADGETS.GADGET_COPY_PASTE.maxCopySize.get();
+        int maxDimension = Config.GADGETS.GADGET_COPY_PASTE.maxCopySize;
         if (region.getXSize() > 0xFFFF || region.getYSize() > 255 || region.getZSize() > 0xFFFF ||  //these are the max dimensions of a Template
                 ((region.getXSize() > maxDimension || region.getYSize() > maxDimension || region.getZSize() > maxDimension) && ! OverrideCopySizeCommand.mayPerformLargeCopy(player))) {
             BlockPos sizeVec = region.getMax().subtract(region.getMin());
@@ -402,7 +402,7 @@ public class GadgetCopyPaste extends AbstractGadget {
                             .author(player.getName().getContents())
                             .build());
             onCopyFinished(newTemplate.normalize(), stack, player);
-        }, buildView, Config.GADGETS.GADGET_COPY_PASTE.copySteps.get());
+        }, buildView, Config.GADGETS.GADGET_COPY_PASTE.copySteps);
     }
 
     private void onCopyFinished(Template newTemplate, ItemStack stack, Player player) {
@@ -440,7 +440,7 @@ public class GadgetCopyPaste extends AbstractGadget {
                 return false;
             }
         }
-        int maxDimension = Config.GADGETS.GADGET_COPY_PASTE.maxBuildSize.get();
+        int maxDimension = Config.GADGETS.GADGET_COPY_PASTE.maxBuildSize;
         if ((region.getXSize() > maxDimension || region.getYSize() > maxDimension || region.getZSize() > maxDimension) &&
                 ! OverrideBuildSizeCommand.mayPerformLargeBuild(player)) {
             BlockPos sizeVec = region.getMax().subtract(region.getMin());

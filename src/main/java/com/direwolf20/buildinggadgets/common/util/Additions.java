@@ -7,9 +7,9 @@ import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Random;
 
@@ -29,12 +29,12 @@ public final class Additions {
         private final String key;
         private final int argCount;
 
-        NineByNineTranslation(@Nonnull String key, @Nonnegative int argCount) {
+        NineByNineTranslation(@NotNull String key, @Range(from = 0, to = Integer.MAX_VALUE) int argCount) {
             this.key = PREFIX + key;
             this.argCount = argCount;
         }
 
-        NineByNineTranslation(@Nonnull String key) {
+        NineByNineTranslation(@NotNull String key) {
             this(key, 0);
         }
 
@@ -59,12 +59,12 @@ public final class Additions {
         private final String key;
         private final int argCount;
 
-        DireNineByNineTranslation(@Nonnull String key, @Nonnegative int argCount) {
+        DireNineByNineTranslation(@NotNull String key, @Range(from = 0, to = Integer.MAX_VALUE) int argCount) {
             this.key = PREFIX + key;
             this.argCount = argCount;
         }
 
-        DireNineByNineTranslation(@Nonnull String key) {
+        DireNineByNineTranslation(@NotNull String key) {
             this(key, 0);
         }
 

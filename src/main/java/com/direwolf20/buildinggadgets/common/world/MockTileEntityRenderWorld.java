@@ -9,8 +9,8 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public class MockTileEntityRenderWorld implements BlockGetter {
         return tileEntities.get(state);
     }
 
-    @Nullable
+    @NotNull
     @Override
     public BlockEntity getBlockEntity(BlockPos pos) {
         return null;

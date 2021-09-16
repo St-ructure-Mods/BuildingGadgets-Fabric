@@ -42,7 +42,7 @@ import static com.direwolf20.buildinggadgets.common.util.GadgetUtils.getToolBloc
 
 public class BuildRender extends BaseRenderer {
     private final boolean isExchanger;
-    private static final BlockState DEFAULT_EFFECT_BLOCK = OurBlocks.EFFECT_BLOCK.get().defaultBlockState();
+    private static final BlockState DEFAULT_EFFECT_BLOCK = OurBlocks.EFFECT_BLOCK.defaultBlockState();
 
     public BuildRender(boolean isExchanger) {
         this.isExchanger = isExchanger;

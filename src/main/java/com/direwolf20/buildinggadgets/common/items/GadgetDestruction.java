@@ -239,7 +239,7 @@ public class GadgetDestruction extends AbstractGadget {
 
     public static boolean isValidBlock(Level world, BlockPos voidPos, Player player, BlockState currentBlock) {
         if (world.isEmptyBlock(voidPos) ||
-                currentBlock.equals(OurBlocks.EFFECT_BLOCK.get().defaultBlockState()) ||
+                currentBlock.equals(OurBlocks.EFFECT_BLOCK.defaultBlockState()) ||
                 currentBlock.getDestroySpeed(world, voidPos) < 0 ||
                 ! world.mayInteract(player, voidPos)) return false;
 

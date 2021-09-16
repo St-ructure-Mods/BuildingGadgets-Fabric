@@ -16,11 +16,11 @@ import java.util.function.ToIntFunction;
  * which is evaluated if the value is at that point unknown. This int key can then be used to efficiently
  * represent the value, which will obviously reduce the size for duplicate values.
  * <p>
- * The mapping build can be represented efficiently using a {@link ListNBT NBTList}. For reading this
+ * The mapping build can be represented efficiently using a {@link //ListNBT NBTList}. For reading this
  * and reversing the mapping use {@link DataDecompressor}.
  * <p>
  * This class implements {@link ToIntFunction} for cases, where another int mapping may be used sometimes.
- * For example if the Data is associated with an {@link net.minecraftforge.registries.IForgeRegistry} and the
+ * For example if the Data is associated with an {@link //net.minecraftforge.registries.IForgeRegistry} and the
  * integer id's might be used, it is of course more efficient to use those directly.
  *
  * @param <T> The type of Data which is compressed

@@ -2,6 +2,8 @@ package com.direwolf20.buildinggadgets.common.blocks;
 
 import com.direwolf20.buildinggadgets.common.entities.ConstructionBlockEntity;
 import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.FallingBlock;
@@ -16,14 +18,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ConstructionBlockPowder extends FallingBlock {
     public ConstructionBlockPowder() {
-        super(Block.Properties.of(Material.SAND).strength(0.5F).harvestTool(ToolType.SHOVEL));
+        super(FabricBlockSettings.of(Material.STONE).strength(0.5F).breakByTool(FabricToolTags.SHOVELS));
     }
 
     @Override

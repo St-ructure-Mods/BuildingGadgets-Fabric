@@ -8,6 +8,8 @@ import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.tileentities.EffectBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,17 +27,13 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
+//import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 @MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
 public class EffectBlock extends BaseEntityBlock {
 
     public enum Mode {
@@ -50,7 +48,7 @@ public class EffectBlock extends BaseEntityBlock {
                 BlockPos targetPos = builder.getBlockPos();
                 BlockData targetBlock = builder.getRenderedBlock();
                 if (builder.isUsingPaste()) {
-                    world.setBlockAndUpdate(targetPos, OurBlocks.CONSTRUCTION_BLOCK.get().defaultBlockState());
+                    world.setBlockAndUpdate(targetPos, OurBlocks.CONSTRUCTION_BLOCK.defaultBlockState());
                     BlockEntity te = world.getBlockEntity(targetPos);
                     if (te instanceof ConstructionBlockTileEntity) {
                         ((ConstructionBlockTileEntity) te).setBlockState(targetBlock);
@@ -92,7 +90,7 @@ public class EffectBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(type, OurTileEntities.EFFECT_BLOCK_TILE_ENTITY.get(), EffectBlockTileEntity::tick);
+        return createTickerHelper(type, OurTileEntities.EFFECT_BLOCK_TILE_ENTITY, EffectBlockTileEntity::tick);
     }
 
     /**
@@ -125,7 +123,7 @@ public class EffectBlock extends BaseEntityBlock {
     }
 
     private static void spawnEffectBlock(@Nullable BlockEntity curTe, BlockState curState, LevelAccessor world, BlockPos spawnPos, BlockData spawnBlock, Mode mode, boolean usePaste) {
-        BlockState state = OurBlocks.EFFECT_BLOCK.get().defaultBlockState();
+        BlockState state = OurBlocks.EFFECT_BLOCK.defaultBlockState();
         world.setBlock(spawnPos, state, 3);
 
         BlockEntity tile = world.getBlockEntity(spawnPos);
@@ -150,7 +148,7 @@ public class EffectBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return OurTileEntities.EFFECT_BLOCK_TILE_ENTITY.get().create(pos, state);
+        return OurTileEntities.EFFECT_BLOCK_TILE_ENTITY.create(pos, state);
     }
 
     @Override
@@ -163,11 +161,6 @@ public class EffectBlock extends BaseEntityBlock {
         return Shapes.block();
     }
 
-    /**
-     * @param state blockState
-     * @return Render Type
-     * @deprecated call via {@link BlockState#getRenderType()} whenever possible. Implementing/overriding is fine.
-     */
     @Override
     @Deprecated
     @SuppressWarnings("deprecation")
@@ -191,9 +184,6 @@ public class EffectBlock extends BaseEntityBlock {
         return new ArrayList<>();
     }
 
-    /**
-     * @deprecated call via {@link BlockState#getPushReaction()} whenever possible. Implementing/overriding is fine.
-     */
     @Override
     @Deprecated
     public PushReaction getPistonPushReaction(BlockState state) {
@@ -206,7 +196,7 @@ public class EffectBlock extends BaseEntityBlock {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return 1.0f;
     }

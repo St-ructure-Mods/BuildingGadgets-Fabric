@@ -79,7 +79,7 @@ public abstract class AbstractMode {
             return false;
 
         // No effect blocks and don't try with the same block as you're trying to exchange with
-        if (worldBlockState == OurBlocks.EFFECT_BLOCK.get().defaultBlockState()
+        if (worldBlockState == OurBlocks.EFFECT_BLOCK.defaultBlockState()
                 || worldBlockState == context.getSetState() )
             return false;
 

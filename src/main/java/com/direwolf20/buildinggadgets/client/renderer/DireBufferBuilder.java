@@ -12,12 +12,12 @@ import com.mojang.blaze3d.platform.MemoryTracker;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.BitSet;
@@ -329,7 +329,7 @@ public class DireBufferBuilder extends DefaultedVertexConsumer implements Buffer
         return this.isDrawing;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static final class DrawState {
         private final VertexFormat format;
         private final int vertexCount;
@@ -354,7 +354,7 @@ public class DireBufferBuilder extends DefaultedVertexConsumer implements Buffer
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static class State {
         private final ByteBuffer stateByteBuffer;
         private final VertexFormat stateVertexFormat;

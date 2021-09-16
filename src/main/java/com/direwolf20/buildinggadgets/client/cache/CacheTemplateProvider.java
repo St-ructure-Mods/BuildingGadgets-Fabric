@@ -12,8 +12,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import org.apache.logging.log4j.util.TriConsumer;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -36,8 +36,8 @@ public final class CacheTemplateProvider implements ITemplateProvider {
     }
 
     @Override
-    @Nonnull
-    public Template getTemplateForKey(@Nonnull ITemplateKey key) {
+    @NotNull
+    public Template getTemplateForKey(@NotNull ITemplateKey key) {
         UUID id = getId(key);
         try {
             return cache.get(id, () -> {

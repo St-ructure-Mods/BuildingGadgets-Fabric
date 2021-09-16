@@ -1,8 +1,7 @@
 package com.direwolf20.buildinggadgets.common.util.lang;
 
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum GuiTranslation implements ITranslationProvider {
     SINGLE_CONFIRM("single.confirm"),
@@ -35,7 +34,7 @@ public enum GuiTranslation implements ITranslationProvider {
     private final String key;
     private final int argCount;
 
-    GuiTranslation(@Nonnull String key) {
+    GuiTranslation(@NotNull String key) {
         this.key = PREFIX + key;
         this.argCount = 0;
     }

@@ -1,8 +1,7 @@
 package com.direwolf20.buildinggadgets.common.util.lang;
 
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum ModeTranslation implements ITranslationProvider{
     COPY("copy"),
@@ -11,7 +10,7 @@ public enum ModeTranslation implements ITranslationProvider{
     private static final String PREFIX = Reference.MODID + ".modes.";
     private final String key;
 
-    ModeTranslation(@Nonnull String key) {
+    ModeTranslation(@NotNull String key) {
         this.key = PREFIX + key;
     }
 
