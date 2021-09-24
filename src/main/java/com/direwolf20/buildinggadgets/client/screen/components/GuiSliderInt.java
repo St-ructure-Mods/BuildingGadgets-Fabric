@@ -7,24 +7,24 @@ import com.direwolf20.buildinggadgets.common.network.packets.PacketChangeRange;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraftforge.fmlclient.gui.widget.Slider;
 
 import java.awt.*;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 
-public class GuiSliderInt extends Slider {
+public class GuiSliderInt extends AbstractSliderButton {
     private int colorBackground, colorSliderBackground, colorSlider;
     private BiConsumer<GuiSliderInt, Integer> increment;
     private int value;
 
     public GuiSliderInt(int xPos, int yPos, int width, int height, Component prefix, Component suf, double minVal, double maxVal,
-                        double currentVal, boolean showDec, boolean drawStr, Color color, OnPress par,
+                        double currentVal, boolean showDec, boolean drawStr, Color color, Button.OnPress par,
                         BiConsumer<GuiSliderInt, Integer> increment) {
 
         super(xPos, yPos, width, height, prefix, suf, minVal, maxVal, currentVal, showDec, drawStr, par);
@@ -40,6 +40,16 @@ public class GuiSliderInt extends Slider {
     public void onRelease(double mouseX, double mouseY) {
         super.onRelease(mouseX, mouseY);
         setValue(getValueInt());
+    }
+
+    @Override
+    protected void updateMessage() {
+
+    }
+
+    @Override
+    protected void applyValue() {
+
     }
 
     @Override

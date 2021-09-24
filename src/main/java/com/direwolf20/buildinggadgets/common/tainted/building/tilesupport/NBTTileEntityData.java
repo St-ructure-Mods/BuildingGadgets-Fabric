@@ -16,9 +16,9 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class NBTTileEntityData implements ITileEntityData {
-    public static NBTTileEntityData ofTile(BlockEntity te) {
+    public static NBTTileEntityData ofTile(BlockEntity be) {
         CompoundTag nbt = new CompoundTag();
-        te.save(nbt);
+        be.save(nbt);
         return new NBTTileEntityData(nbt);
     }
     @Nonnull
@@ -51,10 +51,10 @@ public class NBTTileEntityData implements ITileEntityData {
     public boolean placeIn(BuildContext context, BlockState state, BlockPos position) {
         BuildingGadgets.LOG.trace("Placing {} with Tile NBT at {}.", state, position);
         context.getWorld().setBlock(position, state, 0);
-        BlockEntity te = context.getWorld().getBlockEntity(position);
-        if (te != null) {
+        BlockEntity be = context.getWorld().getBlockEntity(position);
+        if (be != null) {
             try {
-                te.deserializeNBT(getNBTModifiable());
+                be.deserializeNBT(getNBTModifiable());
             } catch (Exception e) {
                 BuildingGadgets.LOG.debug("Failed to apply Tile NBT Data to {} at {} in Context {}", state, position, context, e);
             }

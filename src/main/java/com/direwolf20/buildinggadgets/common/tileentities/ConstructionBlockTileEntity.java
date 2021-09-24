@@ -5,22 +5,16 @@ import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
-import net.minecraftforge.client.model.data.ModelProperty;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ConstructionBlockTileEntity extends BlockEntity {
 
     private BlockData blockState;
-    public static final ModelProperty<BlockState> FACADE_STATE = new ModelProperty<>();
 
     public ConstructionBlockTileEntity(BlockPos pos, BlockState state) {
-        super(OurTileEntities.CONSTRUCTION_BLOCK_TILE_ENTITY.get(), pos, state);
+        super(OurTileEntities.CONSTRUCTION_BLOCK_TILE_ENTITY, pos, state);
     }
 
     public void setBlockState(BlockData state) {
@@ -28,25 +22,13 @@ public class ConstructionBlockTileEntity extends BlockEntity {
         markDirtyClient();
     }
 
-    // TODO: query simulated Tile, if exists, and relay model data...
-    @Nonnull
-    @Override
-    public IModelData getModelData() {
-        if (blockState == null) {
-            return super.getModelData();
-        }
-
-        BlockState state = blockState.getState();
-        return new ModelDataMap.Builder().withInitial(FACADE_STATE, state).build();
-    }
-
-    @Nonnull
+    @NotNull
     @Override
     public BlockState getBlockState() {
         return getConstructionBlockData().getState();
     }
 
-    @Nonnull
+    @NotNull
     public BlockData getConstructionBlockData() {
         if (blockState == null)
             return BlockData.AIR;
@@ -60,9 +42,9 @@ public class ConstructionBlockTileEntity extends BlockEntity {
         markDirtyClient();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public CompoundTag save(@Nonnull CompoundTag compound) {
+    public CompoundTag save(@NotNull CompoundTag compound) {
         if (blockState != null) {
             compound.put(NBTKeys.TE_CONSTRUCTION_STATE, blockState.serialize(true));
         }
@@ -77,7 +59,7 @@ public class ConstructionBlockTileEntity extends BlockEntity {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag updateTag = super.getUpdateTag();
@@ -90,20 +72,5 @@ public class ConstructionBlockTileEntity extends BlockEntity {
         CompoundTag nbtTag = new CompoundTag();
         save(nbtTag);
         return new ClientboundBlockEntityDataPacket(getBlockPos(), 1, nbtTag);
-    }
-
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet) {
-        BlockData oldMimicBlock = getConstructionBlockData();
-        CompoundTag tagCompound = packet.getTag();
-        super.onDataPacket(net, packet);
-        deserializeNBT(tagCompound);
-
-        if (level != null && level.isClientSide) {
-            // If needed send a render update.
-            if (! getConstructionBlockData().equals(oldMimicBlock)) {
-                level.blockEntityChanged(getBlockPos());
-            }
-        }
     }
 }

@@ -81,17 +81,17 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
         this.addRenderableWidget(scrollingList);
 
         int buttonY = getWindowBottomY() - (ScrollingMaterialList.BOTTOM / 2 + BUTTON_HEIGHT / 2);
-        this.buttonClose = new Button(0, buttonY, 0, BUTTON_HEIGHT, MaterialListTranslation.BUTTON_CLOSE.componentTranslation(), b -> getMinecraft().player.closeContainer());
+        this.buttonClose = new Button(0, buttonY, 0, BUTTON_HEIGHT, MaterialListTranslation.BUTTON_CLOSE.componentTranslation(), b -> Minecraft.getInstance().player.closeContainer());
         this.buttonSortingModes = new Button(0, buttonY, 0, BUTTON_HEIGHT, scrollingList.getSortingMode().getTranslationProvider().componentTranslation(), (button) -> {
             scrollingList.setSortingMode(scrollingList.getSortingMode().next());
             buttonSortingModes.setMessage(scrollingList.getSortingMode().getTranslationProvider().componentTranslation());
         });
 
         this.buttonCopyList = new Button(0, buttonY, 0, BUTTON_HEIGHT, MaterialListTranslation.BUTTON_COPY.componentTranslation(), (button) -> {
-            getMinecraft().keyboardHandler.setClipboard(evaluateTemplateHeader().toJson(false, hasControlDown()));
+            Minecraft.getInstance().keyboardHandler.setClipboard(evaluateTemplateHeader().toJson(false, hasControlDown()));
 
-            if( getMinecraft().player != null )
-                getMinecraft().player.displayClientMessage(new TranslatableComponent(MaterialListTranslation.MESSAGE_COPY_SUCCESS.getTranslationKey()), true);
+            if( Minecraft.getInstance().player != null )
+                Minecraft.getInstance().player.displayClientMessage(new TranslatableComponent(MaterialListTranslation.MESSAGE_COPY_SUCCESS.getTranslationKey()), true);
         });
 
         // Buttons will be placed left to right in this order
@@ -106,9 +106,9 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
         Template template = getTemplateCapability();
 
         BuildContext context = BuildContext.builder()
-                .player(getMinecraft().player)
+                .player(Minecraft.getInstance().player)
                 .stack(getTemplateItem())
-                .build(getMinecraft().level);
+                .build(Minecraft.getInstance().level);
 
         return template.getHeaderAndForceMaterials(context);
     }
@@ -119,7 +119,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
 
     @Override
     public void render(PoseStack matrices, int mouseX, int mouseY, float particleTicks) {
-        getMinecraft().getTextureManager().bindForSetup(BACKGROUND_TEXTURE);
+        Minecraft.getInstance().getTextureManager().bindForSetup(BACKGROUND_TEXTURE);
         blit(matrices, backgroundX, backgroundY, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT); // TODO: Might be wrong
 
         scrollingList.render(matrices, mouseX, mouseY, particleTicks);
@@ -158,7 +158,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
     }
 
     public Template getTemplateCapability() {
-        if( getMinecraft().level == null || getMinecraft().player == null )
+        if( Minecraft.getInstance().level == null || Minecraft.getInstance().player == null )
             return null;
 
         LazyOptional<ITemplateProvider> providerCap = getMinecraft().level.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY);

@@ -7,9 +7,14 @@ import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
+import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.impl.networking.client.ClientNetworkingImpl;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,11 +22,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
-import net.minecraftforge.registries.ObjectHolder;
 
 public class ConstructionBlockEntity extends EntityBase {
-    @ObjectHolder(Reference.EntityReference.CONSTRUCTION_BLOCK_ENTITY)
     public static EntityType<ConstructionBlockEntity> TYPE;
 
     private static final EntityDataAccessor<BlockPos> FIXED = SynchedEntityData.defineId(ConstructionBlockEntity.class, EntityDataSerializers.BLOCK_POS);
@@ -66,9 +68,9 @@ public class ConstructionBlockEntity extends EntityBase {
     protected void onSetDespawning() {
         if (targetPos != null) {
             if (!getMakingPaste()) {
-                BlockEntity te = level.getBlockEntity(targetPos);
-                if (te instanceof ConstructionBlockTileEntity) {
-                    BlockData tempState = ((ConstructionBlockTileEntity) te).getConstructionBlockData();
+                BlockEntity be = level.getBlockEntity(targetPos);
+                if (be instanceof ConstructionBlockTileEntity) {
+                    BlockData tempState = ((ConstructionBlockTileEntity) be).getConstructionBlockData();
 
                     boolean opaque = tempState.getState().isSolidRender(level, targetPos);
                     boolean neighborBrightness = false;//tempState.useNeighbourBrightness(world, targetPos); //TODO find replacement
@@ -77,19 +79,19 @@ public class ConstructionBlockEntity extends EntityBase {
                     //boolean ambient = model.isAmbientOcclusion();
                     boolean ambient = false; //TODO Find a better way to get the proper ambient Occlusion value. This is client side only so can't be done here.
                     if (opaque || neighborBrightness || ! ambient) {
-                        BlockData tempSetBlock = ((ConstructionBlockTileEntity) te).getConstructionBlockData();
-                        level.setBlockAndUpdate(targetPos, OurBlocks.CONSTRUCTION_BLOCK.get().defaultBlockState()
+                        BlockData tempSetBlock = ((ConstructionBlockTileEntity) be).getConstructionBlockData();
+                        level.setBlockAndUpdate(targetPos, OurBlocks.CONSTRUCTION_BLOCK.defaultBlockState()
                                 .setValue(ConstructionBlock.BRIGHT, ! opaque)
                                 .setValue(ConstructionBlock.NEIGHBOR_BRIGHTNESS, neighborBrightness)
                                 .setValue(ConstructionBlock.AMBIENT_OCCLUSION, ambient));
-                        te = level.getBlockEntity(targetPos);
-                        if (te instanceof ConstructionBlockTileEntity) {
-                            ((ConstructionBlockTileEntity) te).setBlockState(tempSetBlock);
+                        be = level.getBlockEntity(targetPos);
+                        if (be instanceof ConstructionBlockTileEntity) {
+                            ((ConstructionBlockTileEntity) be).setBlockState(tempSetBlock);
                         }
                     }
                 }
-            } else if (level.getBlockState(targetPos) == OurBlocks.CONSTRUCTION_POWDER_BLOCK.get().defaultBlockState()) {
-                level.setBlockAndUpdate(targetPos, OurBlocks.CONSTRUCTION_DENSE_BLOCK.get().defaultBlockState());
+            } else if (level.getBlockState(targetPos) == OurBlocks.CONSTRUCTION_POWDER_BLOCK.defaultBlockState()) {
+                level.setBlockAndUpdate(targetPos, OurBlocks.CONSTRUCTION_DENSE_BLOCK.defaultBlockState());
             }
         }
     }
@@ -116,6 +118,6 @@ public class ConstructionBlockEntity extends EntityBase {
 
     @Override
     public Packet<?> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
+        return new ClientboundAddEntityPacket(this);
     }
 }

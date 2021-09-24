@@ -72,7 +72,7 @@ public abstract class AbstractMode {
 
     private boolean exchangingValidator(BlockPos pos, BlockState lookingAtState, UseContext context) {
         BlockState worldBlockState = context.getWorldState(pos);
-        BlockEntity te = context.getWorld().getBlockEntity(pos);
+        BlockEntity be = context.getWorld().getBlockEntity(pos);
 
         // No air! or water
         if( worldBlockState.getMaterial() == Material.AIR || worldBlockState.getMaterial().isLiquid() )
@@ -84,7 +84,7 @@ public abstract class AbstractMode {
             return false;
 
         // No tiles unless construction block
-        if (te != null && (!(te instanceof ConstructionBlockTileEntity) || te.getBlockState() == context.getSetState()))
+        if (be != null && (!(be instanceof ConstructionBlockTileEntity) || be.getBlockState() == context.getSetState()))
             return false;
 
         // Don't exchange bedrock

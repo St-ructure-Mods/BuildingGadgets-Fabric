@@ -246,10 +246,10 @@ public class GadgetExchanger extends AbstractGadget {
         BlockState currentBlock = world.getBlockState(pos);
         ITileEntityData data;
 
-        BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof ConstructionBlockTileEntity) {
-            data = ((ConstructionBlockTileEntity) te).getConstructionBlockData().getTileData();
-            currentBlock = ((ConstructionBlockTileEntity) te).getConstructionBlockData().getState();
+        BlockEntity be = world.getBlockEntity(pos);
+        if (be instanceof ConstructionBlockTileEntity) {
+            data = ((ConstructionBlockTileEntity) be).getConstructionBlockData().getTileData();
+            currentBlock = ((ConstructionBlockTileEntity) be).getConstructionBlockData().getState();
         } else
             data = TileSupport.createTileData(world, pos);
 
@@ -286,7 +286,7 @@ public class GadgetExchanger extends AbstractGadget {
         this.applyDamage(tool, player);
 
         if (index.applyMatch(match)) {
-            MaterialList materials = te instanceof ConstructionBlockTileEntity ? InventoryHelper.PASTE_LIST : data.getRequiredItems(
+            MaterialList materials = be instanceof ConstructionBlockTileEntity ? InventoryHelper.PASTE_LIST : data.getRequiredItems(
                     buildContext,
                     currentBlock,
                     world.clip(new ClipContext(player.position(), Vec3.atLowerCornerOf(pos), ClipContext.Block.COLLIDER, Fluid.NONE, player)),

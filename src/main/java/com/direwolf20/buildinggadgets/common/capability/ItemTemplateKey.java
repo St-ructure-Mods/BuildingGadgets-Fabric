@@ -2,16 +2,18 @@ package com.direwolf20.buildinggadgets.common.capability;
 
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
+import dev.onyxstudios.cca.api.v3.item.ItemComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public final class ItemTemplateKey implements ITemplateKey {
+public final class ItemTemplateKey extends ItemComponent implements ITemplateKey {
     private final ItemStack stack;
 
     public ItemTemplateKey(ItemStack stack) {
+        super(stack);
         this.stack = stack;
     }
 

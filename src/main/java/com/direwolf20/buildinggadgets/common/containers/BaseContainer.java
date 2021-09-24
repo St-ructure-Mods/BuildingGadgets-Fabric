@@ -5,7 +5,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseContainer extends AbstractContainerMenu {
     public BaseContainer(@Nullable MenuType<?> p_i50105_1_, int p_i50105_2_) {

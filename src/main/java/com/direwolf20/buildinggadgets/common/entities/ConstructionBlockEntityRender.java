@@ -15,7 +15,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
 
 import java.util.Random;
 
@@ -35,7 +34,7 @@ public class ConstructionBlockEntityRender extends EntityRenderer<ConstructionBl
         VertexConsumer builder;
         Minecraft mc = Minecraft.getInstance();
         builder = buffer.getBuffer(OurRenderTypes.RenderBlock);
-        BlockState renderBlockState = OurBlocks.CONSTRUCTION_DENSE_BLOCK.get().defaultBlockState();
+        BlockState renderBlockState = OurBlocks.CONSTRUCTION_DENSE_BLOCK.defaultBlockState();
         int teCounter = entityIn.tickCount;
         int maxLife = entityIn.getMaxLife();
         teCounter = Math.min(teCounter, maxLife);
@@ -52,7 +51,7 @@ public class ConstructionBlockEntityRender extends EntityRenderer<ConstructionBl
         float f2 = (float) (color & 255) / 255.0F;
         BakedModel ibakedmodel = blockrendererdispatcher.getBlockModel(renderBlockState);
         for (Direction direction : Direction.values()) {
-            renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, scale, ibakedmodel.getQuads(renderBlockState, direction, new Random(Mth.getSeed(entityIn.blockPosition())), EmptyModelData.INSTANCE), 15728640, 655360);
+            renderModelBrightnessColorQuads(matrixStackIn.last(), builder, f, f1, f2, scale, ibakedmodel.getQuads(renderBlockState, direction, new Random(Mth.getSeed(entityIn.blockPosition()))), 15728640, 655360);
         }
         matrixStackIn.popPose();
     }

@@ -97,12 +97,10 @@ public class ConstructionBlock extends Block implements EntityBlock /*implements
         builder.add(BRIGHT, NEIGHBOR_BRIGHTNESS, AMBIENT_OCCLUSION);
     }
 
-    //TODO: Fix and return a new instance of a construction block entity.
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return OurTileEntities.CONSTRUCTION_BLOCK_TILE_ENTITY;
+        return OurTileEntities.CONSTRUCTION_BLOCK_TILE_ENTITY.create(blockPos, blockState);
     }
 
     public boolean isMimicNull(BlockState mimicBlock) {
@@ -111,9 +109,9 @@ public class ConstructionBlock extends Block implements EntityBlock /*implements
 
     @Nullable
     private BlockState getActualMimicBlock(BlockGetter blockAccess, BlockPos pos) {
-        BlockEntity te = blockAccess.getBlockEntity(pos);
-        if (te instanceof ConstructionBlockTileEntity) {
-            return ((ConstructionBlockTileEntity) te).getConstructionBlockData().getState();
+        BlockEntity be = blockAccess.getBlockEntity(pos);
+        if (be instanceof ConstructionBlockTileEntity) {
+            return ((ConstructionBlockTileEntity) be).getConstructionBlockData().getState();
         }
         return null;
     }

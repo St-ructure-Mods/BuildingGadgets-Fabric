@@ -1,43 +1,34 @@
 package com.direwolf20.buildinggadgets.common.containers;
 
 import com.direwolf20.buildinggadgets.common.tileentities.TemplateManagerTileEntity;
-import com.direwolf20.buildinggadgets.common.util.exceptions.CapabilityNotPresentException;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
-
-import javax.annotation.Nonnull;
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 public class TemplateManagerContainer extends BaseContainer {
     public static final String TEXTURE_LOC_SLOT_TOOL = Reference.MODID + ":gui/slot_copy_paste_gadget";
     public static final String TEXTURE_LOC_SLOT_TEMPLATE = Reference.MODID + ":gui/slot_template";
 
-    private TemplateManagerTileEntity te;
+    private TemplateManagerTileEntity be;
 
     public TemplateManagerContainer(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
-        super(OurContainers.TEMPLATE_MANAGER_CONTAINER.get(), windowId);
+        super(OurContainers.TEMPLATE_MANAGER_CONTAINER_TYPE, windowId);
         BlockPos pos = extraData.readBlockPos();
 
-        this.te = (TemplateManagerTileEntity) playerInventory.player.level.getBlockEntity(pos);
+        this.be = (TemplateManagerTileEntity) playerInventory.player.level.getBlockEntity(pos);
         addOwnSlots();
         addPlayerSlots(playerInventory, -12, 70);
     }
 
     public TemplateManagerContainer(int windowId, Inventory playerInventory, TemplateManagerTileEntity tileEntity) {
-        super(OurContainers.TEMPLATE_MANAGER_CONTAINER.get(), windowId);
-        this.te = Objects.requireNonNull(tileEntity);
-
-        addOwnSlots();
-        addPlayerSlots(playerInventory, -12, 70);
+        this(windowId, playerInventory, PacketByteBufs.create().writeBlockPos(tileEntity.getBlockPos()));
     }
 
     @Override
@@ -46,14 +37,19 @@ public class TemplateManagerContainer extends BaseContainer {
     }
 
     private void addOwnSlots() {
-        IItemHandler itemHandler = this.getTe().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseThrow(CapabilityNotPresentException::new);
         int x = 132;
-        addSlot(new SlotTemplateManager(itemHandler, 0, x, 18, TEXTURE_LOC_SLOT_TOOL));
-        addSlot(new SlotTemplateManager(itemHandler, 1, x, 63, TEXTURE_LOC_SLOT_TEMPLATE));
+        addSlot(new SlotTemplateManager(be, 0, x, 18, TEXTURE_LOC_SLOT_TOOL));
+        addSlot(new SlotTemplateManager(be, 1, x, 63, TEXTURE_LOC_SLOT_TEMPLATE));
     }
 
     @Override
-    @Nonnull
+    public boolean canTakeItemForPickAll(ItemStack itemStack, Slot slot) {
+        return (slot.index == 0 && be.isTemplateStack(itemStack)) ||
+                (slot.index == 1 && (be.isTemplateStack(itemStack) || TemplateManagerTileEntity.TEMPLATE_CONVERTIBLES.contains(itemStack.getItem())));
+    }
+
+    @Override
+    @NotNull
     public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
@@ -80,22 +76,24 @@ public class TemplateManagerContainer extends BaseContainer {
         return itemstack;
     }
 
+
+
     public TemplateManagerTileEntity getTe() {
-        return te;
+        return be;
     }
 
-    public static class SlotTemplateManager extends SlotItemHandler {
+    public static class SlotTemplateManager extends Slot {
         private String backgroundLoc;
 
-        public SlotTemplateManager(IItemHandler itemHandler, int index, int xPosition, int yPosition, String backgroundLoc) {
-            super(itemHandler, index, xPosition, yPosition);
+        public SlotTemplateManager(Container container, int index, int xPosition, int yPosition, String backgroundLoc) {
+            super(container, index, xPosition, yPosition);
             this.backgroundLoc = backgroundLoc;
         }
 
-        @Override
-        public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
-            return super.setBackground(atlas, new ResourceLocation(Reference.MODID, this.backgroundLoc));
-        }
+        //@Override
+        //public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
+         //   return super.setBackground(atlas, new ResourceLocation(Reference.MODID, this.backgroundLoc));
+        //}
 
         @Override
         public int getMaxStackSize() {

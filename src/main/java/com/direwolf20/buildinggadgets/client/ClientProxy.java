@@ -117,7 +117,7 @@ public class ClientProxy {
                 facadeState = modelData.getData(ConstructionBlockTileEntity.FACADE_STATE);
                 RenderType layer = MinecraftForgeClient.getRenderLayer();
                 if (facadeState == null || facadeState == Blocks.AIR.defaultBlockState())
-                    facadeState = OurBlocks.CONSTRUCTION_DENSE_BLOCK.get().defaultBlockState();
+                    facadeState = OurBlocks.CONSTRUCTION_DENSE_BLOCK.defaultBlockState();
                 if (layer != null && ! ItemBlockRenderTypes.canRenderInLayer(facadeState, layer)) { // always render in the null layer or the block-breaking textures don't show up
                     return Collections.emptyList();
                 }

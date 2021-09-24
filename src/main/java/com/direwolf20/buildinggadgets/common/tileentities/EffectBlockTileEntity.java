@@ -37,7 +37,7 @@ public class EffectBlockTileEntity extends BlockEntity {
         super(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY, pos, state);
     }
 
-    public void initializeData(BlockState curState, @Nullable BlockEntity te, BlockData replacementBlock, Mode mode, boolean usePaste) {
+    public void initializeData(BlockState curState, @Nullable BlockEntity be, BlockData replacementBlock, Mode mode, boolean usePaste) {
         // Minecraft will reuse a tile entity object at a location where the block got removed, but the modification is still buffered, and the block got restored again
         // If we don't reset this here, the 2nd phase of REPLACE will simply finish immediately because the tile entity object is reused
         this.ticks = 0;
@@ -48,9 +48,9 @@ public class EffectBlockTileEntity extends BlockEntity {
         this.usePaste = usePaste;
 
         if (mode == Mode.REPLACE)
-            this.renderedBlock = te instanceof ConstructionBlockTileEntity ? ((ConstructionBlockTileEntity) te).getConstructionBlockData() : TileSupport.createBlockData(curState, te);
+            this.renderedBlock = be instanceof ConstructionBlockTileEntity ? ((ConstructionBlockTileEntity) be).getConstructionBlockData() : TileSupport.createBlockData(curState, be);
         else
-            this.renderedBlock = te instanceof ConstructionBlockTileEntity ? ((ConstructionBlockTileEntity) te).getConstructionBlockData() : replacementBlock;
+            this.renderedBlock = be instanceof ConstructionBlockTileEntity ? ((ConstructionBlockTileEntity) be).getConstructionBlockData() : replacementBlock;
     }
 
     public static void tick(Level level, BlockPos blockPos, BlockState state, EffectBlockTileEntity blockEntity) {

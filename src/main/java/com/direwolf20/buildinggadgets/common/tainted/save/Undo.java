@@ -15,7 +15,6 @@ import com.direwolf20.buildinggadgets.common.util.compression.DataCompressor;
 import com.direwolf20.buildinggadgets.common.util.compression.DataDecompressor;
 import com.direwolf20.buildinggadgets.common.util.helpers.NBTHelper;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.direwolf20.buildinggadgets.common.util.tools.RegistryUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMap;
@@ -213,8 +212,8 @@ public final class Undo {
 
         public Builder record(BlockGetter reader, BlockPos pos, BlockData placeData, Multiset<IUniqueObject<?>> requiredItems, Multiset<IUniqueObject<?>> producedItems) {
             BlockState state = reader.getBlockState(pos);
-            BlockEntity te = reader.getBlockEntity(pos);
-            ITileEntityData data = te != null ? NBTTileEntityData.ofTile(te) : TileSupport.dummyTileEntityData();
+            BlockEntity be = reader.getBlockEntity(pos);
+            ITileEntityData data = be != null ? NBTTileEntityData.ofTile(be) : TileSupport.dummyTileEntityData();
             return record(pos, new BlockData(state, data), placeData, requiredItems, producedItems);
         }
 

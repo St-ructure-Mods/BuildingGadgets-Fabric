@@ -1,101 +1,116 @@
 package com.direwolf20.buildinggadgets.common.config;
 
+import dev.architectury.utils.value.IntValue;
 import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 public class Config implements ConfigData{
-    private static final Builder SERVER_BUILDER = new Builder();
-    private static final Builder CLIENT_BUILDER = new Builder();
 
+    @ConfigEntry.Category("General")
+    @Comment("General mod settings")
     public static final CategoryGeneral GENERAL = new CategoryGeneral();
+    @ConfigEntry.Category("Gadgets")
+    @Comment("Configure the Gadgets")
     public static final CategoryGadgets GADGETS = new CategoryGadgets();
+
     public static final CategoryPasteContainers PASTE_CONTAINERS = new CategoryPasteContainers();
 
     public static final class CategoryGeneral {
+        @Comment("Defines how far away you can build")
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 48)
+        public final double rayTraceRange = 32D;
+        //Translate option as MaxBuildDistance
 
-        public final DoubleValue rayTraceRange;
-        public final BooleanValue allowAbsoluteCoords;
+        @Comment("Defined whether or not a player can use Absolute Coords mode in the Copy Paste Gadget")
+        public final boolean allowAbsoluteCoords = true;
+        //Translate option as Allow Absolute Coords
         /* Client Only!*/
-        public final BooleanValue absoluteCoordDefault;
-        public final BooleanValue allowOverwriteBlocks;
+        @Comment("Determines if the Copy/Paste GUI's coordinate mode starts in 'Absolute' mode by default.\", \"Set to true for Absolute, set to False for Relative.")
+        public final boolean absoluteCoordDefault = false;
+        //Translate option as Default to absolute Coord-Mode
 
-        private CategoryGeneral() {
-            SERVER_BUILDER.comment("General mod settings").push("general");
-            CLIENT_BUILDER.comment("General mod settings").push("general");
-
-            allowAbsoluteCoords = SERVER_BUILDER
-                    .comment("Defined whether or not a player can use Absolute Coords mode in the Copy Paste Gadget")
-                    .define("Allow Absolute Coords", true);
-
-            rayTraceRange = SERVER_BUILDER
-                    .comment("Defines how far away you can build")
-                    .defineInRange("MaxBuildDistance", 32D, 1, 48);
-
-            absoluteCoordDefault = CLIENT_BUILDER
-                    .comment("Determines if the Copy/Paste GUI's coordinate mode starts in 'Absolute' mode by default.", "Set to true for Absolute, set to False for Relative.")
-                    .define("Default to absolute Coord-Mode", false);
-
-            allowOverwriteBlocks = SERVER_BUILDER
-                    .comment("Whether the Building / CopyPaste Gadget can overwrite blocks like water, lava, grass, etc (like a player can).",
-                            "False will only allow it to overwrite air blocks.")
-                    .define("Allow non-Air-Block-Overwrite", true);
-
-            CLIENT_BUILDER.pop();
-            SERVER_BUILDER.pop();
-        }
+        @Comment("Whether the Building / CopyPaste Gadget can overwrite blocks like water, lava, grass, etc (like a player can).\",\n" +
+                "                            \"False will only allow it to overwrite air blocks.")
+        public final boolean allowOverwriteBlocks = true;
+        //Translate option as Allow non-Air-Block-Overwrite
     }
 
     public static final class CategoryGadgets {
-        public final int maxRange;
-        public final int placeSteps;
 
-        public final GadgetConfig GADGET_BUILDING;
-        public final GadgetConfig GADGET_EXCHANGER;
-        public final CategoryGadgetDestruction GADGET_DESTRUCTION;
-        public final CategoryGadgetCopyPaste GADGET_COPY_PASTE;
+        @Comment("The max range of the Gadgets")
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 32)
+        public final int maxRange = 15;
 
-        private CategoryGadgets() {
-            SERVER_BUILDER.comment("Configure the Gadgets").push("Gadgets");
-            maxRange = SERVER_BUILDER
-                    .comment("The max range of the Gadgets")
-                    .defineInRange("Maximum allowed Range", 15, 1, 32);
+        @Comment("Maximum amount of Blocks to be placed in one Tick.\",\n" +
+                "                            \"Notice that an EffectBlock takes 20 ticks to place, therefore a Server has to handle 20-times this value effect-block Tile's at once. \" +\n" +
+                "                            \"Reduce this if  you notice lag-spikes from Players placing Templates.\",\n" +
+                "                            \"Of course decreasing this value will result in more time required to place large TemplateItem's.")
 
-            //use the old cap as the synchronous border... This implies that 32*32*32 areas are the max size for a synchronous copy by default
-            placeSteps = SERVER_BUILDER
-                    .comment("Maximum amount of Blocks to be placed in one Tick.",
-                            "Notice that an EffectBlock takes 20 ticks to place, therefore a Server has to handle 20-times this value effect-block Tile's at once. " +
-                            "Reduce this if  you notice lag-spikes from Players placing Templates.",
-                            "Of course decreasing this value will result in more time required to place large TemplateItem's.")
-                    .defineInRange("Max Placement/Tick", 1024, 1, Integer.MAX_VALUE);
+        @ConfigEntry.BoundedDiscrete(min = 1, max = Integer.MAX_VALUE)
+        public final int placeSteps = 1024;
 
-            GADGET_BUILDING = new GadgetConfig("Building Gadget", 500000, 50, 10);
-            GADGET_EXCHANGER = new GadgetConfig("Exchanging Gadget", 500000, 100, 10);
-            GADGET_DESTRUCTION = new CategoryGadgetDestruction();
-            GADGET_COPY_PASTE = new CategoryGadgetCopyPaste();
+        @ConfigEntry.Gui.CollapsibleObject
+        @Comment("Energy Cost & Durability of the Building Gadget")
+        public final GadgetConfig GADGET_BUILDING = new GadgetConfig("Building Gadget", 500000, 50, 10);
 
-            SERVER_BUILDER.pop();
-        }
+        @ConfigEntry.Gui.CollapsibleObject
+        @Comment("Energy Cost & Durability of the Exchanging Gadget")
+        public final GadgetConfig GADGET_EXCHANGER = new GadgetConfig("Exchanging Gadget", 500000, 100, 10);
+
+        @ConfigEntry.Gui.CollapsibleObject
+        @Comment("Energy Cost, Durability & Maximum Energy of the Destruction Gadget")
+        public final CategoryGadgetDestruction GADGET_DESTRUCTION = new CategoryGadgetDestruction();
+
+        @Comment("Energy Cost & Durability of the Copy-Paste Gadget")
+        @ConfigEntry.Gui.CollapsibleObject
+        public final CategoryGadgetCopyPaste GADGET_COPY_PASTE = new CategoryGadgetCopyPaste();;
 
         public static class GadgetConfig {
+
+            @Comment("The max energy of the Gadget, set to 0 to disable energy usage")
+            @ConfigEntry.BoundedDiscrete(min = 0, max = Integer.MAX_VALUE)
             public final IntValue maxEnergy;
+            //Maximum Energy
+
+            @Comment("The Gadget's Energy cost per Operation")
+            @ConfigEntry.BoundedDiscrete(min = 0, max = Integer.MAX_VALUE)
             public final IntValue energyCost;
+            //Energy Cost
+
+            @Comment("The Gadget's Max Undo size (Note, the exchanger does not support undo)")
+            @ConfigEntry.BoundedDiscrete(min = 0, max = 128)
             public final IntValue undoSize;
+            //Max Undo History Size
 
             public GadgetConfig(String name, int maxEnergy, int energyCost, int getMaxUndo) {
-                SERVER_BUILDER.comment("Energy Cost & Durability of the " + name).push(name);
+                this.maxEnergy = new IntValue() {
+                    @Override
+                    public void accept(int value) {}
 
-                this.maxEnergy = SERVER_BUILDER
-                        .comment("The max energy of the Gadget, set to 0 to disable energy usage")
-                        .defineInRange("Maximum Energy", maxEnergy, 0, Integer.MAX_VALUE);
+                    @Override
+                    public int getAsInt() {
+                        return maxEnergy;
+                    }
+                };
+                this.energyCost = new IntValue() {
+                    @Override
+                    public void accept(int value) {}
 
-                this.energyCost = SERVER_BUILDER
-                        .comment("The Gadget's Energy cost per Operation")
-                        .defineInRange("Energy Cost", energyCost, 0, Integer.MAX_VALUE);
+                    @Override
+                    public int getAsInt() {
+                        return energyCost;
+                    }
+                };
+                this.undoSize = new IntValue() {
+                    @Override
+                    public void accept(int value) {}
 
-                this.undoSize = SERVER_BUILDER
-                        .comment("The Gadget's Max Undo size (Note, the exchanger does not support undo)")
-                        .defineInRange("Max Undo History Size", getMaxUndo, 0, 128);
-
-                SERVER_BUILDER.pop();
+                    @Override
+                    public int getAsInt() {
+                        return getMaxUndo;
+                    }
+                };
             }
         }
 
@@ -175,8 +190,6 @@ public class Config implements ConfigData{
             capacityT1 = getMaxCapacity(1);
             capacityT2 = getMaxCapacity(2);
             capacityT3 = getMaxCapacity(3);
-
-            SERVER_BUILDER.pop();
         }
 
         private static int getMaxCapacity(int tier) {
@@ -185,7 +198,4 @@ public class Config implements ConfigData{
                     .defineInRange(String.format("T%s Container Capacity", tier), (int) (512 * Math.pow(4, tier - 1)), 1, Integer.MAX_VALUE);
         }
     }
-
-    public static final ForgeConfigSpec SERVER_CONFIG = SERVER_BUILDER.build();
-    public static final ForgeConfigSpec CLIENT_CONFIG = CLIENT_BUILDER.build();
 }

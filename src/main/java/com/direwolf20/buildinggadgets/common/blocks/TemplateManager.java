@@ -9,12 +9,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -22,13 +23,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 import org.jetbrains.annotations.Nullable;
 
-public class TemplateManager extends Block implements EntityBlock {
+public class TemplateManager extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public TemplateManager() {
@@ -59,7 +57,7 @@ public class TemplateManager extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return OurTileEntities.TEMPLATE_MANAGER_TILE_ENTITY.get().create(blockPos, blockState);
+        return OurTileEntities.TEMPLATE_MANAGER_TILE_ENTITY.create(blockPos, blockState);
     }
 
     @Override
@@ -67,21 +65,23 @@ public class TemplateManager extends Block implements EntityBlock {
         if (worldIn.isClientSide)
             return InteractionResult.SUCCESS;
 
-        BlockEntity te = worldIn.getBlockEntity(pos);
-        if (! (te instanceof TemplateManagerTileEntity))
+        BlockEntity be = worldIn.getBlockEntity(pos);
+        if (! (be instanceof TemplateManagerTileEntity))
             return InteractionResult.FAIL;
 
-        te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
+
+
             worldIn.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).ifPresent(provider -> {
                 for (int i = 0; i < handler.getSlots(); i++) {
                     ItemStack itemStack = handler.getStackInSlot(i);
                     itemStack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key ->
                             provider.requestRemoteUpdate(key, PacketDistributor.PLAYER.with(() -> (ServerPlayer) player)));
                 }
-            });
-        });
-
-        NetworkHooks.openGui((ServerPlayer) player, (TemplateManagerTileEntity) te, pos);
+            }));
+        if(!worldIn.isClientSide) {
+            MenuProvider menuProvider = state.getMenuProvider(worldIn, pos);
+            if(menuProvider != null)player.openMenu(menuProvider);
+        }
         return InteractionResult.SUCCESS;
     }
 }

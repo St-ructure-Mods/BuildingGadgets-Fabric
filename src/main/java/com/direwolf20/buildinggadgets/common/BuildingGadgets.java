@@ -11,6 +11,7 @@ import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.config.RecipeConstructionPaste.Serializer;
 import com.direwolf20.buildinggadgets.common.containers.OurContainers;
 import com.direwolf20.buildinggadgets.common.entities.OurEntities;
+import com.direwolf20.buildinggadgets.common.events.BlockPlaceEvent;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
@@ -19,9 +20,11 @@ import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.fabricmc.fabric.impl.item.group.FabricCreativeGuiComponents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.commands.Commands;
 import net.minecraft.resources.ResourceLocation;
@@ -53,6 +56,8 @@ public final class BuildingGadgets implements ModInitializer {
      * tabs icon.
      */
 
+    public static Config config;
+
     public static CreativeModeTab creativeTab = FabricItemGroupBuilder.build(BuildingGadgets.id("tab"), () -> {
         ItemStack stack = new ItemStack(OurItems.BUILDING_GADGET_ITEM);
         stack.getOrCreateTag().putByte(NBTKeys.CREATIVE_MARKER, (byte) 0);
@@ -73,15 +78,11 @@ public final class BuildingGadgets implements ModInitializer {
     public BuildingGadgets() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModLoadingContext.get().registerConfig(Type.SERVER, Config.SERVER_CONFIG);
-        ModLoadingContext.get().registerConfig(Type.CLIENT, Config.CLIENT_CONFIG);
+
 
         OurTileEntities.TILE_ENTITIES.register(eventBus);
         OurContainers.CONTAINERS.register(eventBus);
 
-        MinecraftForge.EVENT_BUS.addListener(this::serverLoad);
-        MinecraftForge.EVENT_BUS.addListener(this::serverLoaded);
-        MinecraftForge.EVENT_BUS.addListener(this::serverStopped);
 
         eventBus.addListener(this::registerRegistries);
         eventBus.addListener(this::setup);
@@ -126,24 +127,25 @@ public final class BuildingGadgets implements ModInitializer {
             LOG.warn("Failed to handle IMC-Message using Method {} from Mod {}!", message.getMethod(), message.getSenderModId());
     }
 
-    private void serverLoad(FMLServerStartingEvent event) {
-        event.getServer().getCommands().getDispatcher().register(
-                Commands.literal(Reference.MODID)
+    private void serverLoad() {
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            server.getCommands().getDispatcher().register(
+                    Commands.literal(Reference.MODID)
                         .then(OverrideBuildSizeCommand.registerToggle())
                         .then(OverrideCopySizeCommand.registerToggle())
                         .then(ForceUnloadedCommand.registerToggle())
                         .then(OverrideBuildSizeCommand.registerList())
                         .then(OverrideCopySizeCommand.registerList())
-                        .then(ForceUnloadedCommand.registerList())
-        );
+                        .then(ForceUnloadedCommand.registerList()));
+        });
     }
 
-    private void serverLoaded(FMLServerStartedEvent event) {
-        SaveManager.INSTANCE.onServerStarted(event);
+    private void serverLoaded() {
+        SaveManager.INSTANCE.onServerStarted();
     }
 
-    private void serverStopped(FMLServerStoppedEvent event) {
-        SaveManager.INSTANCE.onServerStopped(event);
+    private void serverStopped() {
+        SaveManager.INSTANCE.onServerStopped();
     }
 
     private void onRecipeRegister(final RegistryEvent.Register<RecipeSerializer<?>> e) {
@@ -160,7 +162,12 @@ public final class BuildingGadgets implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        AutoConfig.register(Config.class, GsonConfigSerializer::new);
+        config = AutoConfig.getConfigHolder(Config.class).getConfig();
         OurBlocks.registerBlocks();
         OurItems.registerItems();
+        serverLoad();
+        serverLoaded();
+        serverStopped();
     }
 }

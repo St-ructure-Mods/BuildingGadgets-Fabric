@@ -22,8 +22,8 @@ public class MockTileEntityRenderWorld implements BlockGetter {
 
     public BlockEntityRenderer<BlockEntity> getTileEntityRender(BlockState state) {
         if (!tileEntityRenders.containsKey(state)) {
-            BlockEntity te = getTileEntity(state);
-            BlockEntityRenderer<BlockEntity> teRender = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(te);
+            BlockEntity be = getTileEntity(state);
+            BlockEntityRenderer<BlockEntity> teRender = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be);
             tileEntityRenders.put(state, teRender);
         }
 
@@ -32,12 +32,12 @@ public class MockTileEntityRenderWorld implements BlockGetter {
 
     public BlockEntity getTileEntity(BlockState state) {
         if (!tileEntities.containsKey(state)) {
-            BlockEntity te = ((EntityBlock) state.getBlock()).newBlockEntity(tileEntities.get(state).getBlockPos(), state);
-            if (te == null) {
+            BlockEntity be = ((EntityBlock) state.getBlock()).newBlockEntity(tileEntities.get(state).getBlockPos(), state);
+            if (be == null) {
                 return tileEntities.get(state);
             }
 
-            tileEntities.put(state, te);
+            tileEntities.put(state, be);
         }
 
         return tileEntities.get(state);

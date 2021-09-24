@@ -455,7 +455,7 @@ public class GadgetCopyPaste extends AbstractGadget {
     private void schedulePlacement(ItemStack stack, IBuildView view, Player player) {
         IItemIndex index = InventoryHelper.index(stack, player);
         int energyCost = getEnergyCost(stack);
-        boolean overwrite = Config.GENERAL.allowOverwriteBlocks.get();
+        boolean overwrite = Config.GENERAL.allowOverwriteBlocks;
         BlockPlaceContext useContext = new BlockPlaceContext(new UseOnContext(player, InteractionHand.MAIN_HAND, VectorHelper.getLookingAt(player, stack)));
         PlacementChecker checker = new PlacementChecker(
                 stack.getCapability(CapabilityEnergy.ENERGY),

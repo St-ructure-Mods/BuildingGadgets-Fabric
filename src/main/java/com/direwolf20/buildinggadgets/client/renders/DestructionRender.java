@@ -8,6 +8,7 @@ import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.fabricmc.fabric.impl.client.rendering.WorldRenderContextImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +23,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 public class DestructionRender extends BaseRenderer {
 
     @Override
-    public void render(RenderWorldLastEvent evt, Player player, ItemStack heldItem) {
+    public void render(WorldRenderContextImpl evt, Player player, ItemStack heldItem) {
         if (!GadgetDestruction.getOverlay(heldItem))
             return;
 

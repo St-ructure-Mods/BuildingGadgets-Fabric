@@ -10,6 +10,7 @@ import com.google.common.collect.Multiset;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.fabricmc.fabric.impl.client.rendering.WorldRenderContextImpl;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -23,10 +24,6 @@ import net.minecraft.core.BlockPos;
 import com.mojang.math.Matrix4f;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashSet;
@@ -41,7 +38,7 @@ public abstract class BaseRenderer {
 
     private static final RemoteInventoryCache cacheInventory = new RemoteInventoryCache(false);
 
-    public void render(RenderWorldLastEvent evt, Player player, ItemStack heldItem) {
+    public void render(WorldRenderContextImpl evt, Player player, ItemStack heldItem) {
         // This is necessary to prevent issues with not rendering the overlay's at all (when Botania being present) - See #329 for more information
         bindBlocks();
 
@@ -53,7 +50,7 @@ public abstract class BaseRenderer {
         getMc().getTextureManager().bindForSetup(InventoryMenu.BLOCK_ATLAS);
     }
 
-    private static void renderLinkedInventoryOutline(RenderWorldLastEvent evt, ItemStack item, Player player) {
+    private static void renderLinkedInventoryOutline(WorldRenderContextImpl evt, ItemStack item, Player player) {
         Pair<BlockPos, ResourceKey<Level>> dataFromStack = InventoryLinker.getDataFromStack(item);
         if (dataFromStack == null) {
             return;
@@ -70,7 +67,7 @@ public abstract class BaseRenderer {
 
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 
-        PoseStack stack = evt.getMatrixStack();
+        PoseStack stack = evt.matrixStack();
         stack.pushPose();
         stack.translate(-renderPos.x(), -renderPos.y(), -renderPos.z());
         stack.scale(1.01f, 1.01f, 1.01f);

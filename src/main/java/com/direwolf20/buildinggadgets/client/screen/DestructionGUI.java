@@ -16,7 +16,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;

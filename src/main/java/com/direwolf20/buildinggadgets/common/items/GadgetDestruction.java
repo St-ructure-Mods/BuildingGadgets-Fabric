@@ -19,6 +19,7 @@ import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference.BlockReference.TagReference;
 import com.google.common.collect.ImmutableMultiset;
+import net.fabricmc.fabric.impl.client.rendering.fluid.FluidRenderHandlerRegistryImpl;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
@@ -40,7 +41,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -234,7 +235,7 @@ public class GadgetDestruction extends AbstractGadget {
             return false;
         }
 
-        return ForgeRegistries.FLUIDS.containsKey(world.getBlockState(pos).getBlock().getRegistryName());
+        return FluidRenderHandlerRegistryImpl.INSTANCE.get(world.getFluidState(pos).getType()) != null;
     }
 
     public static boolean isValidBlock(Level world, BlockPos voidPos, Player player, BlockState currentBlock) {
@@ -243,18 +244,8 @@ public class GadgetDestruction extends AbstractGadget {
                 currentBlock.getDestroySpeed(world, voidPos) < 0 ||
                 ! world.mayInteract(player, voidPos)) return false;
 
-        BlockEntity te = world.getBlockEntity(voidPos);
-        if ((te != null) && ! (te instanceof ConstructionBlockTileEntity))
-            return false;
-
-        if (! world.isClientSide) {
-            BlockSnapshot blockSnapshot = BlockSnapshot.create(world.dimension(), world, voidPos);
-            if (ForgeEventFactory.onBlockPlace(player, blockSnapshot, Direction.UP))
-                return false;
-            BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, voidPos, currentBlock, player);
-            return ! MinecraftForge.EVENT_BUS.post(e);
-        }
-        return true;
+        BlockEntity be = world.getBlockEntity(voidPos);
+        return (be == null) || be instanceof ConstructionBlockTileEntity;
     }
 
     public void clearArea(Level world, BlockPos pos, Direction side, ServerPlayer player, ItemStack stack) {
@@ -263,10 +254,10 @@ public class GadgetDestruction extends AbstractGadget {
 
         for (BlockPos clearPos : positions) {
             BlockState state = world.getBlockState(clearPos);
-            BlockEntity te = world.getBlockEntity(clearPos);
+            BlockEntity be = world.getBlockEntity(clearPos);
             if (!isAllowedBlock(state.getBlock()))
                 continue;
-            if (te == null || state.getBlock() == OurBlocks.CONSTRUCTION_BLOCK.get() && te instanceof ConstructionBlockTileEntity) {
+            if (be == null || state.getBlock() == OurBlocks.CONSTRUCTION_BLOCK && be instanceof ConstructionBlockTileEntity) {
                 destroyBlock(world, clearPos, player, builder);
             }
         }

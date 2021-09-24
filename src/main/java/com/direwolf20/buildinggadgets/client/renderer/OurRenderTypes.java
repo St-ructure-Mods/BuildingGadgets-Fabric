@@ -18,7 +18,6 @@ import java.util.OptionalDouble;
 
 public class OurRenderTypes extends RenderType {
 
-
     private static final LineStateShard THICK_LINES = new LineStateShard(OptionalDouble.of(3.0D));
 
     public static final RenderType RenderBlock = create("GadgetRenderBlock",

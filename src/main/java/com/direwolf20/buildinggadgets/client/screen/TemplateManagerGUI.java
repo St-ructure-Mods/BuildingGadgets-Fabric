@@ -87,7 +87,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
     private EditBox nameField;
     private Button buttonSave, buttonLoad, buttonCopy, buttonPaste;
 
-    private final TemplateManagerTileEntity te;
+    private final TemplateManagerTileEntity be;
     private final TemplateManagerContainer container;
     private final LazyOptional<ITemplateProvider> templateProvider = getWorld().getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY);
 
@@ -98,7 +98,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         super(container, playerInventory, new TextComponent(""));
 
         this.container = container;
-        this.te = container.getTe();
+        this.be = container.getTe();
     }
 
     @Override
@@ -196,23 +196,23 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
             target.placeIn(view.getContext());
             BlockPos targetPos = target.getPos();
             BlockState renderBlockState = view.getContext().getWorld().getBlockState(targetPos);
-            BlockEntity te = view.getContext().getWorld().getBlockEntity(targetPos);
+            BlockEntity be = view.getContext().getWorld().getBlockEntity(targetPos);
 
             if (renderBlockState.getRenderShape() == RenderShape.MODEL) {
                 BakedModel model = dispatcher.getBlockModel(renderBlockState);
 //                dispatcher.getBlockModelRenderer().renderModelFlat()
 //                        .renderModelFlat(getWorld(), model, renderBlockState, target.getPos(), bufferBuilder, false,
-//                        rand, 0L, te != null ? te.getModelData() : EmptyModelData.INSTANCE);
+//                        rand, 0L, be != null ? be.getModelData() : EmptyModelData.INSTANCE);
             }
 
-            if (te != null) {
+            if (be != null) {
                 try {
-                    BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(te);
+                    BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be);
                     if (renderer != null) {
-//                        if (te.hasFastRenderer())
-//                            renderer.renderTileEntityFast(te, targetPos.getX(), targetPos.getY(), targetPos.getZ(), partialTicks, - 1, bufferBuilder);
+//                        if (be.hasFastRenderer())
+//                            renderer.renderTileEntityFast(be, targetPos.getX(), targetPos.getY(), targetPos.getZ(), partialTicks, - 1, bufferBuilder);
 //                        else
-//                            renderer.render(te, targetPos.getX(), targetPos.getY(), targetPos.getZ(), partialTicks, - 1);
+//                            renderer.render(be, targetPos.getX(), targetPos.getY(), targetPos.getZ(), partialTicks, - 1);
                     }
                     //remember vanilla Tiles rebinding the TextureAtlas
                     getMinecraft().getTextureManager().bindForSetup(InventoryMenu.BLOCK_ATLAS);
@@ -304,7 +304,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> {
             provider.setTemplate(key, newTemplate);
             if (replaced)
-                PacketHandler.sendToServer(new PacketTemplateManagerTemplateCreated(provider.getId(key), te.getBlockPos()));
+                PacketHandler.sendToServer(new PacketTemplateManagerTemplateCreated(provider.getId(key), be.getBlockPos()));
             else
                 provider.requestRemoteUpdate(key);
         });

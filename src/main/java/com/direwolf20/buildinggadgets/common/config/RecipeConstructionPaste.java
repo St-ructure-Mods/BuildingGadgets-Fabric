@@ -42,8 +42,8 @@ public class RecipeConstructionPaste extends ShapedRecipe {
         @Override
         public ShapedRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
             ShapedRecipe recipe = super.fromJson(recipeId, json);
-            return new RecipeConstructionPaste(recipe.getId(), recipe.getGroup(), recipe.getRecipeWidth(),
-                    recipe.getRecipeHeight(), recipe.getIngredients(), recipe.getResultItem());
+            return new RecipeConstructionPaste(recipe.getId(), recipe.getGroup(), recipe.getWidth(),
+                    recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem());
         }
     }
 }

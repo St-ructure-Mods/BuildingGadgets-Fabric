@@ -6,7 +6,6 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
 import com.direwolf20.buildinggadgets.common.util.ref.JsonKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.direwolf20.buildinggadgets.common.util.tools.RegistryUtils;
 import com.google.common.collect.*;
 import com.google.common.collect.Multiset.Entry;
 import com.google.gson.*;

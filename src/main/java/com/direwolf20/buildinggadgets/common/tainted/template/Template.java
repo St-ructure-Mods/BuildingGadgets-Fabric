@@ -13,7 +13,6 @@ import com.direwolf20.buildinggadgets.common.util.compression.DataCompressor;
 import com.direwolf20.buildinggadgets.common.util.compression.DataDecompressor;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.tools.MathUtils;
-import com.direwolf20.buildinggadgets.common.util.tools.RegistryUtils;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.nbt.*;
 import net.minecraft.core.Direction.Axis;

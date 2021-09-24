@@ -40,13 +40,13 @@ public final class OurItems {
 
     // Item Blocks
     public static final Item CONSTRUCTION_ITEM
-            = ITEMS.register("construction_block", () -> new BlockItem(OurBlocks.CONSTRUCTION_BLOCK.get(), OurItems.itemProperties()));
+            = ITEMS.register("construction_block", () -> new BlockItem(OurBlocks.CONSTRUCTION_BLOCK, OurItems.itemProperties()));
     public static final Item CONSTRUCTION_DENSE_ITEM
-            = ITEMS.register("construction_block_dense", () -> new BlockItem(OurBlocks.CONSTRUCTION_DENSE_BLOCK.get(), OurItems.itemProperties()));
+            = ITEMS.register("construction_block_dense", () -> new BlockItem(OurBlocks.CONSTRUCTION_DENSE_BLOCK, OurItems.itemProperties()));
     public static final Item CONSTRUCTION_POWDER_ITEM
-            = ITEMS.register("construction_block_powder", () -> new BlockItem(OurBlocks.CONSTRUCTION_POWDER_BLOCK.get(), OurItems.itemProperties()));
+            = ITEMS.register("construction_block_powder", () -> new BlockItem(OurBlocks.CONSTRUCTION_POWDER_BLOCK, OurItems.itemProperties()));
     public static final Item TEMPLATE_MANGER_ITEM
-            = ITEMS.register("template_manager", () -> new BlockItem(OurBlocks.TEMPLATE_MANGER_BLOCK.get(), OurItems.itemProperties()));
+            = ITEMS.register("template_manager", () -> new BlockItem(OurBlocks.TEMPLATE_MANGER_BLOCK, OurItems.itemProperties()));
 
     public static Item.Properties itemProperties() {
         return new Item.Properties().tab(BuildingGadgets.creativeTab);

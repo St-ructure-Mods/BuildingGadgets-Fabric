@@ -276,9 +276,9 @@ public class InventoryHelper {
             return Optional.empty();
 
         if (state.getBlock() == OurBlocks.CONSTRUCTION_BLOCK.get()) {
-            BlockEntity te = world.getBlockEntity(pos);
-            if (te instanceof ConstructionBlockTileEntity) //should already be checked
-                return Optional.of(((ConstructionBlockTileEntity) te).getConstructionBlockData());
+            BlockEntity be = world.getBlockEntity(pos);
+            if (be instanceof ConstructionBlockTileEntity) //should already be checked
+                return Optional.of(((ConstructionBlockTileEntity) be).getConstructionBlockData());
         }
 
         // Support doors

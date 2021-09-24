@@ -31,14 +31,14 @@ public final class TileSupport {
         return DATA_PROVIDER_FACTORY;
     }
 
-    public static ITileEntityData createTileData(@Nullable BlockEntity te) {
-        if (te == null)
+    public static ITileEntityData createTileData(@Nullable BlockEntity be) {
+        if (be == null)
             return dummyTileEntityData();
         ITileEntityData res;
 
         for (Iterator<ITileDataFactory> it = TileEntityData.getTileDataFactories().iterator(); it.hasNext(); ) {
             ITileDataFactory factory = it.next();
-            res = factory.createDataFor(te);
+            res = factory.createDataFor(be);
             if (res != null)
                 return res;
         }
@@ -47,12 +47,12 @@ public final class TileSupport {
     }
 
     public static ITileEntityData createTileData(BlockGetter world, BlockPos pos) {
-        BlockEntity te = world.getBlockEntity(pos);
-        return createTileData(te);
+        BlockEntity be = world.getBlockEntity(pos);
+        return createTileData(be);
     }
 
-    public static BlockData createBlockData(BlockState state, @Nullable BlockEntity te) {
-        return new BlockData(Objects.requireNonNull(state), createTileData(te));
+    public static BlockData createBlockData(BlockState state, @Nullable BlockEntity be) {
+        return new BlockData(Objects.requireNonNull(state), createTileData(be));
     }
 
     public static BlockData createBlockData(BlockGetter world, BlockPos pos) {

@@ -8,7 +8,6 @@ import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.direwolf20.buildinggadgets.common.util.tools.RegistryUtils;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,7 +19,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
@@ -35,12 +34,12 @@ public final class BlockData {
     public static final BlockData AIR = new BlockData(Blocks.AIR.defaultBlockState(), TileSupport.dummyTileEntityData());
 
     /**
-     * Attempts to retrieve a BlockData from the given {@link CompoundNBT}, if present.
+     * Attempts to retrieve a BlockData from the given {@link CompoundTag}, if present.
      *
-     * @param tag       The {@link CompoundNBT} representing the serialized block data.
-     * @param persisted Whether or not the {@link CompoundNBT} was created using an persisted save.
-     * @return A new instance of {@code BlockData} as represented by the {@link CompoundNBT}, if it could be created or null otherwise.
-     * @see #deserialize(CompoundNBT, boolean)
+     * @param tag       The {@link CompoundTag} representing the serialized block data.
+     * @param persisted Whether or not the {@link CompoundTag} was created using an persisted save.
+     * @return A new instance of {@code BlockData} as represented by the {@link CompoundTag}, if it could be created or null otherwise.
+     * @see #deserialize(CompoundTag, boolean)
      */
     @Nullable
     public static BlockData tryDeserialize(@Nullable CompoundTag tag, boolean persisted) {
@@ -70,9 +69,9 @@ public final class BlockData {
     }
 
     /**
-     * @param tag The {@link CompoundNBT} representing the serialized block data.
-     * @param persisted Whether or not the {@link CompoundNBT} was created using an persisted save.
-     * @return A new instance of {@code BlockData} as represented by the {@link CompoundNBT}.
+     * @param tag The {@link CompoundTag} representing the serialized block data.
+     * @param persisted Whether or not the {@link CompoundTag} was created using an persisted save.
+     * @return A new instance of {@code BlockData} as represented by the {@link CompoundTag}.
      * @throws IllegalArgumentException if the given tag does not represent a valid {@code BlockData}.
      * @throws NullPointerException if the tag was null.
      */

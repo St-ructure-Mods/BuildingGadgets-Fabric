@@ -27,7 +27,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-//import net.minecraftforge.common.util.Constants;
 
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -49,9 +48,9 @@ public class EffectBlock extends BaseEntityBlock {
                 BlockData targetBlock = builder.getRenderedBlock();
                 if (builder.isUsingPaste()) {
                     world.setBlockAndUpdate(targetPos, OurBlocks.CONSTRUCTION_BLOCK.defaultBlockState());
-                    BlockEntity te = world.getBlockEntity(targetPos);
-                    if (te instanceof ConstructionBlockTileEntity) {
-                        ((ConstructionBlockTileEntity) te).setBlockState(targetBlock);
+                    BlockEntity be = world.getBlockEntity(targetPos);
+                    if (be instanceof ConstructionBlockTileEntity) {
+                        ((ConstructionBlockTileEntity) be).setBlockState(targetBlock);
                     }
                     world.addFreshEntity(new ConstructionBlockEntity(world, targetPos, false));
                 } else {
@@ -62,7 +61,7 @@ public class EffectBlock extends BaseEntityBlock {
                     targetBlock.placeIn(BuildContext.builder().build(world), targetPos);
 
                     // Instead of removing the block, we just sync the client & server to know that the block has been replaced
-                    world.sendBlockUpdated(targetPos, targetBlock.getState(), targetBlock.getState(), Constants.BlockFlags.DEFAULT);
+                    world.sendBlockUpdated(targetPos, targetBlock.getState(), targetBlock.getState(), 1);
 
                     BlockPos upPos = targetPos.above();
                     world.getBlockState(targetPos).neighborChanged(world, targetPos, world.getBlockState(upPos).getBlock(), upPos, false);
@@ -136,7 +135,7 @@ public class EffectBlock extends BaseEntityBlock {
         ((EffectBlockTileEntity) tile).initializeData(curState, curTe, spawnBlock, mode, usePaste);
         // Send data to client
         if (world instanceof Level)
-            ((Level) world).sendBlockUpdated(spawnPos, state, state, Constants.BlockFlags.DEFAULT);
+            ((Level) world).sendBlockUpdated(spawnPos, state, state, 1);
     }
 
     public EffectBlock() {

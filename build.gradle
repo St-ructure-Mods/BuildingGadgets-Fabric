@@ -24,6 +24,10 @@ repositories {
             includeGroup "dev.architectury"
         }
     }
+    maven {
+        name = 'Ladysnake Mods'
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+    }
 }
 
 sourceCompatibility = JavaVersion.VERSION_16
@@ -34,6 +38,7 @@ version = project.mod_version
 group = project.maven_group
 
 loom {
+    accessWidenerPath = file("src/main/resources/buildinggadgets.accesswidener")
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
@@ -44,13 +49,17 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-    modApi include("dev.technici4n:FastTransferLib:${project.ftl_version}")
 
     modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
     modApi("dev.architectury:architectury-fabric:${project.architectury_version}")
     modApi("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
+
+    include modApi("teamreborn:energy:${project.energy_version}")
+
+    modImplementation "io.github.onyxstudios:Cardinal-Components-API:${project.cca_version}"
+    include "io.github.onyxstudios:Cardinal-Components-API:${project.cca_version}"
 }
 
 // Processes main only resources

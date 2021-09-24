@@ -21,6 +21,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.impl.client.rendering.WorldRenderContextImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -37,8 +39,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.model.data.EmptyModelData;
 
 import java.io.Closeable;
 import java.util.*;
@@ -63,7 +63,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
     }
 
     @Override
-    public void render(RenderWorldLastEvent evt, Player player, ItemStack heldItem) {
+    public void render(WorldRenderContextImpl evt, Player player, ItemStack heldItem) {
         // We can completely trust that heldItem isn't empty and that it's a copy paste gadget.
         super.render(evt, player, heldItem);
 
@@ -71,7 +71,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         Vec3 cameraView = getMc().gameRenderer.getMainCamera().getPosition();
 
         // translate the matric to the projected view
-        PoseStack stack = evt.getMatrixStack(); //Get current matrix position from the evt call
+        PoseStack stack = evt.matrixStack(); //Get current matrix position from the evt call
         stack.pushPose(); //Save the render position from RenderWorldLast
         stack.translate(-cameraView.x(), -cameraView.y(), -cameraView.z()); //Sets render position to 0,0,0
 
@@ -213,16 +213,16 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
                             // TODO: likely broken this
                             if (Block.shouldRenderFace(state, context.getWorld(), targetPos, direction, target.getPos()) && !(context.getWorld().getBlockState(targetPos.relative(direction)).getBlock().equals(state.getBlock()))) {
                                 if (state.getMaterial().isSolidBlocking()) {
-                                    renderModelBrightnessColorQuads(stack.last(), builder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, direction, new Random(Mth.getSeed(targetPos)), EmptyModelData.INSTANCE), 15728640, 655360);
+                                    renderModelBrightnessColorQuads(stack.last(), builder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, direction, new Random(Mth.getSeed(targetPos))), 15728640, 655360);
                                 } else {
-                                    renderModelBrightnessColorQuads(stack.last(), noDepthbuilder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, direction, new Random(Mth.getSeed(targetPos)), EmptyModelData.INSTANCE), 15728640, 655360);
+                                    renderModelBrightnessColorQuads(stack.last(), noDepthbuilder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, direction, new Random(Mth.getSeed(targetPos))), 15728640, 655360);
                                 }
                             }
                         }
                         if (state.getMaterial().isSolidBlocking())
-                            renderModelBrightnessColorQuads(stack.last(), builder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, null, new Random(Mth.getSeed(targetPos)), EmptyModelData.INSTANCE), 15728640, 655360);
+                            renderModelBrightnessColorQuads(stack.last(), builder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, null, new Random(Mth.getSeed(targetPos))), 15728640, 655360);
                         else
-                            renderModelBrightnessColorQuads(stack.last(), noDepthbuilder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, null, new Random(Mth.getSeed(targetPos)), EmptyModelData.INSTANCE), 15728640, 655360);
+                            renderModelBrightnessColorQuads(stack.last(), noDepthbuilder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, null, new Random(Mth.getSeed(targetPos))), 15728640, 655360);
                     }
                 } catch (Exception e) {
                     BuildingGadgets.LOG.trace("Caught exception whilst rendering {}.", state, e);

@@ -207,12 +207,12 @@ public class GadgetUtils {
     }
 
     public static InteractionResult setRemoteInventory(ItemStack stack, Player player, Level world, BlockPos pos, boolean setTool) {
-        BlockEntity te = world.getBlockEntity(pos);
-        if (te == null)
+        BlockEntity be = world.getBlockEntity(pos);
+        if (be == null)
             return InteractionResult.PASS;
 
-        if (setTool && te instanceof ConstructionBlockTileEntity) {
-            setToolBlock(stack, ((ConstructionBlockTileEntity) te).getConstructionBlockData());
+        if (setTool && be instanceof ConstructionBlockTileEntity) {
+            setToolBlock(stack, ((ConstructionBlockTileEntity) be).getConstructionBlockData());
             return InteractionResult.SUCCESS;
         }
 

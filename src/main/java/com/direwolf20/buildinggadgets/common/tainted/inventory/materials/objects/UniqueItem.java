@@ -3,7 +3,6 @@ package com.direwolf20.buildinggadgets.common.tainted.inventory.materials.object
 import com.direwolf20.buildinggadgets.common.tainted.template.SerialisationSupport;
 import com.direwolf20.buildinggadgets.common.util.ref.JsonKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.direwolf20.buildinggadgets.common.util.tools.RegistryUtils;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonDeserializer;

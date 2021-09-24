@@ -24,6 +24,8 @@ import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,16 +44,13 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.DistExecutor;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -67,6 +66,7 @@ public abstract class AbstractGadget extends Item {
     private final Tag.Named<Block> whiteList;
     private final Tag.Named<Block> blackList;
     private Supplier<UndoWorldSave> saveSupplier;
+    protected final long energyCapacity = 0;
 
     public AbstractGadget(Properties builder, IntSupplier undoLengthSupplier, String undoName, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
         super(builder.setNoRepair());
@@ -88,7 +88,7 @@ public abstract class AbstractGadget extends Item {
         return blackList;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public BaseRenderer getRender() {
         return renderer;
     }
@@ -120,49 +120,6 @@ public abstract class AbstractGadget extends Item {
         ItemStack charged = new ItemStack(this);
         charged.getOrCreateTag().putDouble(NBTKeys.ENERGY, this.getEnergyMax());
         items.add(charged);
-    }
-
-    @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
-        LazyOptional<IEnergyStorage> cap = stack.getCapability(CapabilityEnergy.ENERGY);
-        if( !cap.isPresent() )
-            return super.getDurabilityForDisplay(stack);
-
-        Pair<Integer, Integer> energyStorage = cap.map(e -> Pair.of(e.getEnergyStored(), e.getMaxEnergyStored())).orElse(Pair.of(0, 0));
-        return 1D - (energyStorage.getLeft() / (double) energyStorage.getRight());
-    }
-
-    @Override
-    public int getRGBDurabilityForDisplay(ItemStack stack) {
-        LazyOptional<IEnergyStorage> cap = stack.getCapability(CapabilityEnergy.ENERGY);
-        if( !cap.isPresent() )
-            return super.getRGBDurabilityForDisplay(stack);
-
-        Pair<Integer, Integer> energyStorage = cap.map(e -> Pair.of(e.getEnergyStored(), e.getMaxEnergyStored())).orElse(Pair.of(0, 0));
-        return Mth.hsvToRgb(Math.max(0.0F, energyStorage.getLeft() / (float) energyStorage.getRight()) / 3.0F, 1.0F, 1.0F);
-    }
-
-    @Override
-    public boolean isDamaged(ItemStack stack) {
-        LazyOptional<IEnergyStorage> cap = stack.getCapability(CapabilityEnergy.ENERGY);
-        if( !cap.isPresent() )
-            return super.isDamaged(stack);
-
-        Pair<Integer, Integer> energyStorage = cap.map(e -> Pair.of(e.getEnergyStored(), e.getMaxEnergyStored())).orElse(Pair.of(0, 0));
-        return energyStorage.getLeft() != energyStorage.getRight();
-    }
-
-    @Override
-    public boolean showDurabilityBar(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains(NBTKeys.CREATIVE_MARKER))
-            return false;
-
-        LazyOptional<IEnergyStorage> cap = stack.getCapability(CapabilityEnergy.ENERGY);
-        if( !cap.isPresent() )
-            return super.showDurabilityBar(stack);
-
-        Pair<Integer, Integer> energyStorage = cap.map(e -> Pair.of(e.getEnergyStored(), e.getMaxEnergyStored())).orElse(Pair.of(0, 0));
-        return energyStorage.getLeft() != energyStorage.getRight();
     }
 
     @Override

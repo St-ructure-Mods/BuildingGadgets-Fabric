@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
 
 public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity> {
 
@@ -56,7 +55,7 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
         OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
         try {
             dispatcher.renderSingleBlock(
-                    renderBlockState, stack, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE
+                    renderBlockState, stack, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY
             );
         } catch (Exception ignored) {} // if it fails to render then we'll get a bug report I'm sure.
 

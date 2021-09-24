@@ -10,7 +10,7 @@ import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +21,8 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+
+//TODO: Replace PacketDistributor with a fabric equivalent
 
 @Tainted(reason = "Uses template system")
 public final class CacheTemplateProvider implements ITemplateProvider {
@@ -63,17 +65,17 @@ public final class CacheTemplateProvider implements ITemplateProvider {
     }
 
     @Override
-    public boolean requestUpdate(ITemplateKey key, PacketDistributor.PacketTarget target) {
-        return requestUpdate(key.getTemplateId(UUID::randomUUID), target);
+    public boolean requestUpdate(ITemplateKey key, ResourceLocation channel) {
+        return requestUpdate(key.getTemplateId(UUID::randomUUID), channel);
     }
 
-    private boolean requestUpdate(UUID id, PacketDistributor.PacketTarget target) {
-        PacketHandler.send(new PacketRequestTemplate(id), target);
+    private boolean requestUpdate(UUID id, ResourceLocation channel) {
+        PacketHandler.send(new PacketRequestTemplate(id), channel);
         return true;
     }
 
     @Override
-    public boolean requestRemoteUpdate(ITemplateKey key, PacketDistributor.PacketTarget target) {
+    public boolean requestRemoteUpdate(ITemplateKey key, ResourceLocation channel) {
         UUID id = getId(key);
         Template template = cache.getIfPresent(id);
         if (template != null) {

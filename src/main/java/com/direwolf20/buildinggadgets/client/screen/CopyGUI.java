@@ -24,7 +24,7 @@ import java.util.List;
 public class CopyGUI extends Screen {
     private GuiIncrementer startX, startY, startZ, endX, endY, endZ;
 
-    private boolean absoluteCoords = Config.GENERAL.absoluteCoordDefault.get() && Config.GENERAL.allowAbsoluteCoords.get();
+    private boolean absoluteCoords = Config.GENERAL.absoluteCoordDefault && Config.GENERAL.allowAbsoluteCoords;
 
     private int x;
     private int y;

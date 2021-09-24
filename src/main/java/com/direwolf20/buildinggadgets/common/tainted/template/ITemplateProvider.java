@@ -1,19 +1,30 @@
 package com.direwolf20.buildinggadgets.common.tainted.template;
 
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
+import dev.onyxstudios.cca.api.v3.component.Component;
+import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
+import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents;
+import net.fabricmc.fabric.impl.networking.client.ClientPlayNetworkAddon;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 import java.util.UUID;
 
-public interface ITemplateProvider {
+public interface ITemplateProvider extends Component{
     UUID getId(ITemplateKey key);
 
     Template getTemplateForKey(ITemplateKey key);
 
-    default <T extends Throwable> Template getTemplateForKey(ICapabilityProvider provider, NonNullSupplier<? extends T> exceptionSupplier) throws T {
-        return getTemplateForKey(provider.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).orElseThrow(exceptionSupplier));
+    default <T extends Throwable> Template getTemplateForKey(ComponentProvider provider) throws T {
+        return getTemplateForKey((ITemplateKey) ComponentRegistryV3.INSTANCE.get(BuildingGadgets.id("template_key")).get(provider));
     }
 
     /**
@@ -40,10 +51,10 @@ public interface ITemplateProvider {
     /**
      * Requests an update from the specified target.
      *
-     * @param target The target to which to request the update
+     * @param channel The channel to which to request the update
      * @see #requestUpdate(ITemplateKey)
      */
-    boolean requestUpdate(ITemplateKey key, PacketDistributor.PacketTarget target);
+    boolean requestUpdate(ITemplateKey key, ResourceLocation channel);
 
     /**
      * Requests an update <b>for<b/> the other side - aka sends an update packet to it. On the client this will send the data to the server,
@@ -56,10 +67,10 @@ public interface ITemplateProvider {
     /**
      * Requests a remote update for the specified target.
      *
-     * @param target The target for which to request an update
+     * @param channel The channel for which to request an update
      * @see #requestRemoteUpdate(ITemplateKey)
      */
-    boolean requestRemoteUpdate(ITemplateKey key, PacketDistributor.PacketTarget target);
+    boolean requestRemoteUpdate(ITemplateKey key, ResourceLocation channel);
 
 
     /**
