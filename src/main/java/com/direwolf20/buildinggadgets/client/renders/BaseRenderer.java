@@ -80,7 +80,7 @@ public abstract class BaseRenderer {
     }
 
 
-    int getEnergy(Player player, ItemStack heldItem) {
+    long getEnergy(Player player, ItemStack heldItem) {
         LazyOptional<IEnergyStorage> energy = heldItem.getCapability(CapabilityEnergy.ENERGY);
         if (player.isCreative() || !energy.isPresent())
             return Integer.MAX_VALUE;

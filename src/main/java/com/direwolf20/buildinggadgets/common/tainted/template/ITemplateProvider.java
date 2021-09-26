@@ -5,16 +5,7 @@ import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import dev.onyxstudios.cca.api.v3.component.Component;
 import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents;
-import net.fabricmc.fabric.impl.networking.client.ClientPlayNetworkAddon;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.NonNullSupplier;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 import java.util.UUID;
 
@@ -24,7 +15,7 @@ public interface ITemplateProvider extends Component{
     Template getTemplateForKey(ITemplateKey key);
 
     default <T extends Throwable> Template getTemplateForKey(ComponentProvider provider) throws T {
-        return getTemplateForKey((ITemplateKey) ComponentRegistryV3.INSTANCE.get(BuildingGadgets.id("template_key")).get(provider));
+        return getTemplateForKey(BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(provider));
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.util;
 
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
@@ -20,6 +21,8 @@ import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -29,6 +32,7 @@ import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -43,12 +47,9 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,9 +59,10 @@ import java.util.stream.Collectors;
 
 public class GadgetUtils {
     // TODO: migrate to tags
-    private static final ImmutableList<Block> DISALLOWED_BLOCKS = ImmutableList.of(
-        Blocks.END_PORTAL, Blocks.NETHER_PORTAL, Blocks.END_PORTAL_FRAME, Blocks.BEDROCK, Blocks.SPAWNER
-    );
+    private static final Tag<Block> DISALLOWED_BLOCKS = Tag.fromSet(
+        ImmutableSet.of(
+                Blocks.END_PORTAL, Blocks.NETHER_PORTAL, Blocks.END_PORTAL_FRAME, Blocks.BEDROCK, Blocks.SPAWNER
+        ));
 
     private static final ImmutableList<String> LINK_STARTS = ImmutableList.of("http","www");
 
@@ -155,8 +157,7 @@ public class GadgetUtils {
         stack.setTag(tagCompound);
     }
 
-
-    @Nonnull
+    @NotNull
     public static BlockData getToolBlock(ItemStack stack) {
         CompoundTag tagCompound = stack.getOrCreateTag();
         BlockData res = BlockData.tryDeserialize(tagCompound.getCompound(NBTKeys.TE_CONSTRUCTION_STATE), true);
@@ -284,34 +285,5 @@ public class GadgetUtils {
         if (posTag.isEmpty())
             return null;
         return NbtUtils.readBlockPos(posTag);
-    }
-
-
-    @Nullable
-    public static ResourceLocation getDIMFromNBT(ItemStack stack, String tagName) {
-        CompoundTag tagCompound = stack.getTag();
-        if (tagCompound == null) {
-            return null;
-        }
-        CompoundTag posTag = tagCompound.getCompound(tagName);
-        if (posTag.equals(new CompoundTag())) {
-            return null;
-        }
-        return new ResourceLocation(posTag.getString(NBTKeys.GADGET_DIM));
-    }
-
-    /**
-     * Drops the IItemHandlerModifiable Inventory of the TileEntity at the specified position.
-     */
-    public static void dropTileEntityInventory(Level world, BlockPos pos) {
-        BlockEntity tileEntity = world.getBlockEntity(pos);
-        if (tileEntity != null) {
-            LazyOptional<IItemHandler> cap = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-            cap.ifPresent(handler -> {
-                for (int i = 0; i < handler.getSlots(); i++) {
-                    net.minecraft.world.Containers.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), handler.getStackInSlot(i));
-                }
-            });
-        }
     }
 }

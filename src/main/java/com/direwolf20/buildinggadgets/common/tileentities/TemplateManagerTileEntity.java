@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.tileentities;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.containers.TemplateManagerContainer;
 import com.direwolf20.buildinggadgets.common.inventory.ImplContainer;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference.ItemReference;
@@ -57,7 +58,7 @@ public class TemplateManagerTileEntity extends BlockEntity implements ExtendedSc
     }
 
     public boolean isTemplateStack(ItemStack stack) {
-        return ComponentRegistryV3.INSTANCE.get(BuildingGadgets.id("template_key")).getNullable(stack) != null;
+        return BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(stack) != null;
     }
 
     @Override

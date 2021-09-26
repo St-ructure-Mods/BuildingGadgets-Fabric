@@ -23,11 +23,11 @@ public class GuiSliderInt extends AbstractSliderButton {
     private BiConsumer<GuiSliderInt, Integer> increment;
     private int value;
 
-    public GuiSliderInt(int xPos, int yPos, int width, int height, Component prefix, Component suf, double minVal, double maxVal,
-                        double currentVal, boolean showDec, boolean drawStr, Color color, Button.OnPress par,
+    public GuiSliderInt(int xPos, int yPos, int width, int height, Component prefix, double minVal, double maxVal,
+                        double currentVal, Color color,
                         BiConsumer<GuiSliderInt, Integer> increment) {
 
-        super(xPos, yPos, width, height, prefix, suf, minVal, maxVal, currentVal, showDec, drawStr, par);
+        super(xPos, yPos, width, height, prefix, currentVal);
 
         colorBackground = GuiMod.getColor(color, 200).getRGB();
         colorSliderBackground = GuiMod.getColor(color.darker(), 200).getRGB();

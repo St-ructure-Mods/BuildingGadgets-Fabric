@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items.modes;
 
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
@@ -20,7 +21,7 @@ public class BuildToMeMode extends AbstractMode {
         int playerCoord = XYZ.posToXYZ(player.blockPosition(), facingXYZ);
 
         // Clamp the value to the max range of the gadgets raytrace
-        double difference = Math.max(0, Math.min(Config.GENERAL.rayTraceRange.get(), Math.abs(startCoord - playerCoord)));
+        double difference = Math.max(0, Math.min(BuildingGadgets.config.GENERAL.rayTraceRange, Math.abs(startCoord - playerCoord)));
         for( int i = 0; i < difference; i ++)
             coordinates.add(XYZ.extendPosSingle(i, start, context.getHitSide(), facingXYZ));
 

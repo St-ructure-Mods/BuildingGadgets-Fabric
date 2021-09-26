@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.network.packets;
 
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.items.GadgetBuilding;
@@ -26,7 +27,7 @@ public class PacketToggleFuzzy {
 
                 ItemStack stack = AbstractGadget.getGadget(player);
                 if (stack.getItem() instanceof GadgetExchanger || stack.getItem() instanceof GadgetBuilding
-                        || (stack.getItem() instanceof GadgetDestruction && Config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled.get()))
+                        || (stack.getItem() instanceof GadgetDestruction && BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled))
                     AbstractGadget.toggleFuzzy(player, stack);
             });
 

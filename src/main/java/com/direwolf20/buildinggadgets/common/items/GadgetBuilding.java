@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items;
 
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
@@ -61,7 +62,7 @@ public class GadgetBuilding extends AbstractGadget {
 
     public GadgetBuilding() {
         super(OurItems.nonStackableItemProperties(),
-                Config.GADGETS.GADGET_BUILDING.undoSize::get,
+                BuildingGadgets.config.GADGETS.GADGET_BUILDING.undoSize,
                 Reference.SaveReference.UNDO_BUILDING,
                 TagReference.WHITELIST_BUILDING,
                 TagReference.BLACKLIST_BUILDING);
@@ -69,12 +70,12 @@ public class GadgetBuilding extends AbstractGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.GADGETS.GADGET_BUILDING.maxEnergy.get();
+        return (int) BuildingGadgets.config.GADGETS.GADGET_BUILDING.maxEnergy;
     }
 
     @Override
     public int getEnergyCost(ItemStack tool) {
-        return Config.GADGETS.GADGET_BUILDING.energyCost.get();
+        return (int) BuildingGadgets.config.GADGETS.GADGET_BUILDING.energyCost;
     }
 
     @Override

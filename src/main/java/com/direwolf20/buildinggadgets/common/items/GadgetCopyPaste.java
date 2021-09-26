@@ -112,7 +112,7 @@ public class GadgetCopyPaste extends AbstractGadget {
 
     public GadgetCopyPaste() {
         super(OurItems.nonStackableItemProperties(),
-                Config.GADGETS.GADGET_COPY_PASTE.undoSize::get,
+                BuildingGadgets.config.GADGETS.GADGET_COPY_PASTE.undoSize,
                 Reference.SaveReference.UNDO_COPY_PASTE,
                 TagReference.WHITELIST_COPY_PASTE,
                 TagReference.BLACKLIST_COPY_PASTE);
@@ -120,12 +120,12 @@ public class GadgetCopyPaste extends AbstractGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.GADGETS.GADGET_COPY_PASTE.maxEnergy.get();
+        return (int) BuildingGadgets.config.GADGETS.GADGET_COPY_PASTE.maxEnergy;
     }
 
     @Override
     public int getEnergyCost(ItemStack tool) {
-        return Config.GADGETS.GADGET_COPY_PASTE.energyCost.get();
+        return (int) BuildingGadgets.config.GADGETS.GADGET_COPY_PASTE.energyCost;
     }
 
     @Override
@@ -455,7 +455,7 @@ public class GadgetCopyPaste extends AbstractGadget {
     private void schedulePlacement(ItemStack stack, IBuildView view, Player player) {
         IItemIndex index = InventoryHelper.index(stack, player);
         int energyCost = getEnergyCost(stack);
-        boolean overwrite = Config.GENERAL.allowOverwriteBlocks;
+        boolean overwrite = BuildingGadgets.config.GENERAL.allowOverwriteBlocks;
         BlockPlaceContext useContext = new BlockPlaceContext(new UseOnContext(player, InteractionHand.MAIN_HAND, VectorHelper.getLookingAt(player, stack)));
         PlacementChecker checker = new PlacementChecker(
                 stack.getCapability(CapabilityEnergy.ENERGY),

@@ -76,12 +76,6 @@ public final class BuildingGadgets implements ModInitializer {
     }
 
     public BuildingGadgets() {
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
-
-
-        OurTileEntities.TILE_ENTITIES.register(eventBus);
-        OurContainers.CONTAINERS.register(eventBus);
 
 
         eventBus.addListener(this::registerRegistries);

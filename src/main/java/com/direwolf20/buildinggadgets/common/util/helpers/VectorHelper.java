@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.util.helpers;
 
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +20,7 @@ public class VectorHelper {
     }
 
     public static BlockHitResult getLookingAt(Player player, ClipContext.Fluid rayTraceFluid) {
-        double rayTraceRange = Config.GENERAL.rayTraceRange.get();
+        double rayTraceRange = BuildingGadgets.config.GENERAL.rayTraceRange;
         HitResult result = player.pick(rayTraceRange, 0f, rayTraceFluid != ClipContext.Fluid.NONE);
 
         return (BlockHitResult) result;

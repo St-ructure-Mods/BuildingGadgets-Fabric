@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.client.screen;
 
 import com.direwolf20.buildinggadgets.client.screen.components.GuiIncrementer;
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
@@ -24,7 +25,7 @@ import java.util.List;
 public class CopyGUI extends Screen {
     private GuiIncrementer startX, startY, startZ, endX, endY, endZ;
 
-    private boolean absoluteCoords = Config.GENERAL.absoluteCoordDefault && Config.GENERAL.allowAbsoluteCoords;
+    private boolean absoluteCoords = BuildingGadgets.config.GENERAL.absoluteCoordDefault && BuildingGadgets.config.GENERAL.allowAbsoluteCoords;
 
     private int x;
     private int y;
@@ -82,7 +83,7 @@ public class CopyGUI extends Screen {
                 onClose();
             }));
 
-            if( Config.GENERAL.allowAbsoluteCoords.get() ) {
+            if( BuildingGadgets.config.GENERAL.allowAbsoluteCoords ) {
                 add(new CenteredButton(y + 20, 120, GuiTranslation.COPY_BUTTON_ABSOLUTE.componentTranslation(), (button) -> {
                     coordsModeSwitch();
                     updateTextFields();

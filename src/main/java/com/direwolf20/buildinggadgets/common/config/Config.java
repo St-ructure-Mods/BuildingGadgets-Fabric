@@ -1,20 +1,24 @@
 package com.direwolf20.buildinggadgets.common.config;
 
-import dev.architectury.utils.value.IntValue;
+import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
+
+import java.util.function.IntSupplier;
 
 public class Config implements ConfigData{
 
     @ConfigEntry.Category("General")
     @Comment("General mod settings")
-    public static final CategoryGeneral GENERAL = new CategoryGeneral();
+    public final CategoryGeneral GENERAL = new CategoryGeneral();
     @ConfigEntry.Category("Gadgets")
     @Comment("Configure the Gadgets")
-    public static final CategoryGadgets GADGETS = new CategoryGadgets();
+    public final CategoryGadgets GADGETS = new CategoryGadgets();
 
-    public static final CategoryPasteContainers PASTE_CONTAINERS = new CategoryPasteContainers();
+    @ConfigEntry.Category("Paste Containers")
+    @Comment("Configure the Paste Containers")
+    public final CategoryPasteContainers PASTE_CONTAINERS = new CategoryPasteContainers();
 
     public static final class CategoryGeneral {
         @Comment("Defines how far away you can build")
@@ -70,132 +74,89 @@ public class Config implements ConfigData{
 
             @Comment("The max energy of the Gadget, set to 0 to disable energy usage")
             @ConfigEntry.BoundedDiscrete(min = 0, max = Integer.MAX_VALUE)
-            public final IntValue maxEnergy;
+            public final long maxEnergy;
             //Maximum Energy
 
             @Comment("The Gadget's Energy cost per Operation")
             @ConfigEntry.BoundedDiscrete(min = 0, max = Integer.MAX_VALUE)
-            public final IntValue energyCost;
+            public final long energyCost;
             //Energy Cost
 
             @Comment("The Gadget's Max Undo size (Note, the exchanger does not support undo)")
             @ConfigEntry.BoundedDiscrete(min = 0, max = 128)
-            public final IntValue undoSize;
+            public final long undoSize;
             //Max Undo History Size
 
             public GadgetConfig(String name, int maxEnergy, int energyCost, int getMaxUndo) {
-                this.maxEnergy = new IntValue() {
-                    @Override
-                    public void accept(int value) {}
-
-                    @Override
-                    public int getAsInt() {
-                        return maxEnergy;
-                    }
-                };
-                this.energyCost = new IntValue() {
-                    @Override
-                    public void accept(int value) {}
-
-                    @Override
-                    public int getAsInt() {
-                        return energyCost;
-                    }
-                };
-                this.undoSize = new IntValue() {
-                    @Override
-                    public void accept(int value) {}
-
-                    @Override
-                    public int getAsInt() {
-                        return getMaxUndo;
-                    }
-                };
+                this.maxEnergy = maxEnergy;
+                this.energyCost = energyCost;
+                this.undoSize = getMaxUndo;
             }
         }
 
         public static final class CategoryGadgetDestruction extends GadgetConfig {
-            public final IntValue destroySize;
-            public final DoubleValue nonFuzzyMultiplier;
-            public final BooleanValue nonFuzzyEnabled;
+
+            @Comment("The maximum dimensions, the Destruction Gadget can destroy.")
+            @ConfigEntry.BoundedDiscrete(min = 0, max = 32)
+            public final int destroySize = 16;
+            //Destroy Dimensions
+
+            @Comment("The cost in energy/durability will increase by this amount when not in fuzzy mode")
+            @ConfigEntry.BoundedDiscrete(min = 0, max = Long.MAX_VALUE)
+            public final long nonFuzzyMultiplier = 2;
+            //Non-Fuzzy Mode Multiplier
+
+            @Comment("If enabled, the Destruction Gadget can be taken out of fuzzy mode, allowing only instances of the block "
+                    + "clicked to be removed (at a higher cost)")
+            public final boolean nonFuzzyEnabled = false;
+            //Non-Fuzzy Mode Enabled
 
             private CategoryGadgetDestruction() {
                 super("Destruction Gadget", 1000000, 200, 1);
-
-                SERVER_BUILDER
-                        .comment("Energy Cost, Durability & Maximum Energy of the Destruction Gadget")
-                        .push("Destruction Gadget");
-
-
-                destroySize = SERVER_BUILDER
-                        .comment("The maximum dimensions, the Destruction Gadget can destroy.")
-                        .defineInRange("Destroy Dimensions", 16, 0, 32);
-
-                nonFuzzyMultiplier = SERVER_BUILDER
-                        .comment("The cost in energy/durability will increase by this amount when not in fuzzy mode")
-                        .defineInRange("Non-Fuzzy Mode Multiplier", 2, 0, Double.MAX_VALUE);
-
-                nonFuzzyEnabled = SERVER_BUILDER
-                        .comment("If enabled, the Destruction Gadget can be taken out of fuzzy mode, allowing only instances of the block "
-                                + "clicked to be removed (at a higher cost)")
-                        .define("Non-Fuzzy Mode Enabled", false);
-
-                SERVER_BUILDER.pop();
-
             }
         }
 
         public static final class CategoryGadgetCopyPaste extends GadgetConfig {
-            public final int copySteps;
-            public final int maxCopySize;
-            public final int maxBuildSize;
+
+            @Comment("Maximum amount of Blocks to be copied in one Tick. \",\n" +
+                    "                                \"Lower values may improve Server-Performance when copying large Templates")
+            @ConfigEntry.BoundedDiscrete(min = 1, max = Integer.MAX_VALUE)
+            public final int copySteps = 32768;
+            //Max Copy/Tick
+
+            @Comment("Maximum dimensions (x, y and z) that can be copied by a Template without requiring special permission.\",\n" +
+                    "                                \"Permission can be granted using the '/buildinggadgets OverrideCopySize [<Player>]' command.")
+            @ConfigEntry.BoundedDiscrete(min = -1, max = Integer.MAX_VALUE)
+            public final int maxCopySize = 256;
+            //Max Copy Dimensions
+
+            @Comment("Maximum dimensions (x, y and z) that can be build by a Template without requiring special permission.\",\n" +
+                    "                                \"Permission can be granted using the '/buildinggadgets OverrideBuildSize [<Player>]' command.")
+            @ConfigEntry.BoundedDiscrete(min = -1, max = Integer.MAX_VALUE)
+            public final int maxBuildSize = 256;
+            //Max Build Dimensions
 
             private CategoryGadgetCopyPaste() {
                 super("Copy-Paste Gadget", 500000, 50, 1);
-
-                SERVER_BUILDER
-                        .comment("Energy Cost & Durability of the Copy-Paste Gadget")
-                        .push("Copy-Paste Gadget");
-
-                //use the old cap as the per tick border... This implies that 32*32*32 areas are the max size for a one tick copy by default
-                copySteps = SERVER_BUILDER
-                        .comment("Maximum amount of Blocks to be copied in one Tick. ",
-                                "Lower values may improve Server-Performance when copying large Templates")
-                        .defineInRange("Max Copy/Tick", 32768, 1, Integer.MAX_VALUE);
-
-                maxCopySize = SERVER_BUILDER
-                        .comment("Maximum dimensions (x, y and z) that can be copied by a Template without requiring special permission.",
-                                "Permission can be granted using the '/buildinggadgets OverrideCopySize [<Player>]' command.")
-                        .defineInRange("Max Copy Dimensions", 256, - 1, Integer.MAX_VALUE);
-
-                maxBuildSize = SERVER_BUILDER
-                        .comment("Maximum dimensions (x, y and z) that can be build by a Template without requiring special permission.",
-                                "Permission can be granted using the '/buildinggadgets OverrideBuildSize [<Player>]' command.")
-                        .defineInRange("Max Build Dimensions", 256, - 1, Integer.MAX_VALUE);
-
-                SERVER_BUILDER.pop();
             }
         }
     }
 
     public static final class CategoryPasteContainers {
 
-        public final int capacityT1, capacityT2, capacityT3;
+        @Comment("The maximum capacity of a tier 1 (iron) Construction Paste Container")
+        @ConfigEntry.BoundedDiscrete(min = 1, max = Integer.MAX_VALUE)
+        public final int capacityT1 = (int) (512 * Math.pow(4, 0));
+        //T1 Container Capacity
 
-        private CategoryPasteContainers() {
-            SERVER_BUILDER
-                    .comment("Configure the Paste Containers")
-                    .push("Paste Containers");
+        @Comment("The maximum capacity of a tier 2 Construction Paste Container")
+        @ConfigEntry.BoundedDiscrete(min = 1, max = Integer.MAX_VALUE)
+        public final int capacityT2 = (int) (512 * Math.pow(4, 2 - 1));
+        //T2 Container Capacity
 
-            capacityT1 = getMaxCapacity(1);
-            capacityT2 = getMaxCapacity(2);
-            capacityT3 = getMaxCapacity(3);
-        }
-
-        private static int getMaxCapacity(int tier) {
-            return SERVER_BUILDER
-                    .comment(String.format("The maximum capacity of a tier %s (iron) Construction Paste Container", tier))
-                    .defineInRange(String.format("T%s Container Capacity", tier), (int) (512 * Math.pow(4, tier - 1)), 1, Integer.MAX_VALUE);
-        }
+        @Comment("The maximum capacity of a tier 3 Construction Paste Container")
+        @ConfigEntry.BoundedDiscrete(min = 1, max = Integer.MAX_VALUE)
+        public final int capacityT3 = (int) (512 * Math.pow(4, 3 - 1));
+        //T3 Container Capacity
     }
 }

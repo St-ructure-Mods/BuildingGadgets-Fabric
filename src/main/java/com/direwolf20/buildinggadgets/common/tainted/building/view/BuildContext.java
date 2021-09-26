@@ -2,13 +2,14 @@ package com.direwolf20.buildinggadgets.common.tainted.building.view;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import oshi.annotation.concurrent.Immutable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
 import java.util.Objects;
 
 /**
@@ -23,28 +24,28 @@ public final class BuildContext {
         return new Builder();
     }
 
-    @Nonnull
+    @NotNull
     private final LevelAccessor world;
     @Nullable
     private final Player player;
 
     private final ItemStack stack;
 
-    public BuildContext(@Nonnull LevelAccessor world, @Nullable Player player, @Nonnull ItemStack stack) {
+    public BuildContext(@NotNull LevelAccessor world, @Nullable Player player, @NotNull ItemStack stack) {
         this.world = world;
         this.player = player;
         this.stack = stack;
     }
 
     /**
-     * @return The {@link IWorld} of this {@code SimpleBuildContext}. Will not be null.
+     * @return The {@link LevelAccessor} of this {@code SimpleBuildContext}. Will not be null.
      */
-    public LevelAccessor getWorld() {
+    public @NotNull LevelAccessor getWorld() {
         return world;
     }
 
     /**
-     * @return The {@link PlayerEntity} performing the build. May be null if unknown.
+     * @return The {@link Player} performing the build. May be null if unknown.
      */
     @Nullable
     public Player getPlayer() {
@@ -67,7 +68,7 @@ public final class BuildContext {
         private LevelAccessor world;
         @Nullable
         private Player buildingPlayer;
-        @Nonnull
+        @NotNull
         private ItemStack stack;
 
         private Builder() {
@@ -77,22 +78,22 @@ public final class BuildContext {
         }
 
         /**
-         * Sets the {@link IWorld} of the resulting {@link BuildContext}.
-         * @param world The {@link IWorld} of the resulting {@link BuildContext}.
+         * Sets the {@link LevelAccessor} of the resulting {@link BuildContext}.
+         * @param world The {@link LevelAccessor} of the resulting {@link BuildContext}.
          * @return The {@code Builder} itself
          * @see BuildContext#getWorld()
          */
-        public Builder world(@Nonnull LevelAccessor world) {
+        public Builder world(@NotNull LevelAccessor world) {
             this.world = world;
             return this;
         }
 
         /**
-         * Sets the {@link PlayerEntity} of the resulting {@link BuildContext}. Notice that this also set's the world
+         * Sets the {@link Player} of the resulting {@link BuildContext}. Notice that this also set's the world
          * for the resulting {@code SimpleBuildContext} if the player is non-null and a world hasn't been set yet.
          * <p>
          * This defaults to null.
-         * @param buildingPlayer The {@link PlayerEntity} of the resulting {@link BuildContext}.
+         * @param buildingPlayer The {@link Player} of the resulting {@link BuildContext}.
          * @return The {@code Builder} itself
          * @see BuildContext#getPlayer()
          */
@@ -112,7 +113,7 @@ public final class BuildContext {
          * @return The {@code Builder} itself
          * @see BuildContext#getStack()
          */
-        public Builder stack(@Nonnull ItemStack stack) {
+        public Builder stack(@NotNull ItemStack stack) {
             this.stack = stack;
             return this;
         }
@@ -120,7 +121,7 @@ public final class BuildContext {
         /**
          * Creates a new {@link BuildContext} using the world previously set on this {@code Builder}.
          * @return A new {@link BuildContext} with the values specified in this {@code Builder}.
-         * @see #build(IWorld)
+         * @see #build(LevelAccessor)
          */
         public BuildContext build() {
             return build(null);
@@ -128,9 +129,9 @@ public final class BuildContext {
 
         /**
          * Creates a new {@link BuildContext} using the specified world. If the given world is null, the world in this {@code Builder} will be used.
-         * @param world The {@link IWorld} to use. If null this {@code SimpleBuilder}'s world will be used.
+         * @param world The {@link LevelAccessor} to use. If null this {@code SimpleBuilder}'s world will be used.
          * @return A new {@link BuildContext} with the values specified in this {@code SimpleBuilder}.
-         * @throws NullPointerException if both the {@link World} passed in and the {@link World} of this {@code Builder} are null.
+         * @throws NullPointerException if both the {@link Level} passed in and the {@link Level} of this {@code Builder} are null.
          */
         public BuildContext build(@Nullable LevelAccessor world) {
             return new BuildContext(world != null ? world : Objects.requireNonNull(this.world), buildingPlayer, stack);

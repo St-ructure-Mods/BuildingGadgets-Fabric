@@ -9,6 +9,7 @@ import com.direwolf20.buildinggadgets.client.KeyBindings;
 import com.direwolf20.buildinggadgets.client.OurSounds;
 import com.direwolf20.buildinggadgets.client.screen.components.GuiIconActionable;
 import com.direwolf20.buildinggadgets.client.screen.components.GuiSliderInt;
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.*;
 import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
@@ -33,6 +34,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
@@ -115,7 +117,7 @@ public class ModeRadialMenu extends Screen {
             }));
         }
         if (!(tool.getItem() instanceof GadgetCopyPaste)) {
-            if (!isDestruction || Config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled.get()) {
+            if (!isDestruction || BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled) {
                 Button button = new PositionedIconActionable(RadialTranslation.FUZZY, "fuzzy", right, send -> {
                     if (send)
                         PacketHandler.sendToServer(new PacketToggleFuzzy());
@@ -137,7 +139,7 @@ public class ModeRadialMenu extends Screen {
             }
             if (!isDestruction) {
                 int widthSlider = 82;
-                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), new TextComponent(""), 1, Config.GADGETS.maxRange.get(),
+                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), 1, BuildingGadgets.config.GADGETS.maxRange,
                         GadgetUtils.getToolRange(tool), false, true, Color.DARK_GRAY, slider -> {
                     GuiSliderInt sliderI = (GuiSliderInt) slider;
                     sendRangeUpdate(sliderI.getValueInt());
@@ -157,23 +159,23 @@ public class ModeRadialMenu extends Screen {
                 if (!send)
                     return false;
 
-                assert getMinecraft().player != null;
+                assert Minecraft.getInstance().player != null;
 
-                getMinecraft().player.closeContainer();
+                Minecraft.getInstance().player.closeContainer();
                 if (GadgetCopyPaste.getToolMode(tool) == GadgetCopyPaste.ToolMode.COPY)
-                    getMinecraft().setScreen(new CopyGUI(tool));
+                    Minecraft.getInstance().setScreen(new CopyGUI(tool));
                 else
-                    getMinecraft().setScreen(new PasteGUI(tool));
+                    Minecraft.getInstance().setScreen(new PasteGUI(tool));
                 return true;
             }));
             addRenderableWidget(new PositionedIconActionable(RadialTranslation.OPEN_MATERIAL_LIST, "copypaste_materiallist", right, send -> {
                 if (!send)
                     return false;
 
-                assert getMinecraft().player != null;
+                assert Minecraft.getInstance().player != null;
 
-                getMinecraft().player.closeContainer();
-                getMinecraft().setScreen(new MaterialListGUI(tool));
+                Minecraft.getInstance().player.closeContainer();
+                Minecraft.getInstance().setScreen(new MaterialListGUI(tool));
                 return true;
             }));
         }
@@ -271,8 +273,8 @@ public class ModeRadialMenu extends Screen {
     }
 
     private ItemStack getGadget() {
-        assert getMinecraft().player != null;
-        return AbstractGadget.getGadget(getMinecraft().player);
+        assert Minecraft.getInstance().player != null;
+        return AbstractGadget.getGadget(Minecraft.getInstance().player);
     }
 
     @Override
@@ -417,7 +419,7 @@ public class ModeRadialMenu extends Screen {
             if (tool.getItem() instanceof GadgetBuilding)
                 name = ForgeI18n.getPattern(BuildingModes.values()[i].getTranslationKey());
             else if (tool.getItem() instanceof GadgetExchanger)
-                name = ForgeI18n.getPattern(ExchangingModes.values()[i].getTranslationKey());
+                name = TranslatableComponent.ExchangingModes.values()[i].getTranslationKey());
             else
                 name = GadgetCopyPaste.ToolMode.values()[i].getTranslation().format();
 
@@ -481,8 +483,8 @@ public class ModeRadialMenu extends Screen {
             else
                 mode = GadgetCopyPaste.ToolMode.values()[slotSelected].getTranslation().format();
 
-            assert getMinecraft().player != null;
-            getMinecraft().player.displayClientMessage(MessageTranslation.MODE_SET.componentTranslation(mode).setStyle(Styles.AQUA), true);
+            assert Minecraft.getInstance().player != null;
+            Minecraft.getInstance().player.displayClientMessage(MessageTranslation.MODE_SET.componentTranslation(mode).setStyle(Styles.AQUA), true);
 
             PacketHandler.sendToServer(new PacketToggleMode(slotSelected));
             OurSounds.BEEP.playSound();
@@ -502,7 +504,7 @@ public class ModeRadialMenu extends Screen {
             changeMode();
         }
 
-        ImmutableSet<KeyMapping> set = ImmutableSet.of(getMinecraft().options.keyUp, getMinecraft().options.keyLeft, getMinecraft().options.keyDown, getMinecraft().options.keyRight, getMinecraft().options.keyShift, getMinecraft().options.keySprint, getMinecraft().options.keyJump);
+        ImmutableSet<KeyMapping> set = ImmutableSet.of(Minecraft.getInstance().options.keyUp, Minecraft.getInstance().options.keyLeft, Minecraft.getInstance().options.keyDown, Minecraft.getInstance().options.keyRight, Minecraft.getInstance().options.keyShift, Minecraft.getInstance().options.keySprint, Minecraft.getInstance().options.keyJump);
         for (KeyMapping k : set)
             KeyMapping.set(k.getKey(), k.isDown());
 

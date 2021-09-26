@@ -19,19 +19,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
-import java.util.function.IntSupplier;
 
 public class ConstructionPasteContainer extends Item {
     private static final ResourceLocation LEVEL = new ResourceLocation("level");
 
-    private final IntSupplier maxCapacity;
+    private final int maxCapacity;
     private final boolean isCreative;
 
-    public ConstructionPasteContainer(boolean isCreative, IntSupplier maxCapacity) {
+    public ConstructionPasteContainer(boolean isCreative, int maxCapacity) {
         super(OurItems.nonStackableItemProperties());
 
         this.isCreative = isCreative;
@@ -46,7 +44,7 @@ public class ConstructionPasteContainer extends Item {
     }
 
     public ConstructionPasteContainer(boolean isCreative) {
-        this(isCreative, () -> Integer.MAX_VALUE);
+        this(isCreative, Integer.MAX_VALUE);
     }
 
     @Override
@@ -121,7 +119,7 @@ public class ConstructionPasteContainer extends Item {
     }
 
     public int getMaxCapacity() {
-        return isCreative ? Integer.MAX_VALUE : maxCapacity.getAsInt();
+        return isCreative ? Integer.MAX_VALUE : maxCapacity;
     }
 
     public boolean isCreative() {

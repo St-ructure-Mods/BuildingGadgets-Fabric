@@ -1,15 +1,17 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
+import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
 import com.direwolf20.buildinggadgets.common.tileentities.TemplateManagerTileEntity;
-import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
+import dev.onyxstudios.cca.api.v3.component.ComponentKey;
+import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -43,7 +45,7 @@ public class TemplateManager extends BaseEntityBlock {
     @Override
     public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if (newState.getBlock() != this) {
-            GadgetUtils.dropTileEntityInventory(worldIn, pos);
+            Containers.dropContents(worldIn, pos, (Container) worldIn.getBlockEntity(pos));
             super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
@@ -62,22 +64,16 @@ public class TemplateManager extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-        if (worldIn.isClientSide)
-            return InteractionResult.SUCCESS;
+        TemplateManagerTileEntity be = (TemplateManagerTileEntity) worldIn.getBlockEntity(pos);
 
-        BlockEntity be = worldIn.getBlockEntity(pos);
-        if (! (be instanceof TemplateManagerTileEntity))
-            return InteractionResult.FAIL;
-
-
-
-            worldIn.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).ifPresent(provider -> {
-                for (int i = 0; i < handler.getSlots(); i++) {
-                    ItemStack itemStack = handler.getStackInSlot(i);
+        ITemplateProvider templateProvider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.getNullable(worldIn);
+        provider -> {
+                for (int i = 0; i < be.getItems().size(); i++) {
+                    ItemStack itemStack = be.getItems().get(i);
                     itemStack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key ->
-                            provider.requestRemoteUpdate(key, PacketDistributor.PLAYER.with(() -> (ServerPlayer) player)));
+                            templateProvider.requestRemoteUpdate(key, PacketDistributor.PLAYER.with(() -> (ServerPlayer) player)));
                 }
-            }));
+            };
         if(!worldIn.isClientSide) {
             MenuProvider menuProvider = state.getMenuProvider(worldIn, pos);
             if(menuProvider != null)player.openMenu(menuProvider);

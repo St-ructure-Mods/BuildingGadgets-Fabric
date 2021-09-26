@@ -8,7 +8,6 @@ import com.direwolf20.buildinggadgets.common.capability.IPrivateEnergy;
 import com.direwolf20.buildinggadgets.common.capability.provider.MultiCapabilityProvider;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
 import com.direwolf20.buildinggadgets.common.tainted.concurrent.UndoScheduler;
-import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.items.modes.*;
@@ -41,25 +40,20 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.DistExecutor;
-import org.apache.commons.lang3.tuple.Pair;
 
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import static com.direwolf20.buildinggadgets.common.util.GadgetUtils.withSuffix;
-
-import net.minecraft.world.item.Item.Properties;
 
 public abstract class AbstractGadget extends Item {
     private BaseRenderer renderer;
@@ -68,8 +62,8 @@ public abstract class AbstractGadget extends Item {
     private Supplier<UndoWorldSave> saveSupplier;
     protected final long energyCapacity = 0;
 
-    public AbstractGadget(Properties builder, IntSupplier undoLengthSupplier, String undoName, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
-        super(builder.setNoRepair());
+    public AbstractGadget(Properties builder, long undoLengthSupplier, String undoName, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
+        super(builder.defaultDurability(0));
 
         renderer = DistExecutor.runForDist(this::createRenderFactory, () -> () -> null);
         this.whiteList = BlockTags.bind(whiteListTag.toString());
@@ -303,7 +297,7 @@ public abstract class AbstractGadget extends Item {
                     .stack(stack)
                     .build(world);
 
-            UndoScheduler.scheduleUndo(undo, index, buildContext, Config.GADGETS.placeSteps.get());
+            UndoScheduler.scheduleUndo(undo, index, buildContext, BuildingGadgets.config.GADGETS.placeSteps);
         } else
             player.displayClientMessage(MessageTranslation.NOTHING_TO_UNDO.componentTranslation().setStyle(Styles.RED), true);
     }

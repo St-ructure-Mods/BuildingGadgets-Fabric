@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items.modes;
 
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
@@ -65,7 +66,7 @@ public abstract class AbstractMode {
         if (context.world.isOutsideBuildHeight(pos))
             return false;
 
-        return Config.GENERAL.allowOverwriteBlocks.get()
+        return BuildingGadgets.config.GENERAL.allowOverwriteBlocks
                 ? context.getWorldState(pos).getMaterial().isReplaceable()
                 : context.getWorldState(pos).getMaterial() != Material.AIR;
     }

@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.client.renders.BuildRender;
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.config.Config;
@@ -58,12 +59,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.world.BlockEvent;
 
-import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -77,7 +73,7 @@ public class GadgetExchanger extends AbstractGadget {
 
     public GadgetExchanger() {
         super(OurItems.nonStackableItemProperties(),
-                () -> 0,
+                0,
                 "",
                 TagReference.WHITELIST_EXCHANGING,
                 TagReference.BLACKLIST_EXCHANGING);
@@ -85,12 +81,12 @@ public class GadgetExchanger extends AbstractGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.GADGETS.GADGET_EXCHANGER.maxEnergy.get();
+        return (int) BuildingGadgets.config.GADGETS.GADGET_EXCHANGER.maxEnergy;
     }
 
     @Override
     public int getEnergyCost(ItemStack tool) {
-        return Config.GADGETS.GADGET_EXCHANGER.energyCost.get();
+        return (int) BuildingGadgets.config.GADGETS.GADGET_EXCHANGER.energyCost;
     }
 
     @Override
@@ -193,9 +189,9 @@ public class GadgetExchanger extends AbstractGadget {
         int range = getToolRange(heldItem);
         int changeAmount = (getToolMode(heldItem) == ExchangingModes.GRID || (range % 2 == 0)) ? 1 : 2;
         if (player.isShiftKeyDown()) {
-            range = (range <= 1) ? Config.GADGETS.maxRange.get() : range - changeAmount;
+            range = (range <= 1) ? BuildingGadgets.config.GADGETS.maxRange : range - changeAmount;
         } else {
-            range = (range >= Config.GADGETS.maxRange.get()) ? 1 : range + changeAmount;
+            range = (range >= BuildingGadgets.config.GADGETS.maxRange) ? 1 : range + changeAmount;
         }
         setToolRange(heldItem, range);
         player.displayClientMessage(MessageTranslation.RANGE_SET.componentTranslation(range).setStyle(Styles.AQUA), true);

@@ -441,13 +441,11 @@ public class MockDelegationWorld implements LevelAccessor {
             if (entity == null && state.hasBlockEntity()) {
                 try {
                     entity = ((EntityBlock) state.getBlock()).newBlockEntity(pos, state);
-                    if (entity != null) {
+                    //if (entity != null) {
 
                         //if we pass our wrapped world down to this, it will cause it to determine an errornous blockstate...
                         //we'd need to reflect into the be...
-
-                        entity.onLoad();
-                    }
+                    //}
                 } catch (Exception e) {
                     BuildingGadgets.LOG.debug("Tile Entity at {} with state {} threw exception whilst creating.", pos, state, e);
                 }

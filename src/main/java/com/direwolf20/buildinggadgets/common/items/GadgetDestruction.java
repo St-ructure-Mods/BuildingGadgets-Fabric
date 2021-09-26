@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.items;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.client.renders.DestructionRender;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.config.Config;
@@ -35,11 +36,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -52,7 +48,7 @@ public class GadgetDestruction extends AbstractGadget {
 
     public GadgetDestruction() {
         super(OurItems.nonStackableItemProperties(),
-                Config.GADGETS.GADGET_DESTRUCTION.undoSize::get,
+                BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.undoSize,
                 Reference.SaveReference.UNDO_DESTRUCTION,
                 TagReference.WHITELIST_DESTRUCTION,
                 TagReference.BLACKLIST_DESTRUCTION);
@@ -60,12 +56,12 @@ public class GadgetDestruction extends AbstractGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.GADGETS.GADGET_DESTRUCTION.maxEnergy.get();
+        return (int) BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.maxEnergy;
     }
 
     @Override
     public int getEnergyCost(ItemStack tool) {
-        return Config.GADGETS.GADGET_DESTRUCTION.energyCost.get() * getCostMultiplier(tool);
+        return (int) (BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.energyCost * getCostMultiplier(tool));
     }
 
     @Override
@@ -74,7 +70,7 @@ public class GadgetDestruction extends AbstractGadget {
     }
 
     private int getCostMultiplier(ItemStack tool) {
-        return (int) (! getFuzzy(tool) ? Config.GADGETS.GADGET_DESTRUCTION.nonFuzzyMultiplier.get() : 1);
+        return (int) (! getFuzzy(tool) ? BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyMultiplier : 1);
     }
 
     @Override
@@ -94,7 +90,7 @@ public class GadgetDestruction extends AbstractGadget {
                             .componentTranslation(String.valueOf(getConnectedArea(stack)))
                             .setStyle(Styles.YELLOW));
 
-        if (Config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled.get())
+        if (BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled)
             tooltip.add(TooltipTranslation.GADGET_FUZZY
                                 .componentTranslation(String.valueOf(getFuzzy(stack)))
                                 .setStyle(Styles.GOLD));

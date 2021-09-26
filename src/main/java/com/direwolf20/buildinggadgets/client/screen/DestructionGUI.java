@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.client.screen;
 
 import com.direwolf20.buildinggadgets.client.screen.components.GuiSliderInt;
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.GadgetDestruction;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
@@ -56,7 +57,7 @@ public class DestructionGUI extends Screen {
                 this.onClose();
             }
             else
-                Minecraft.getInstance().player.displayClientMessage(MessageTranslation.DESTRCUT_TOO_LARGE.componentTranslation(Config.GADGETS.GADGET_DESTRUCTION.destroySize.get()), true);
+                Minecraft.getInstance().player.displayClientMessage(MessageTranslation.DESTRCUT_TOO_LARGE.componentTranslation(BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.destroySize), true);
         }));
 
         this.addRenderableWidget(new Button((x - 30) - 32, y + 65, 60, 20, new TranslatableComponent(GuiMod.getLangKeySingle("cancel")), b -> onClose()));
@@ -79,7 +80,7 @@ public class DestructionGUI extends Screen {
         int x = left.getValueInt() + right.getValueInt();
         int y = up.getValueInt() + down.getValueInt();
         int z = depth.getValueInt();
-        int dim = Config.GADGETS.GADGET_DESTRUCTION.destroySize.get();
+        int dim = BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.destroySize;
 
         return x <= dim && y <= dim && z <= dim;
     }
@@ -115,7 +116,7 @@ public class DestructionGUI extends Screen {
 
         drawCenteredString(matrices, font, this.sizeString, width / 2, (height / 2) + 40, this.isValidSize ? 0x00FF00 : 0xFF2000);
         if (!this.isValidSize) {
-            drawCenteredString(matrices, font, MessageTranslation.DESTRCUT_TOO_LARGE.format(Config.GADGETS.GADGET_DESTRUCTION.destroySize.get()), width / 2, (height / 2) + 50, 0xFF2000);
+            drawCenteredString(matrices, font, MessageTranslation.DESTRCUT_TOO_LARGE.format(BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.destroySize), width / 2, (height / 2) + 50, 0xFF2000);
         }
     }
 
