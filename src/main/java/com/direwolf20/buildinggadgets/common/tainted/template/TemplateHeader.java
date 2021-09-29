@@ -15,8 +15,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
@@ -168,12 +168,12 @@ public final class TemplateHeader {
     private final String name;
     @Nullable
     private final String author;
-    @Nonnull
+    @NotNull
     private final Region boundingBox;
     @Nullable
     private final MaterialList requiredItems;
 
-    private TemplateHeader(@Nullable String name, @Nullable String author, @Nullable MaterialList requiredItems, @Nonnull Region boundingBox) {
+    private TemplateHeader(@Nullable String name, @Nullable String author, @Nullable MaterialList requiredItems, @NotNull Region boundingBox) {
         this.name = name;
         this.author = author;
         this.requiredItems = requiredItems;
@@ -246,7 +246,7 @@ public final class TemplateHeader {
         private String author;
         @Nullable
         private MaterialList requiredItems;
-        @Nonnull
+        @NotNull
         private Region boundingBox;
 
         private Builder(Region boundingBox) {

@@ -8,6 +8,7 @@ import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.ExchangingModes;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketBindTool;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.ITileEntityData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
@@ -169,7 +170,7 @@ public class GadgetExchanger extends AbstractGadget {
                 BaseRenderer.updateInventoryCache();
             } else {
                 if (Screen.hasControlDown()) {
-                    PacketHandler.sendToServer(new PacketBindTool());
+                    PacketBindTool.send();
                 }
             }
         }

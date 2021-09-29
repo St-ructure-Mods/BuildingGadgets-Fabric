@@ -11,6 +11,7 @@ import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.containers.TemplateManagerContainer;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketTemplateManagerTemplateCreated;
 import com.direwolf20.buildinggadgets.common.network.packets.PacketTemplateManagerTemplateCreated;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
@@ -302,9 +303,9 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
     private void pasteTemplateToStack(ITemplateProvider provider, ItemStack stack, Template newTemplate, boolean replaced) {
         stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> {
             provider.setTemplate(key, newTemplate);
-            if (replaced)
-                PacketHandler.sendToServer(new PacketTemplateManagerTemplateCreated(provider.getId(key), be.getBlockPos()));
-            else
+            if (replaced) {
+                PacketTemplateManagerTemplateCreated.send(provider.getId(key), be.getBlockPos());
+            } else
                 provider.requestRemoteUpdate(key);
         });
     }

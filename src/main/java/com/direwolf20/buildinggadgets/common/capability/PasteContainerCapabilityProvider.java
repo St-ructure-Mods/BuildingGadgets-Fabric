@@ -7,8 +7,8 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PasteContainerCapabilityProvider implements ICapabilityProvider {
     private final LazyOptional<PasteContainerItemHandler> itemHandler;
@@ -17,9 +17,9 @@ public class PasteContainerCapabilityProvider implements ICapabilityProvider {
         this.itemHandler = LazyOptional.of(() -> new PasteContainerItemHandler(container));
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY == cap)
             return itemHandler.cast();
         return LazyOptional.empty();

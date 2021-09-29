@@ -13,7 +13,7 @@ import com.google.gson.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Iterator;

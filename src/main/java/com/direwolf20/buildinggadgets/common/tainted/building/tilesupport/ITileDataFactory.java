@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.tainted.building.tilesupport;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries.TileEntityData;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Function creating {@link ITileEntityData} from a given {@link TileEntity}.

@@ -30,7 +30,7 @@ public class PacketHandler {
     public static final ResourceLocation PacketRequestTemplate = BuildingGadgets.id("packet_request_template");
 
     public static void registerMessages() {
-        ServerPlayNetworking.registerGlobalReceiver(PacketAnchor, new PacketAnchorHandler());
+        ServerPlayNetworking.registerGlobalReceiver(PacketAnchor, new PacketAnchor());
         ServerPlayNetworking.registerGlobalReceiver(PacketBindTool, new PacketBindTool());
         ServerPlayNetworking.registerGlobalReceiver(PacketToggleFuzzy, new PacketToggleFuzzy());
         ServerPlayNetworking.registerGlobalReceiver(PacketToggleFluidOnly, new PacketToggleFluidOnly());

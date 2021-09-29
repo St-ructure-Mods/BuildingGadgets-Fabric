@@ -71,7 +71,7 @@ public class ConstructionBakedModel implements BakedModel {
     }
 
 //    @Override
-//    public TextureAtlasSprite getParticleTexture(@Nonnull IModelData data) {
+//    public TextureAtlasSprite getParticleTexture(@NotNull IModelData data) {
 //        return this.getBakedModel().getParticleTexture(data);
 //    }
 

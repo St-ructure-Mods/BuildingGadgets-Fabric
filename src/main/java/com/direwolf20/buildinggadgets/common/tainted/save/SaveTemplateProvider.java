@@ -2,10 +2,13 @@ package com.direwolf20.buildinggadgets.common.tainted.save;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.packets.PacketRequestTemplate;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.Target;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.bidirection.PacketRequestTemplate;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.bidirection.SplitPacketUpdateTemplate;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
 import org.apache.logging.log4j.util.TriConsumer;
 
@@ -51,7 +54,10 @@ public final class SaveTemplateProvider implements ITemplateProvider {
         UUID id = getId(key);
         Template template = getSave().getTemplate(id);
         notifyListeners(key, template, l -> l::onTemplateUpdateSend);
-        PacketHandler.getSplitManager().send(new SplitPacketUpdateTemplate(id, template), PacketDistributor.ALL.noArg());
+
+        // TODO: Get all players in world to send packet to
+        SplitPacketUpdateTemplate.sendToClient(id, template, null);
+
         return true;
     }
 
@@ -71,21 +77,21 @@ public final class SaveTemplateProvider implements ITemplateProvider {
     }
 
     public boolean requestRemoteUpdate(ITemplateKey key, ServerPlayer playerEntity) {
-        return requestRemoteUpdate(key, PacketDistributor.PLAYER.with(() -> playerEntity));
+        return requestRemoteUpdate(key, new Target(PacketFlow.CLIENTBOUND, playerEntity));
     }
 
     @Override
-    public boolean requestRemoteUpdate(ITemplateKey key, PacketDistributor.PacketTarget target) {
+    public boolean requestRemoteUpdate(ITemplateKey key, Target target) {
         UUID id = getId(key);
         Template template = getSave().getTemplate(id);
-        PacketHandler.getSplitManager().send(new SplitPacketUpdateTemplate(id, template), target);
+        SplitPacketUpdateTemplate.sendToTarget(target, id, template);
         return true;
     }
 
     @Override
-    public boolean requestUpdate(ITemplateKey key, PacketDistributor.PacketTarget target) {
+    public boolean requestUpdate(ITemplateKey key, Target target) {
         UUID id = getId(key);
-        PacketHandler.HANDLER.send(target, new PacketRequestTemplate(id));
+        PacketRequestTemplate.sendToTarget(target, id);
         return true;
     }
 

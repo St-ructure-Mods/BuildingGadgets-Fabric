@@ -7,8 +7,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -71,7 +71,7 @@ public class ConnectedSurface implements Iterable<BlockPos> {
      *
      * @implNote Uses a 8-way adjacent flood fill algorithm with Breadth-First Search to identify blocks with a valid path.
      */
-    @Nonnull
+    @NotNull
     @Override
     public Iterator<BlockPos> iterator() {
         BlockState selectedBlock = getReferenceFor(searchingCenter);

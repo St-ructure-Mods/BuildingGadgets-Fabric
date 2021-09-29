@@ -137,9 +137,9 @@ public class ClientProxy {
                 return null;
             }
 
-            @Nonnull
+            @NotNull
             @Override
-            public IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
+            public IModelData getModelData(@NotNull BlockAndTintGetter world, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull IModelData tileData) {
                 return tileData;
             }
         };
@@ -193,9 +193,9 @@ public class ClientProxy {
                 return null;
             }
 
-            @Nonnull
+            @NotNull
             @Override
-            public IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
+            public IModelData getModelData(@NotNull BlockAndTintGetter world, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull IModelData tileData) {
                 return tileData;
             }
         };

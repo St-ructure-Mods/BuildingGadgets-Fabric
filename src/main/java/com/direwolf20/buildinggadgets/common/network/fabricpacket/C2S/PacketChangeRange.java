@@ -6,7 +6,6 @@ import com.direwolf20.buildinggadgets.common.items.GadgetDestruction;
 import com.direwolf20.buildinggadgets.common.items.GadgetExchanger;
 import com.direwolf20.buildinggadgets.common.network.fabricpacket.PacketHandler;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -19,6 +18,10 @@ import net.minecraft.world.item.ItemStack;
 
 public class PacketChangeRange implements ServerPlayNetworking.PlayChannelHandler {
 
+    public static void send() {
+        send(-1);
+    }
+
     public static void send(int range) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         buf.writeInt(range);
@@ -28,16 +31,19 @@ public class PacketChangeRange implements ServerPlayNetworking.PlayChannelHandle
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         int range = buf.readInt();
+
         server.execute(() -> {
             ItemStack stack = AbstractGadget.getGadget(player);
-            if (range >= 0)
+
+            if (range >= 0) {
                 GadgetUtils.setToolRange(stack, range);
-            else if (stack.getItem() instanceof GadgetBuilding)
+            } else if (stack.getItem() instanceof GadgetBuilding) {
                 GadgetBuilding.rangeChange(player, stack);
-            else if (stack.getItem() instanceof GadgetExchanger)
+            } else if (stack.getItem() instanceof GadgetExchanger) {
                 GadgetExchanger.rangeChange(player, stack);
-            else if (stack.getItem() instanceof GadgetDestruction)
+            } else if (stack.getItem() instanceof GadgetDestruction) {
                 GadgetDestruction.switchOverlay(player, stack);
+            }
         });
     }
 }

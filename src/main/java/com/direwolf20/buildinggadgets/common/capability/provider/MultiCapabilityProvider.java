@@ -6,9 +6,8 @@ import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Universal capability provider that links multiple capability provider to share all of their properties.
@@ -27,9 +26,9 @@ public class MultiCapabilityProvider implements ICapabilityProvider {
         this.childProviders = childProviders;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         for (ICapabilityProvider provider : childProviders) {
             LazyOptional<T> optional = provider.getCapability(cap, side);
             if (optional.isPresent()) return optional;

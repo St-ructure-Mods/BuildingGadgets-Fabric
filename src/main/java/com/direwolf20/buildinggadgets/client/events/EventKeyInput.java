@@ -4,11 +4,10 @@ import com.direwolf20.buildinggadgets.client.KeyBindings;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.client.screen.ModeRadialMenu;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.packets.*;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.*;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -38,19 +37,19 @@ public class EventKeyInput {
         KeyMapping mode = KeyBindings.menuSettings;
         if (!(mc.screen instanceof ModeRadialMenu) && mode.consumeClick() && ((mode.getKeyModifier() == KeyModifier.NONE
                 && KeyModifier.getActiveModifier() == KeyModifier.NONE) || mode.getKeyModifier() != KeyModifier.NONE)) {
-                mc.setScreen(new ModeRadialMenu(tool));
+            mc.setScreen(new ModeRadialMenu(tool));
         } else if (KeyBindings.range.consumeClick()) {
-            PacketHandler.sendToServer(new PacketChangeRange());
+            PacketChangeRange.send();
         } else if (KeyBindings.rotateMirror.consumeClick()) {
-            PacketHandler.sendToServer(new PacketRotateMirror());
+            PacketRotateMirror.send(null);
         } else if (KeyBindings.undo.consumeClick()) {
-            PacketHandler.sendToServer(new PacketUndo());
+            PacketUndo.send();
         } else if (KeyBindings.anchor.consumeClick()) {
-            PacketHandler.sendToServer(new PacketAnchor());
+            PacketAnchor.send();
         } else if (KeyBindings.fuzzy.consumeClick()) {
-            PacketHandler.sendToServer(new PacketToggleFuzzy());
+            PacketToggleFuzzy.send();
         } else if (KeyBindings.connectedArea.consumeClick()) {
-            PacketHandler.sendToServer(new PacketToggleConnectedArea());
+            PacketToggleConnectedArea.send();
         }
     }
 }

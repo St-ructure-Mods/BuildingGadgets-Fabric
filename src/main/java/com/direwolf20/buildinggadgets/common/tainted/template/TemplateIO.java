@@ -14,7 +14,7 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.util.Base64;
 

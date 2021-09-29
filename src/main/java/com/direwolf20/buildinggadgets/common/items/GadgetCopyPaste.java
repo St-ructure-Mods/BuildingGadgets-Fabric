@@ -11,6 +11,7 @@ import com.direwolf20.buildinggadgets.common.commands.OverrideBuildSizeCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketBindTool;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementChecker;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
@@ -325,7 +326,7 @@ public class GadgetCopyPaste extends AbstractGadget {
                 getActivePos(player, stack).ifPresent(pos -> build(stack, world, player, pos));
         } else {
             if (player.isShiftKeyDown() && Screen.hasControlDown() && lookingAtInventory) {
-                PacketHandler.sendToServer(new PacketBindTool());
+                PacketBindTool.send();
                 return InteractionResultHolder.pass(stack);
             }
 

@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
@@ -38,9 +38,9 @@ public final class PlacementTarget {
         return new PlacementTarget(pos, data);
     }
 
-    @Nonnull
+    @NotNull
     private final BlockPos pos;
-    @Nonnull
+    @NotNull
     private final BlockData data;
 
     /**
@@ -49,7 +49,7 @@ public final class PlacementTarget {
      * @param data The {@link BlockData} to be placed
      * @throws NullPointerException if position or data are null
      */
-    public PlacementTarget(@Nonnull BlockPos pos, @Nonnull BlockData data) {
+    public PlacementTarget(@NotNull BlockPos pos, @NotNull BlockData data) {
         this.pos = Objects.requireNonNull(pos);
         this.data = Objects.requireNonNull(data);
     }

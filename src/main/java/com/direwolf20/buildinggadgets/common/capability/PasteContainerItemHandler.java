@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.Mth;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public final class PasteContainerItemHandler implements IItemHandlerModifiable {
     private final ItemStack container;
@@ -18,7 +18,7 @@ public final class PasteContainerItemHandler implements IItemHandlerModifiable {
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         setCount(stack.getCount(), false);
     }
 
@@ -27,16 +27,16 @@ public final class PasteContainerItemHandler implements IItemHandlerModifiable {
         return 1;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getStackInSlot(int slot) {
         int count = getCount();
         return count <= 0 ? ItemStack.EMPTY : new ItemStack(OurItems.CONSTRUCTION_PASTE_ITEM.get(), count);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (stack.isEmpty() || ! isItemValid(slot, stack))
             return stack;
         if (isCreative)
@@ -51,7 +51,7 @@ public final class PasteContainerItemHandler implements IItemHandlerModifiable {
         return stack;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount <= 0)
@@ -76,7 +76,7 @@ public final class PasteContainerItemHandler implements IItemHandlerModifiable {
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
         return stack.getItem() == OurItems.CONSTRUCTION_PASTE_ITEM.get();
     }
 

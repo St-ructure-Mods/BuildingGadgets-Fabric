@@ -7,6 +7,7 @@ import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateKey;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.api.EnvironmentInterface;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -46,19 +47,24 @@ public class PacketRequestTemplate implements ClientPlayNetworking.PlayChannelHa
         ClientPlayNetworking.send(PacketHandler.PacketRequestTemplate, buf);
     }
 
-    //S2C
+    // S2C
     @Override
+    @Environment(EnvType.CLIENT)
     public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
+        UUID id = buf.readUUID();
+
         client.execute(() -> {
-            ClientProxy.CACHE_TEMPLATE_PROVIDER.requestRemoteUpdate(new TemplateKey(buf.readUUID()));
+            ClientProxy.CACHE_TEMPLATE_PROVIDER.requestRemoteUpdate(new TemplateKey(id));
         });
     }
 
-    //C2S
+    // C2S
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
+        UUID id = buf.readUUID();
+
         server.execute(() -> {
-            SaveManager.INSTANCE.getTemplateProvider().requestRemoteUpdate(new TemplateKey(buf.readUUID()));
+            SaveManager.INSTANCE.getTemplateProvider().requestRemoteUpdate(new TemplateKey(id));
         });
     }
 }

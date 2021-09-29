@@ -9,8 +9,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class TemplateKeyProvider implements ICapabilityProvider {
     private final LazyOptional<ITemplateKey> lazyOpt;
@@ -20,9 +20,9 @@ public final class TemplateKeyProvider implements ICapabilityProvider {
         lazyOpt = LazyOptional.of(() -> key);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityTemplate.TEMPLATE_KEY_CAPABILITY)
             return lazyOpt.cast();
         return LazyOptional.empty();

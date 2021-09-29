@@ -11,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class PacketRotateMirror implements ServerPlayNetworking.PlayChannelHandler {
 
@@ -18,11 +19,11 @@ public class PacketRotateMirror implements ServerPlayNetworking.PlayChannelHandl
         ROTATE, MIRROR
     }
 
-    public static void send(Operation operation) {
+    public static void send(@Nullable Operation operation) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         boolean hasOperation = operation != null;
         buf.writeBoolean(hasOperation);
-        if(hasOperation) {
+        if (hasOperation) {
             buf.writeInt(operation.ordinal());
         }
         ClientPlayNetworking.send(PacketHandler.PacketRotateMirror, buf);
@@ -30,16 +31,18 @@ public class PacketRotateMirror implements ServerPlayNetworking.PlayChannelHandl
 
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        server.execute(() -> {
-            boolean hasOperation = buf.readBoolean();
-            Operation operation = null;
-            ItemStack stack = AbstractGadget.getGadget(player);
-            operation = hasOperation ? Operation.values()[buf.readInt()] : (player.isShiftKeyDown() ? Operation.MIRROR : Operation.ROTATE);
+        boolean hasOperation = buf.readBoolean();
+        Operation operation = hasOperation ? buf.readEnum(Operation.class) : (player.isShiftKeyDown() ? Operation.MIRROR : Operation.ROTATE);
 
-            if (operation == Operation.MIRROR) {
-                ((AbstractGadget) stack.getItem()).onMirror(stack, player);
-            } else {
-                ((AbstractGadget) stack.getItem()).onRotate(stack, player);
+        server.execute(() -> {
+            ItemStack stack = AbstractGadget.getGadget(player);
+
+            if (stack.getItem() instanceof AbstractGadget item) {
+                if (operation == Operation.MIRROR) {
+                    item.onMirror(stack, player);
+                } else {
+                    item.onRotate(stack, player);
+                }
             }
         });
     }

@@ -4,7 +4,6 @@ import com.direwolf20.buildinggadgets.client.ClientProxy;
 import com.direwolf20.buildinggadgets.common.network.fabricpacket.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.fabricpacket.Target;
 import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
-import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateIO;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateKey;
@@ -30,24 +29,17 @@ import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
 @EnvironmentInterface(value = EnvType.CLIENT, itf = ClientPlayNetworking.PlayChannelHandler.class)
-public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChannelHandler, ServerPlayNetworking.PlayChannelHandler{
-
-    public UUID id;
-
-    public UUID getId() {
-        return id;
-    }
+public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChannelHandler, ServerPlayNetworking.PlayChannelHandler {
 
     public static void sendToTarget(Target target, UUID id, Template template) {
-        if(target.flow() == PacketFlow.CLIENTBOUND) {
+        if (target.flow() == PacketFlow.CLIENTBOUND) {
             sendToClient(id, template, target.player());
-        }
-        else {
+        } else {
             send(id, template);
         }
     }
 
-    //S2C
+    // S2C
     public static void sendToClient(UUID id, Template template, ServerPlayer player) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         buf.writeUUID(id);
@@ -55,14 +47,13 @@ public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChann
         try {
             TemplateIO.writeTemplate(template, stream);
             buf.writeBytes(stream.toByteArray());
-        }
-        catch (TemplateWriteException e) {
+        } catch (TemplateWriteException e) {
             e.printStackTrace();
         }
         ServerPlayNetworking.send(player, PacketHandler.SplitPacketUpdateTemplate, buf);
     }
 
-        //C2S
+    // C2S
     public static void send(UUID id, Template template) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         buf.writeUUID(id);
@@ -70,8 +61,7 @@ public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChann
         try {
             TemplateIO.writeTemplate(template, stream);
             buf.writeBytes(stream.toByteArray());
-        }
-        catch (TemplateWriteException e) {
+        } catch (TemplateWriteException e) {
             e.printStackTrace();
         }
         ClientPlayNetworking.send(PacketHandler.SplitPacketUpdateTemplate, buf);
@@ -83,27 +73,29 @@ public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChann
         return TemplateIO.readTemplate(new ByteArrayInputStream(bytes), null);
     }
 
-    //S2C
+    // S2C
     @Environment(EnvType.CLIENT)
     @Override
     public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        id = buf.readUUID();
+        UUID id = buf.readUUID();
+
         client.execute(() -> {
             try {
-                ClientProxy.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(getId()), readTemplate(buf));
+                ClientProxy.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), readTemplate(buf));
             } catch (TemplateReadException e) {
                 throw new RuntimeException("Failed to read TemplateItem from buffer!", e);
             }
         });
     }
 
-    //C2S
+    // C2S
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        id = buf.readUUID();
+        UUID id = buf.readUUID();
+
         server.execute(() -> {
             try {
-                SaveManager.INSTANCE.getTemplateProvider().setTemplate(new TemplateKey(getId()), readTemplate(buf));
+                SaveManager.INSTANCE.getTemplateProvider().setTemplate(new TemplateKey(id), readTemplate(buf));
             } catch (TemplateReadException e) {
                 throw new RuntimeException("Failed to read TemplateItem from buffer!", e);
             }

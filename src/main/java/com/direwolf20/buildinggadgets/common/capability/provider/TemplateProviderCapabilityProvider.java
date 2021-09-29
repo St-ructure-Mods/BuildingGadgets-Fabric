@@ -7,8 +7,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class TemplateProviderCapabilityProvider implements ICapabilityProvider {
     private final LazyOptional<ITemplateProvider> opt;
@@ -17,9 +17,9 @@ public final class TemplateProviderCapabilityProvider implements ICapabilityProv
         this.opt = LazyOptional.of(() -> provider);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY)
             return opt.cast();
         return LazyOptional.empty();

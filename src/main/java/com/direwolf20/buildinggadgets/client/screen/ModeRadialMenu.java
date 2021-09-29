@@ -35,7 +35,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
@@ -90,28 +89,32 @@ public class ModeRadialMenu extends Screen {
 
         if (isDestruction) {
             addRenderableWidget(new PositionedIconActionable(RadialTranslation.DESTRUCTION_OVERLAY, "destroy_overlay", right, send -> {
-                if (send)
-                    PacketHandler.sendToServer(new PacketChangeRange());
+                if (send) {
+                    PacketChangeRange.send();
+                }
 
                 return GadgetDestruction.getOverlay(getGadget());
             }));
 
             addRenderableWidget(new PositionedIconActionable(RadialTranslation.FLUID_ONLY, "fluid_only", right, send -> {
-                if (send)
-                    PacketHandler.sendToServer(new PacketToggleFluidOnly());
+                if (send) {
+                    PacketToggleFluidOnly.send();
+                }
 
                 return GadgetDestruction.getIsFluidOnly(getGadget());
             }));
         } else {
             addRenderableWidget(new PositionedIconActionable(RadialTranslation.ROTATE, "rotate", left, false, send -> {
-                if (send)
+                if (send) {
                     PacketRotateMirror.send(PacketRotateMirror.Operation.ROTATE);
+                }
 
                 return false;
             }));
             addRenderableWidget(new PositionedIconActionable(RadialTranslation.MIRROR, "mirror", left, false, send -> {
-                if (send)
+                if (send) {
                     PacketRotateMirror.send(PacketRotateMirror.Operation.MIRROR);
+                }
 
                 return false;
             }));
@@ -193,7 +196,7 @@ public class ModeRadialMenu extends Screen {
         }
         addRenderableWidget(new PositionedIconActionable(RadialTranslation.ANCHOR, "anchor", left, send -> {
             if (send)
-                PacketAnchorHandler.send();
+                PacketAnchor.send();
 
             ItemStack stack = getGadget();
             if (stack.getItem() instanceof GadgetCopyPaste || stack.getItem() instanceof GadgetDestruction)

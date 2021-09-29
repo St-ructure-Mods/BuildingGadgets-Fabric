@@ -11,8 +11,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class NBTTileEntityData implements ITileEntityData {
@@ -21,7 +21,7 @@ public class NBTTileEntityData implements ITileEntityData {
         be.save(nbt);
         return new NBTTileEntityData(nbt);
     }
-    @Nonnull
+    @NotNull
     private final CompoundTag nbt;
     @Nullable
     private final MaterialList requiredMaterials;

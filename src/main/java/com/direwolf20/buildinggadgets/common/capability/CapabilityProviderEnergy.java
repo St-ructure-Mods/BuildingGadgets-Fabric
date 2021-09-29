@@ -7,8 +7,8 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.function.IntSupplier;
 
 public class CapabilityProviderEnergy implements ICapabilityProvider {
@@ -20,9 +20,9 @@ public class CapabilityProviderEnergy implements ICapabilityProvider {
         this.energyCapability = LazyOptional.of(() -> energyItem);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         return cap == CapabilityEnergy.ENERGY ? energyCapability.cast() : LazyOptional.empty();
     }
 

@@ -10,8 +10,8 @@ import com.google.common.graph.MutableGraph;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public final class TopologicalRegistryBuilder<T> {
@@ -130,17 +130,17 @@ public final class TopologicalRegistryBuilder<T> {
     }
 
     private static final class ValueObject<T> implements Comparable<ValueObject<?>> {
-        @Nonnull
+        @NotNull
         private final ResourceLocation key;
         @Nullable
         private T value;
 
-        private ValueObject(@Nonnull ResourceLocation key, @Nullable T value) {
+        private ValueObject(@NotNull ResourceLocation key, @Nullable T value) {
             this.key = key;
             this.value = value;
         }
 
-        @Nonnull
+        @NotNull
         private ResourceLocation getKey() {
             return key;
         }
@@ -150,7 +150,7 @@ public final class TopologicalRegistryBuilder<T> {
             return value;
         }
 
-        public void setValue(@Nonnull T value) {
+        public void setValue(@NotNull T value) {
             this.value = Objects.requireNonNull(value);
         }
 
