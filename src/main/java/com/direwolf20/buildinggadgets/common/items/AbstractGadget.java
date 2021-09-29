@@ -1,14 +1,14 @@
 package com.direwolf20.buildinggadgets.common.items;
 
 
+import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
+import com.direwolf20.buildinggadgets.common.items.modes.*;
+import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.concurrent.UndoScheduler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
-import com.direwolf20.buildinggadgets.common.items.modes.*;
-import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo;
 import com.direwolf20.buildinggadgets.common.tainted.save.UndoWorldSave;
@@ -22,23 +22,22 @@ import com.google.common.collect.ImmutableSortedSet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.tag.TagFactory;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tags.Tag;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.base.SimpleBatteryItem;
 
@@ -64,8 +63,19 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
         saveSupplier = SaveManager.INSTANCE.registerUndoSave(w -> SaveManager.getUndoSave(w, undoLengthSupplier, undoName));
     }
 
-    public abstract int getEnergyMax();
-    public abstract int getEnergyCost(ItemStack tool);
+    public abstract long getEnergyCapacity();
+
+    public abstract long getEnergyCost(ItemStack tool);
+
+    @Override
+    public long getEnergyMaxInput() {
+        return 10000;
+    }
+
+    @Override
+    public long getEnergyMaxOutput() {
+        return 0;
+    }
 
     public Tag.Named<Block> getWhiteList() {
         return whiteList;
@@ -90,11 +100,12 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         super.fillItemCategory(group, items);
-        if( !allowdedIn(group) )
+        if (!allowdedIn(group)) {
             return;
+        }
 
         ItemStack charged = new ItemStack(this);
-        charged.getOrCreateTag().putDouble(NBTKeys.ENERGY, this.getEnergyMax());
+        charged.getOrCreateTag().putDouble(NBTKeys.ENERGY, this.getEnergyCapacity());
         items.add(charged);
     }
 
@@ -104,8 +115,9 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     }
 
     public boolean isAllowedBlock(Block block) {
-        if (getWhiteList().getValues().isEmpty())
-            return ! getBlackList().contains(block);
+        if (getWhiteList().getValues().isEmpty()) {
+            return !getBlackList().contains(block);
+        }
         return getWhiteList().contains(block);
     }
 
@@ -121,33 +133,37 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     }
 
     public boolean canUse(ItemStack tool, Player player) {
-        if (player.isCreative() || getEnergyMax() == 0)
+        if (player.isCreative() || this.getEnergyCapacity() == 0) {
             return true;
+        }
 
         return getEnergyCost(tool) <= SimpleBatteryItem.getStoredEnergyUnchecked(tool);
     }
 
     public void applyDamage(ItemStack tool, ServerPlayer player) {
-        if (player.isCreative() || getEnergyMax() == 0)
+        if (player.isCreative() || this.getEnergyCapacity() == 0) {
             return;
+        }
 
         ((AbstractGadget) tool.getItem()).tryUseEnergy(tool, getEnergyCost(tool));
     }
 
     protected void addEnergyInformation(List<Component> tooltip, ItemStack stack) {
-        if( getEnergyMax() == 0 )
+        if (this.getEnergyCapacity() == 0) {
             return;
+        }
 
-        if(stack.getItem() instanceof SimpleBatteryItem) {
+        if (stack.getItem() instanceof SimpleBatteryItem) {
             tooltip.add(TooltipTranslation.GADGET_ENERGY
-                                .componentTranslation(withSuffix((int) getStoredEnergy(stack)), withSuffix((int) getEnergyCapacity()))
-                                .setStyle(Styles.GRAY));
+                    .componentTranslation(withSuffix((int) getStoredEnergy(stack)), withSuffix((int) getEnergyCapacity()))
+                    .setStyle(Styles.GRAY));
         }
     }
 
     public final void onRotate(ItemStack stack, Player player) {
-        if (performRotate(stack, player))
+        if (performRotate(stack, player)) {
             player.displayClientMessage(MessageTranslation.ROTATED.componentTranslation().setStyle(Styles.AQUA), true);
+        }
     }
 
     protected boolean performRotate(ItemStack stack, Player player) {
@@ -155,8 +171,9 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     }
 
     public final void onMirror(ItemStack stack, Player player) {
-        if (performMirror(stack, player))
+        if (performMirror(stack, player)) {
             player.displayClientMessage(MessageTranslation.MIRRORED.componentTranslation().setStyle(Styles.AQUA), true);
+        }
     }
 
     protected boolean performMirror(ItemStack stack, Player player) {
@@ -166,8 +183,9 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     public final void onAnchor(ItemStack stack, Player player) {
         if (getAnchor(stack) == null) {
             BlockHitResult lookingAt = VectorHelper.getLookingAt(player, stack);
-            if ((player.level.isEmptyBlock(lookingAt.getBlockPos())))
+            if ((player.level.isEmptyBlock(lookingAt.getBlockPos()))) {
                 return;
+            }
             onAnchorSet(stack, player, lookingAt);
             player.displayClientMessage(MessageTranslation.ANCHOR_SET.componentTranslation().setStyle(Styles.AQUA), true);
         } else {
@@ -219,14 +237,14 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
 
     public static void addInformationRayTraceFluid(List<Component> tooltip, ItemStack stack) {
         tooltip.add(TooltipTranslation.GADGET_RAYTRACE_FLUID
-                            .componentTranslation(String.valueOf(shouldRayTraceFluid(stack)))
-                            .setStyle(Styles.BLUE));
+                .componentTranslation(String.valueOf(shouldRayTraceFluid(stack)))
+                .setStyle(Styles.BLUE));
     }
 
     //this should only be called Server-Side!!!
     public UUID getUUID(ItemStack stack) {
         CompoundTag nbt = stack.getOrCreateTag();
-        if (! nbt.hasUUID(NBTKeys.GADGET_UUID)) {
+        if (!nbt.hasUUID(NBTKeys.GADGET_UUID)) {
             UUID newId = getUndoSave().getFreeUUID();
             nbt.putUUID(NBTKeys.GADGET_UUID, newId);
             return newId;
@@ -236,13 +254,15 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
 
     // Todo: tweak and fix.
     public static int getRangeInBlocks(int range, AbstractMode mode) {
-        if( mode instanceof StairMode ||
+        if (mode instanceof StairMode ||
                 mode instanceof VerticalColumnMode ||
-                mode instanceof HorizontalColumnMode)
+                mode instanceof HorizontalColumnMode) {
             return range;
+        }
 
-        if( mode instanceof GridMode)
-            return range < 7 ? 9 : range < 13 ? 11 * 11: 19 * 19;
+        if (mode instanceof GridMode) {
+            return range < 7 ? 9 : range < 13 ? 11 * 11 : 19 * 19;
+        }
 
         return range == 1 ? 1 : (range + 1) * (range + 1);
     }
@@ -264,9 +284,9 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
         if (undoOptional.isPresent()) {
             Undo undo = undoOptional.get();
             IItemIndex index = InventoryHelper.index(stack, player);
-            if (! ForceUnloadedCommand.mayForceUnloadedChunks(player)) {//TODO separate command
+            if (!ForceUnloadedCommand.mayForceUnloadedChunks(player)) {//TODO separate command
                 ImmutableSortedSet<ChunkPos> unloadedChunks = undo.getBoundingBox().getUnloadedChunks(world);
-                if (! unloadedChunks.isEmpty()) {
+                if (!unloadedChunks.isEmpty()) {
                     pushUndo(stack, undo);
                     player.displayClientMessage(MessageTranslation.UNDO_UNLOADED.componentTranslation().setStyle(Styles.RED), true);
                     BuildingGadgets.LOG.error("Player attempted to undo a Region missing {} unloaded chunks. Denied undo!", unloadedChunks.size());
@@ -280,7 +300,8 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
                     .build(world);
 
             UndoScheduler.scheduleUndo(undo, index, buildContext, BuildingGadgets.config.GADGETS.placeSteps);
-        } else
+        } else {
             player.displayClientMessage(MessageTranslation.NOTHING_TO_UNDO.componentTranslation().setStyle(Styles.RED), true);
+        }
     }
 }

@@ -33,6 +33,7 @@ import com.google.common.collect.Multiset;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -44,7 +45,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
@@ -56,6 +56,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.List;
@@ -77,13 +78,13 @@ public class GadgetExchanger extends AbstractGadget {
     }
 
     @Override
-    public int getEnergyMax() {
-        return (int) BuildingGadgets.config.GADGETS.GADGET_EXCHANGER.maxEnergy;
+    public long getEnergyCapacity() {
+        return BuildingGadgets.config.GADGETS.GADGET_EXCHANGER.maxEnergy;
     }
 
     @Override
-    public int getEnergyCost(ItemStack tool) {
-        return (int) BuildingGadgets.config.GADGETS.GADGET_EXCHANGER.energyCost;
+    public long getEnergyCost(ItemStack tool) {
+        return BuildingGadgets.config.GADGETS.GADGET_EXCHANGER.energyCost;
     }
 
     @Override
@@ -101,15 +102,15 @@ public class GadgetExchanger extends AbstractGadget {
         return true;
     }
 
-    @Override
-    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return EnchantmentHelper.getEnchantments(book).containsKey(Enchantments.SILK_TOUCH) || super.isBookEnchantable(stack, book);
-    }
-
-    @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return enchantment == Enchantments.SILK_TOUCH || super.canApplyAtEnchantingTable(stack, enchantment);
-    }
+//    @Override
+//    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+//        return EnchantmentHelper.getEnchantments(book).containsKey(Enchantments.SILK_TOUCH) || super.isBookEnchantable(stack, book);
+//    }
+//
+//    @Override
+//    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+//        return enchantment == Enchantments.SILK_TOUCH || super.canApplyAtEnchantingTable(stack, enchantment);
+//    }
 
     private static void setToolMode(ItemStack tool, ExchangingModes mode) {
         //Store the tool's mode in NBT as a string
@@ -136,16 +137,16 @@ public class GadgetExchanger extends AbstractGadget {
 
         tooltip.add(TooltipTranslation.GADGET_BLOCK
                 .componentTranslation(LangUtil.getFormattedBlockName(getToolBlock(stack).getState()))
-                            .setStyle(Styles.DK_GREEN));
+                .setStyle(Styles.DK_GREEN));
 
         int range = getToolRange(stack);
         tooltip.add(TooltipTranslation.GADGET_RANGE
-                            .componentTranslation(range, getRangeInBlocks(range, mode.getMode()))
-                            .setStyle(Styles.LT_PURPLE));
+                .componentTranslation(range, getRangeInBlocks(range, mode.getMode()))
+                .setStyle(Styles.LT_PURPLE));
 
         tooltip.add(TooltipTranslation.GADGET_FUZZY
-                            .componentTranslation(String.valueOf(getFuzzy(stack)))
-                            .setStyle(Styles.GOLD));
+                .componentTranslation(String.valueOf(getFuzzy(stack)))
+                .setStyle(Styles.GOLD));
 
         addInformationRayTraceFluid(tooltip, stack);
     }
@@ -157,15 +158,15 @@ public class GadgetExchanger extends AbstractGadget {
         if (!world.isClientSide) {
             if (player.isShiftKeyDown()) {
                 InteractionResultHolder<Block> result = selectBlock(itemstack, player);
-                if( !result.getResult().consumesAction() ) {
-                    player.displayClientMessage(MessageTranslation.INVALID_BLOCK.componentTranslation(result.getObject().getRegistryName()).setStyle(Styles.AQUA), true);
+                if (!result.getResult().consumesAction()) {
+                    player.displayClientMessage(MessageTranslation.INVALID_BLOCK.componentTranslation(Registry.BLOCK.getKey(result.getObject())).setStyle(Styles.AQUA), true);
                     return super.use(world, player, hand);
                 }
             } else if (player instanceof ServerPlayer) {
                 exchange((ServerPlayer) player, itemstack);
             }
         } else {
-            if (! player.isShiftKeyDown()) {
+            if (!player.isShiftKeyDown()) {
                 BaseRenderer.updateInventoryCache();
             } else {
                 if (Screen.hasControlDown()) {
@@ -258,17 +259,17 @@ public class GadgetExchanger extends AbstractGadget {
         MaterialList requiredItems = setBlock.getRequiredItems(buildContext, null, pos);
         MatchResult match = index.tryMatch(requiredItems);
         boolean useConstructionPaste = false;
-        if (! match.isSuccess()) {
+        if (!match.isSuccess()) {
             if (setBlock.getState().hasBlockEntity())
                 return;
             match = index.tryMatch(InventoryHelper.PASTE_LIST);
-            if (! match.isSuccess())
+            if (!match.isSuccess())
                 return;
             else
                 useConstructionPaste = true;
         }
 
-        if (! player.mayBuild() || ! world.mayInteract(player, pos))
+        if (!player.mayBuild() || !world.mayInteract(player, pos))
             return;
 
         BlockSnapshot blockSnapshot = BlockSnapshot.create(world.dimension(), world, pos);

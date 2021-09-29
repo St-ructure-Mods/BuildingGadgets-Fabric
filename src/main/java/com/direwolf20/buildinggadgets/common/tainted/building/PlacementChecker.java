@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -21,23 +22,25 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
+import team.reborn.energy.api.EnergyStorage;
 
 import java.util.function.BiPredicate;
 import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 
 /**
  * This class performs all Placement checks required for the Copy-Paste-Gadget. Aka it tests for availability of energy, items and free placement-space.
  * You can extract information about whether the tests succeed, paste was used etc. from the CheckResult.
  */
 public final class PlacementChecker {
-    private final LazyOptional<IEnergyStorage> energyCap;
-    private final ToIntFunction<PlacementTarget> energyFun;
+    private final EnergyStorage energyStorage;
+    private final ToLongFunction<PlacementTarget> energyFun;
     private final IItemIndex index;
     private final boolean firePlaceEvents;
     private final BiPredicate<BuildContext, PlacementTarget> placeCheck;
 
-    public PlacementChecker(LazyOptional<IEnergyStorage> energyCap, ToIntFunction<PlacementTarget> energyFun, IItemIndex index, BiPredicate<BuildContext, PlacementTarget> placeCheck, boolean firePlaceEvents) {
-        this.energyCap = energyCap;
+    public PlacementChecker(EnergyStorage energyStorage, ToLongFunction<PlacementTarget> energyFun, IItemIndex index, BiPredicate<BuildContext, PlacementTarget> placeCheck, boolean firePlaceEvents) {
+        this.energyStorage = energyStorage;
         this.energyFun = energyFun;
         this.index = index;
         this.firePlaceEvents = firePlaceEvents;
@@ -50,7 +53,7 @@ public final class PlacementChecker {
     public CheckResult checkPositionWithResult(BuildContext context, PlacementTarget target, boolean giveBackItems) {
         if (target.getPos().getY() > context.getWorld().getMaxBuildHeight() || target.getPos().getY() < 0 || ! placeCheck.test(context, target))
             return new CheckResult(MatchResult.failure(), ImmutableMultiset.of(), false, false);
-        int energy = energyFun.applyAsInt(target);
+        long energy = energyFun.applyAsLong(target);
         Multiset<IUniqueObject<?>> insertedItems = ImmutableMultiset.of();
         boolean isCreative = context.getPlayer() != null && context.getPlayer().isCreative();
 

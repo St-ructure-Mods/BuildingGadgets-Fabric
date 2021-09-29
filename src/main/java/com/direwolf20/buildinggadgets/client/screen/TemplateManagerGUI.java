@@ -69,6 +69,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerContainer> {
@@ -87,7 +88,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
     private final TemplateManagerTileEntity be;
     private final TemplateManagerContainer container;
-    private final ITemplateProvider templateProvider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.getNullable(getWorld());
+    private final Optional<ITemplateProvider> templateProvider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(getWorld());
 
     // It is so stupid I can't get the key from the template.
     private Template template;
@@ -152,6 +153,10 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
     }
 
     private void validateCache(float partialTicks) {
+        if (templateProvider.isEmpty()) {
+            return;
+        }
+
         // Invalidate the render
         if( container.getSlot(0).getItem().isEmpty() && template != null ) {
             template = null;
@@ -161,7 +166,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
         ITemplateKey key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(container.getSlot(0).getItem());
             // Make sure we're not re-creating the same cache.
-        Template template = templateProvider.getTemplateForKey(key);
+        Template template = templateProvider.get().getTemplateForKey(key);
         if( this.template == template )
             return;
 
@@ -522,7 +527,6 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         return getMinecraft().level;
     }
 
-    @Override
     public Minecraft getMinecraft() {
         return Minecraft.getInstance();
     }

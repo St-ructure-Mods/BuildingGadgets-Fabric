@@ -1,13 +1,10 @@
 package com.direwolf20.buildinggadgets.common.config;
 
-import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
-import java.util.function.IntSupplier;
-
-public class Config implements ConfigData{
+public class Config implements ConfigData {
 
     @ConfigEntry.Category("General")
     @Comment("General mod settings")

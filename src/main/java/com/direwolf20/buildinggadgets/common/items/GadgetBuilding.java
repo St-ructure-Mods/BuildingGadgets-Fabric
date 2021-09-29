@@ -65,13 +65,13 @@ public class GadgetBuilding extends AbstractGadget {
     }
 
     @Override
-    public int getEnergyMax() {
-        return (int) BuildingGadgets.config.GADGETS.GADGET_BUILDING.maxEnergy;
+    public long getEnergyCapacity() {
+        return BuildingGadgets.config.GADGETS.GADGET_BUILDING.maxEnergy;
     }
 
     @Override
-    public int getEnergyCost(ItemStack tool) {
-        return (int) BuildingGadgets.config.GADGETS.GADGET_BUILDING.energyCost;
+    public long getEnergyCost(ItemStack tool) {
+        return BuildingGadgets.config.GADGETS.GADGET_BUILDING.energyCost;
     }
 
     @Override
@@ -284,20 +284,5 @@ public class GadgetBuilding extends AbstractGadget {
     public boolean performMirror(ItemStack stack, Player player) {
         GadgetUtils.rotateOrMirrorToolBlock(stack, player, PacketRotateMirror.Operation.MIRROR);
         return true;
-    }
-
-    @Override
-    public long getEnergyCapacity() {
-        return 0;
-    }
-
-    @Override
-    public long getEnergyMaxInput() {
-        return 0;
-    }
-
-    @Override
-    public long getEnergyMaxOutput() {
-        return 0;
     }
 }

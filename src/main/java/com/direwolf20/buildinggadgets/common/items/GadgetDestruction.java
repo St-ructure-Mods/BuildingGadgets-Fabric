@@ -55,13 +55,13 @@ public class GadgetDestruction extends AbstractGadget {
     }
 
     @Override
-    public int getEnergyMax() {
-        return (int) BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.maxEnergy;
+    public long getEnergyCapacity() {
+        return  BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.maxEnergy;
     }
 
     @Override
-    public int getEnergyCost(ItemStack tool) {
-        return (int) (BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.energyCost * getCostMultiplier(tool));
+    public long getEnergyCost(ItemStack tool) {
+        return BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.energyCost * getCostMultiplier(tool);
     }
 
     @Override
