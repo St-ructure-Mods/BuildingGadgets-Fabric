@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.client.renderer.DireBufferBuilder;
 import com.direwolf20.buildinggadgets.client.renderer.DireVertexBuffer;
 import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
@@ -132,7 +132,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
 
         // Check the template cap from the world
         // Fetch the template key (because for some reason this is it's own cap)
-        world.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).ifPresent((ITemplateProvider provider) -> heldItem.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey key) -> {
+        BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(world).ifPresent((ITemplateProvider provider) -> BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(heldItem).ifPresent((ITemplateKey key) -> {
             // Finally get the data from the render.
             GadgetCopyPaste.getActivePos(player, heldItem).ifPresent(startPos -> {
                 MockDelegationWorld fakeWorld = new MockDelegationWorld(world);

@@ -1,21 +1,18 @@
 package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
-import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
-import com.direwolf20.buildinggadgets.common.capability.provider.TemplateKeyProvider;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class TemplateItem extends Item {
@@ -46,11 +43,11 @@ public class TemplateItem extends Item {
 
     public static ItemStack getTemplateItem(Player player) {
         ItemStack mainhand = player.getMainHandItem();
-        if (mainhand.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).isPresent())
+        if (BGComponent.TEMPLATE_KEY_COMPONENT.isProvidedBy(mainhand))
             return mainhand;
 
         ItemStack offhand = player.getOffhandItem();
-        if (offhand.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).isPresent())
+        if (BGComponent.TEMPLATE_KEY_COMPONENT.isProvidedBy(offhand))
             return offhand;
 
         return ItemStack.EMPTY;

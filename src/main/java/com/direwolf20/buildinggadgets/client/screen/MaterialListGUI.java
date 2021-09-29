@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.client.screen;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
@@ -27,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdateListener {
@@ -161,9 +161,9 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
         if( Minecraft.getInstance().level == null || Minecraft.getInstance().player == null )
             return null;
 
-        LazyOptional<ITemplateProvider> providerCap = getMinecraft().level.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY);
+        Optional<ITemplateProvider> providerCap = BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(minecraft.level);
         if (providerCap.isPresent()) {
-            LazyOptional<ITemplateKey> keyCap = item.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY);
+            Optional<ITemplateKey> keyCap = BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(item);
             ITemplateProvider provider = providerCap.orElseThrow(RuntimeException::new);
             if (keyCap.isPresent()) {
                 provider.registerUpdateListener(this);
@@ -188,7 +188,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
 
     @Override
     public void onTemplateUpdate(ITemplateProvider provider, ITemplateKey key, Template template) {
-        item.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey itemKey) -> {
+        BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(item).ifPresent((ITemplateKey itemKey) -> {
             UUID keyId = provider.getId(key);
             UUID itemId = provider.getId(itemKey);
             if (keyId.equals(itemId)) {

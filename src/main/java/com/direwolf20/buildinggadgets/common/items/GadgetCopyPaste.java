@@ -4,11 +4,10 @@ import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.client.renders.CopyPasteRender;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
-import com.direwolf20.buildinggadgets.common.capability.provider.TemplateKeyProvider;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideBuildSizeCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementChecker;
@@ -27,7 +26,6 @@ import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateHeader;
 import com.direwolf20.buildinggadgets.common.util.Additions;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
-import com.direwolf20.buildinggadgets.common.util.exceptions.CapabilityNotPresentException;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.*;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
@@ -60,12 +58,11 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -138,15 +135,9 @@ public class GadgetCopyPaste extends AbstractGadget {
     }
 
     @Override
-    protected void addCapabilityProviders(Builder<ICapabilityProvider> providerBuilder, ItemStack stack, @Nullable CompoundTag tag) {
-        super.addCapabilityProviders(providerBuilder, stack, tag);
-        providerBuilder.add(new TemplateKeyProvider(stack));
-    }
-
-    @Override
     public boolean performRotate(ItemStack stack, Player player) {
-        return player.level.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).map(provider ->
-                stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).map(key -> {
+        return BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).map(provider ->
+                BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).map(key -> {
                     Template template = provider.getTemplateForKey(key);
                     provider.setTemplate(key, template.rotate(Rotation.CLOCKWISE_90));
                     provider.requestRemoteUpdate(key, PacketDistributor.PLAYER.with(() -> (ServerPlayer) player));
@@ -157,8 +148,8 @@ public class GadgetCopyPaste extends AbstractGadget {
 
     @Override
     public boolean performMirror(ItemStack stack, Player player) {
-        return player.level.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).map(provider ->
-                stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).map(key -> {
+        return BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).map(provider ->
+                BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).map(key -> {
                     Template template = provider.getTemplateForKey(key);
                     provider.setTemplate(key, template.mirror(player.getDirection().getAxis()));
                     provider.requestRemoteUpdate(key, PacketDistributor.PLAYER.with(() -> (ServerPlayer) player));
@@ -407,14 +398,14 @@ public class GadgetCopyPaste extends AbstractGadget {
     private void onCopyFinished(Template newTemplate, ItemStack stack, Player player) {
         if (! Additions.sizeInvalid(player, newTemplate.getHeader().getBoundingBox()))
             sendMessage(stack, player, MessageTranslation.AREA_COPIED, Styles.DK_GREEN);
-        ITemplateKey key = stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).orElseThrow(CapabilityNotPresentException::new);
+        ITemplateKey key = BGComponent.TEMPLATE_KEY_COMPONENT.get(stack);
         SaveManager.INSTANCE.getTemplateProvider().setTemplate(key, newTemplate);
         SaveManager.INSTANCE.getTemplateProvider().requestRemoteUpdate(key, (ServerPlayer) player);
     }
 
     private void build(ItemStack stack, Level world, Player player, BlockPos pos) {
-        world.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).ifPresent((ITemplateProvider provider) -> {
-            stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey key) -> {
+        BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(world).ifPresent((ITemplateProvider provider) -> {
+            BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent((ITemplateKey key) -> {
                 Template template = provider.getTemplateForKey(key);
                 BuildContext buildContext = BuildContext.builder()
                         .stack(stack)
