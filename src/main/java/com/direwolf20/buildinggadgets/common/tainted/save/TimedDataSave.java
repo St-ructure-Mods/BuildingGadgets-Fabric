@@ -5,12 +5,12 @@ import com.direwolf20.buildinggadgets.common.util.helpers.NBTHelper;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMap;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.*;
 import java.util.function.Function;
@@ -92,7 +92,7 @@ public abstract class TimedDataSave<T extends TimedValue> extends SavedData {
         private long lastUpdateTime;
 
         protected TimedValue(CompoundTag nbt) {
-            this(nbt.contains(NBTKeys.WORLD_SAVE_TIME, NBT.TAG_LONG) ? nbt.getLong(NBTKeys.WORLD_SAVE_TIME) : System.currentTimeMillis());
+            this(nbt.contains(NBTKeys.WORLD_SAVE_TIME, NbtType.LONG) ? nbt.getLong(NBTKeys.WORLD_SAVE_TIME) : System.currentTimeMillis());
         }
 
         protected TimedValue(long lastUpdateTime) {

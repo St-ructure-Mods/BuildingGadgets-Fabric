@@ -10,9 +10,9 @@ import com.direwolf20.buildinggadgets.common.util.tools.JsonBiDiSerializer;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
 import com.google.gson.*;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Constants.NBT;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import javax.annotation.Nonnull;
@@ -39,7 +39,7 @@ public final class TemplateHeader {
      * then this will need to be bumped up to reject older, likely broken versions
      */
     public static final String LOWEST_MC_VERSION = "1.14.4";
-    
+
     private static final ComparableVersion COMP_VERSION = new ComparableVersion(VERSION);
     private static final ComparableVersion HIGHEST_MC_COMP = new ComparableVersion(HIGHEST_MC_VERSION);
     private static final ComparableVersion LOWEST_MC_COMP = new ComparableVersion(LOWEST_MC_VERSION);
@@ -124,15 +124,15 @@ public final class TemplateHeader {
     }
 
     public static Builder builderFromNBT(CompoundTag nbt, boolean persisted) {
-        Preconditions.checkArgument(nbt.contains(NBTKeys.KEY_BOUNDS, NBT.TAG_COMPOUND),
+        Preconditions.checkArgument(nbt.contains(NBTKeys.KEY_BOUNDS, NbtType.COMPOUND),
                 "Cannot construct a TemplateHeader without '" + NBTKeys.KEY_BOUNDS + "'!");
         Region region = Region.deserializeFrom(nbt.getCompound(NBTKeys.KEY_BOUNDS));
         Builder builder = builder(region);
-        if (nbt.contains(NBTKeys.KEY_NAME, NBT.TAG_STRING))
+        if (nbt.contains(NBTKeys.KEY_NAME, NbtType.STRING))
             builder.name(nbt.getString(NBTKeys.KEY_NAME));
-        if (nbt.contains(NBTKeys.KEY_AUTHOR, NBT.TAG_STRING))
+        if (nbt.contains(NBTKeys.KEY_AUTHOR, NbtType.STRING))
             builder.author(nbt.getString(NBTKeys.KEY_AUTHOR));
-        if (nbt.contains(NBTKeys.KEY_MATERIALS, NBT.TAG_COMPOUND))
+        if (nbt.contains(NBTKeys.KEY_MATERIALS, NbtType.COMPOUND))
             builder.requiredItems(MaterialList.deserialize(nbt.getCompound(NBTKeys.KEY_MATERIALS), persisted));
         return builder;
     }

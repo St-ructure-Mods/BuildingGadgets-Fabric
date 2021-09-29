@@ -10,8 +10,8 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.base.Preconditions;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -69,7 +69,7 @@ public final class SerialisationSupport {
         public ITileEntityData deserialize(CompoundTag tagCompound, boolean persisted) {
             CompoundTag data = tagCompound.getCompound(NBTKeys.KEY_DATA);
             MaterialList materialList = null;
-            if (tagCompound.contains(NBTKeys.KEY_MATERIALS, NBT.TAG_COMPOUND))
+            if (tagCompound.contains(NBTKeys.KEY_MATERIALS, NbtType.COMPOUND))
                 materialList = MaterialList.deserialize(tagCompound.getCompound(NBTKeys.KEY_MATERIALS), persisted);
             return new NBTTileEntityData(data, materialList);
         }

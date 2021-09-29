@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.nbt.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -31,7 +32,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,11 +41,11 @@ import java.util.function.ToIntFunction;
 
 public final class Undo {
     static Undo deserialize(CompoundTag nbt) {
-        Preconditions.checkArgument(nbt.contains(NBTKeys.WORLD_SAVE_DIM, NBT.TAG_STRING)
-                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_ITEMS_SERIALIZER_LIST, NBT.TAG_LIST)
-                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_BLOCK_LIST, NBT.TAG_LIST)
-                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_DATA_LIST, NBT.TAG_LIST)
-                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_DATA_SERIALIZER_LIST, NBT.TAG_LIST));
+        Preconditions.checkArgument(nbt.contains(NBTKeys.WORLD_SAVE_DIM, NbtType.STRING)
+                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_ITEMS_SERIALIZER_LIST, NbtType.LIST)
+                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_BLOCK_LIST, NbtType.LIST)
+                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_DATA_LIST, NbtType.LIST)
+                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_DATA_SERIALIZER_LIST, NbtType.LIST));
         DataDecompressor<ITileDataSerializer> serializerReverseObjectIncrementer = new DataDecompressor<>(
                 (ListTag) nbt.get(NBTKeys.WORLD_SAVE_UNDO_DATA_SERIALIZER_LIST),
                 inbt -> {

@@ -5,6 +5,7 @@ import com.direwolf20.buildinggadgets.common.tainted.Tainted;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -12,7 +13,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-//import net.minecraftforge.common.util.Constants.NBT;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -130,10 +130,10 @@ public class EffectBlockTileEntity extends BlockEntity {
     public void load(CompoundTag nbt) {
         super.load(nbt);
 
-        if (nbt.contains(NBTKeys.GADGET_TICKS, NBT.TAG_INT) &&
-                nbt.contains(NBTKeys.GADGET_MODE, NBT.TAG_INT) &&
-                nbt.contains(NBTKeys.GADGET_SOURCE_BLOCK, NBT.TAG_COMPOUND) &&
-                nbt.contains(NBTKeys.GADGET_REPLACEMENT_BLOCK, NBT.TAG_COMPOUND) &&
+        if (nbt.contains(NBTKeys.GADGET_TICKS, NbtType.INT) &&
+                nbt.contains(NBTKeys.GADGET_MODE, NbtType.INT) &&
+                nbt.contains(NBTKeys.GADGET_SOURCE_BLOCK, NbtType.COMPOUND) &&
+                nbt.contains(NBTKeys.GADGET_REPLACEMENT_BLOCK, NbtType.COMPOUND) &&
                 nbt.contains(NBTKeys.GADGET_USE_PASTE)) {
 
             ticks = nbt.getInt(NBTKeys.GADGET_TICKS);

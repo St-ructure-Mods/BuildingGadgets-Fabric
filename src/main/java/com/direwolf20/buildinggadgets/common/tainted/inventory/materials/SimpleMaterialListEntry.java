@@ -9,11 +9,11 @@ import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.*;
 import com.google.common.collect.Multiset.Entry;
 import com.google.gson.*;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.Comparator;
 import java.util.Objects;
@@ -51,7 +51,7 @@ class SimpleMaterialListEntry implements MaterialListEntry<SimpleMaterialListEnt
                 .thenComparingInt(Entry::getCount);
         @Override
         public SimpleMaterialListEntry readFromNBT(CompoundTag nbt, boolean persisted) {
-            ListTag nbtList = nbt.getList(NBTKeys.KEY_DATA, NBT.TAG_COMPOUND);
+            ListTag nbtList = nbt.getList(NBTKeys.KEY_DATA, NbtType.COMPOUND);
             ImmutableMultiset.Builder<IUniqueObject<?>> builder = ImmutableMultiset.builder();
             for (Tag nbtEntry : nbtList) {
                 CompoundTag compoundEntry = (CompoundTag) nbtEntry;

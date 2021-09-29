@@ -36,6 +36,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSortedSet;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -59,7 +60,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -240,7 +240,7 @@ public class GadgetCopyPaste extends AbstractGadget {
     @Nullable
     public static BlockPos getUpperRegionBound(ItemStack stack) {
         CompoundTag nbt = stack.getOrCreateTag();
-        if (nbt.contains(NBTKeys.GADGET_START_POS, NBT.TAG_COMPOUND))
+        if (nbt.contains(NBTKeys.GADGET_START_POS, NbtType.COMPOUND))
             return NbtUtils.readBlockPos(nbt.getCompound(NBTKeys.GADGET_START_POS));
         return null;
     }
@@ -248,7 +248,7 @@ public class GadgetCopyPaste extends AbstractGadget {
     @Nullable
     public static BlockPos getLowerRegionBound(ItemStack stack) {
         CompoundTag nbt = stack.getOrCreateTag();
-        if (nbt.contains(NBTKeys.GADGET_END_POS, NBT.TAG_COMPOUND))
+        if (nbt.contains(NBTKeys.GADGET_END_POS, NbtType.COMPOUND))
             return NbtUtils.readBlockPos(nbt.getCompound(NBTKeys.GADGET_END_POS));
         return null;
     }
@@ -261,7 +261,7 @@ public class GadgetCopyPaste extends AbstractGadget {
     public static ToolMode getToolMode(ItemStack stack) {
         CompoundTag tagCompound = stack.getOrCreateTag();
         ToolMode mode = ToolMode.COPY;
-        if (! tagCompound.contains(NBTKeys.GADGET_MODE, NBT.TAG_BYTE)) {
+        if (! tagCompound.contains(NBTKeys.GADGET_MODE, NbtType.BYTE)) {
             setToolMode(stack, mode);
             return mode;
         }
