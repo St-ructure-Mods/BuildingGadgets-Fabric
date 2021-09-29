@@ -7,8 +7,10 @@ import com.direwolf20.buildinggadgets.common.network.bidirection.SplitPacketUpda
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.Collections;
@@ -25,6 +27,10 @@ public final class SaveTemplateProvider implements ITemplateProvider {
     public SaveTemplateProvider(Supplier<TemplateSave> save) {
         this.save = save;
         this.updateListeners = Collections.newSetFromMap(new WeakHashMap<>());
+    }
+
+    public SaveTemplateProvider(Level world) {
+        this(TemplateSave::new);
     }
 
     public TemplateSave getSave() {
@@ -111,5 +117,15 @@ public final class SaveTemplateProvider implements ITemplateProvider {
                 BuildingGadgets.LOG.error("Update listener threw an exception!", e);
             }
         }
+    }
+
+    @Override
+    public void readFromNbt(CompoundTag tag) {
+
+    }
+
+    @Override
+    public void writeToNbt(CompoundTag tag) {
+
     }
 }
