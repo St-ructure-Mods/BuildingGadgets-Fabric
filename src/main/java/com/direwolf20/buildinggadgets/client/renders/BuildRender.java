@@ -2,6 +2,10 @@ package com.direwolf20.buildinggadgets.client.renders;
 
 import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
+import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
+import com.direwolf20.buildinggadgets.common.items.GadgetBuilding;
+import com.direwolf20.buildinggadgets.common.items.GadgetExchanger;
+import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
@@ -9,24 +13,20 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.RecordingItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
-import com.direwolf20.buildinggadgets.common.items.GadgetBuilding;
-import com.direwolf20.buildinggadgets.common.items.GadgetExchanger;
-import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.fabricmc.fabric.impl.client.rendering.WorldRenderContextImpl;
-import net.minecraft.world.level.block.state.BlockState;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -45,16 +45,16 @@ public class BuildRender extends BaseRenderer {
     }
 
     @Override
-    public void render(WorldRenderContextImpl evt, Player player, ItemStack heldItem) {
+    public void render(WorldRenderContext evt, Player player, ItemStack heldItem) {
         super.render(evt, player, heldItem);
 
         BlockHitResult lookingAt = VectorHelper.getLookingAt(player, heldItem);
 
-        BlockState state = AIR;
+        BlockState state;
         Optional<List<BlockPos>> anchor = getAnchor(heldItem);
 
         BlockState startBlock = player.level.getBlockState(lookingAt.getBlockPos());
-        if( (player.level.isEmptyBlock(lookingAt.getBlockPos()) && !anchor.isPresent()) || startBlock == DEFAULT_EFFECT_BLOCK )
+        if ((player.level.isEmptyBlock(lookingAt.getBlockPos()) && !anchor.isPresent()) || startBlock == DEFAULT_EFFECT_BLOCK)
             return;
 
         BlockData data = getToolBlock(heldItem);
@@ -90,7 +90,7 @@ public class BuildRender extends BaseRenderer {
         for (BlockPos coordinate : coordinates) {
             matrix.pushPose();
             matrix.translate(coordinate.getX(), coordinate.getY(), coordinate.getZ());
-            if( this.isExchanger ) {
+            if (this.isExchanger) {
                 matrix.translate(-0.0005f, -0.0005f, -0.0005f);
                 matrix.scale(1.001f, 1.001f, 1.001f);
             }
@@ -98,7 +98,7 @@ public class BuildRender extends BaseRenderer {
             // todo: add back from 1.16 port
 //            if (getBuilderWorld().getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) { //Get the block state in the fake world
 //                try {
-                    state = renderBlockState;
+            state = renderBlockState;
 //                } catch (Exception ignored) {}
 //            }
 
@@ -107,7 +107,8 @@ public class BuildRender extends BaseRenderer {
                 dispatcher.renderSingleBlock(
                         state, matrix, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY
                 );
-            } catch (Exception ignored) {} // I'm sure if this is an issue someone will report it
+            } catch (Exception ignored) {
+            } // I'm sure if this is an issue someone will report it
 
             //Move the render position back to where it was
             matrix.popPose();
@@ -131,7 +132,7 @@ public class BuildRender extends BaseRenderer {
 
             for (BlockPos coordinate : coordinates) { //Now run through the UNSORTED list of coords, to show which blocks won't place if you don't have enough of them.
                 boolean renderFree = false;
-                    hasEnergy -= ((AbstractGadget) heldItem.getItem()).getEnergyCost(heldItem);
+                hasEnergy -= ((AbstractGadget) heldItem.getItem()).getEnergyCost(heldItem);
 
                 builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
                 MatchResult match = index.tryMatch(materials);
@@ -140,7 +141,7 @@ public class BuildRender extends BaseRenderer {
                 if (!match.isSuccess() || hasEnergy < 0) {
                     if (hasLinkedInventory && remainingCached > 0) {
                         renderFree = true;
-                        remainingCached --;
+                        remainingCached--;
                     } else {
                         renderMissingBlock(matrix.last().pose(), builder, coordinate);
                     }

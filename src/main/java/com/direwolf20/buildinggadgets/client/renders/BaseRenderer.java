@@ -11,7 +11,7 @@ import com.google.common.collect.Multiset;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.fabricmc.fabric.impl.client.rendering.WorldRenderContextImpl;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -40,7 +40,7 @@ public abstract class BaseRenderer {
 
     private static final RemoteInventoryCache cacheInventory = new RemoteInventoryCache(false);
 
-    public void render(WorldRenderContextImpl evt, Player player, ItemStack heldItem) {
+    public void render(WorldRenderContext evt, Player player, ItemStack heldItem) {
         // This is necessary to prevent issues with not rendering the overlay's at all (when Botania being present) - See #329 for more information
         bindBlocks();
 
@@ -52,7 +52,7 @@ public abstract class BaseRenderer {
         getMc().getTextureManager().bindForSetup(InventoryMenu.BLOCK_ATLAS);
     }
 
-    private static void renderLinkedInventoryOutline(WorldRenderContextImpl evt, ItemStack item, Player player) {
+    private static void renderLinkedInventoryOutline(WorldRenderContext evt, ItemStack item, Player player) {
         Pair<BlockPos, ResourceKey<Level>> dataFromStack = InventoryLinker.getDataFromStack(item);
         if (dataFromStack == null) {
             return;

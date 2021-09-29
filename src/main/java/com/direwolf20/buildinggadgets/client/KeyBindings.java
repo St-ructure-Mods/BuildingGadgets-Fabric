@@ -1,18 +1,13 @@
 package com.direwolf20.buildinggadgets.client;
 
-import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
-import com.direwolf20.buildinggadgets.common.items.TemplateItem;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 
 public class KeyBindings {
 
-    private static final KeyConflictContextGadget CONFLICT_CONTEXT_GADGET = new KeyConflictContextGadget();
     public static KeyMapping menuSettings;
     public static KeyMapping range;
     public static KeyMapping rotateMirror;
@@ -34,28 +29,12 @@ public class KeyBindings {
     }
 
     private static KeyMapping createBinding(String name, int key) {
-        KeyMapping keyBinding = new KeyMapping(getKey(name), CONFLICT_CONTEXT_GADGET, InputConstants.Type.KEYSYM.getOrCreate(key), getKey("category"));
-        ClientRegistry.registerKeyBinding(keyBinding);
+        KeyMapping keyBinding = new KeyMapping(getKey(name), InputConstants.Type.KEYSYM, key, getKey("category"));
+        KeyBindingHelper.registerKeyBinding(keyBinding);
         return keyBinding;
     }
 
     private static String getKey(String name) {
         return String.join(".", "key", Reference.MODID, name);
-    }
-
-    public static class KeyConflictContextGadget implements IKeyConflictContext
-    {
-        @Override
-        public boolean isActive() {
-            Player player = Minecraft.getInstance().player;
-            return !KeyConflictContext.GUI.isActive() && player != null
-                    && (!AbstractGadget.getGadget(player).isEmpty()
-                        || (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TemplateItem || player.getItemInHand(InteractionHand.OFF_HAND).getItem() instanceof TemplateItem));
-        }
-
-        @Override
-        public boolean conflicts(IKeyConflictContext other) {
-            return other == this || other == KeyConflictContext.IN_GAME;
-        }
     }
 }

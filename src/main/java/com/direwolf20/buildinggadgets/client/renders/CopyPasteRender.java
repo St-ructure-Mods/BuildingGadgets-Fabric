@@ -21,8 +21,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.fabricmc.fabric.impl.client.rendering.WorldRenderContextImpl;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -63,7 +62,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
     }
 
     @Override
-    public void render(WorldRenderContextImpl evt, Player player, ItemStack heldItem) {
+    public void render(WorldRenderContext evt, Player player, ItemStack heldItem) {
         // We can completely trust that heldItem isn't empty and that it's a copy paste gadget.
         super.render(evt, player, heldItem);
 
@@ -151,7 +150,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
                     }
                 }
                 UUID id = provider.getId(key);
-                if (! id.equals(lastRendered))
+                if (!id.equals(lastRendered))
                     renderBuffer = null;
                 renderTargets(matrices, cameraView, context, targets, startPos);
                 lastRendered = id;
@@ -233,10 +232,10 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
             stack.popPose(); //Load after loop
         });
 //        try {
-            Vec3 projectedView2 = getMc().gameRenderer.getMainCamera().getPosition();
-            Vec3 startPosView = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
-            projectedView2 = projectedView2.subtract(startPosView);
-            renderBuffer.sort((float) projectedView2.x(), (float) projectedView2.y(), (float) projectedView2.z());
+        Vec3 projectedView2 = getMc().gameRenderer.getMainCamera().getPosition();
+        Vec3 startPosView = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
+        projectedView2 = projectedView2.subtract(startPosView);
+        renderBuffer.sort((float) projectedView2.x(), (float) projectedView2.y(), (float) projectedView2.z());
 //        } catch (Exception ignored) {
 //        }
         matrix.translate(startPos.getX(), startPos.getY(), startPos.getZ());
