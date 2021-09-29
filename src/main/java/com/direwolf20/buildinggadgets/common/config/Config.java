@@ -68,7 +68,7 @@ public class Config implements ConfigData{
 
         @Comment("Energy Cost & Durability of the Copy-Paste Gadget")
         @ConfigEntry.Gui.CollapsibleObject
-        public final CategoryGadgetCopyPaste GADGET_COPY_PASTE = new CategoryGadgetCopyPaste();;
+        public final CategoryGadgetCopyPaste GADGET_COPY_PASTE = new CategoryGadgetCopyPaste();
 
         public static class GadgetConfig {
 

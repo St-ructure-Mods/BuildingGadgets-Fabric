@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 abstract class SubMaterialListEntry implements MaterialListEntry<SubMaterialListEntry> {
     private final ImmutableList<MaterialListEntry<?>> subEntries;
     private final ImmutableList<SimpleMaterialListEntry> constantEntries;
-    private boolean simplified;
+    private final boolean simplified;
 
     public SubMaterialListEntry(ImmutableList<MaterialListEntry<?>> subEntries, ImmutableList<SimpleMaterialListEntry> simpleEntries, boolean simplified) {
         this.subEntries = Objects.requireNonNull(subEntries, "Cannot construct a SubMaterialListEntry without a list of Sub-MaterialEntries!");
@@ -83,7 +83,7 @@ abstract class SubMaterialListEntry implements MaterialListEntry<SubMaterialList
         ImmutableMultiset.Builder<IUniqueObject<?>> builder = ImmutableMultiset.builder();
         for (SimpleMaterialListEntry entry:simpleEntries) {
             builder.addAll(entry.getItems());
-        };
+        }
         return new SimpleMaterialListEntry(builder.build());
     }
 
@@ -107,7 +107,7 @@ abstract class SubMaterialListEntry implements MaterialListEntry<SubMaterialList
                 simpleEntries.add((SimpleMaterialListEntry) subEntry);
             else
                 remainder.add(subEntry);
-        } ;
+        }
     }
 
     protected static abstract class Serializer implements MaterialListEntry.Serializer<SubMaterialListEntry> {

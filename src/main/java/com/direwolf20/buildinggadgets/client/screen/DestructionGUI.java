@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.client.screen;
 import com.direwolf20.buildinggadgets.client.screen.components.GuiSliderInt;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.items.GadgetDestruction;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketDestructionGUI;
+import com.direwolf20.buildinggadgets.common.network.C2S.PacketDestructionGUI;
 import com.direwolf20.buildinggadgets.common.util.lang.GuiTranslation;
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.mojang.blaze3d.vertex.PoseStack;

@@ -38,7 +38,7 @@ public class TemplateManagerTileEntity extends BlockEntity implements ExtendedSc
 
     public static final int SIZE = 2;
 
-    private NonNullList<ItemStack> inventory = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> inventory = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 
     public TemplateManagerTileEntity(BlockPos pos, BlockState state) {
         super(OurTileEntities.TEMPLATE_MANAGER_TILE_ENTITY, pos, state);

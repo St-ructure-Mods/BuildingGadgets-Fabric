@@ -16,8 +16,8 @@ import java.util.*;
 import java.util.function.Function;
 
 public abstract class TimedDataSave<T extends TimedValue> extends SavedData {
-    private Map<UUID, T> idToValue;
-    private Long2ObjectSortedMap<Set<UUID>> timeToId;
+    private final Map<UUID, T> idToValue;
+    private final Long2ObjectSortedMap<Set<UUID>> timeToId;
 
     public TimedDataSave() {
         super();

@@ -1,14 +1,13 @@
 package com.direwolf20.buildinggadgets.client.cache;
 
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.packets.PacketSetRemoteInventoryCache;
+import com.direwolf20.buildinggadgets.common.network.C2S.PacketSetRemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Multiset;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +16,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class RemoteInventoryCache {
-    private boolean isCopyPaste, forceUpdate;
+    private final boolean isCopyPaste;
+    private boolean forceUpdate;
     private Pair<BlockPos, ResourceKey<Level>> locCached;
     private Multiset<UniqueItem> cache;
     private Stopwatch timer;
@@ -51,7 +51,7 @@ public class RemoteInventoryCache {
         if (loc == null)
             cache = null;
         else {
-            PacketHandler.sendToServer(new PacketSetRemoteInventoryCache(loc, isCopyPaste));
+            PacketSetRemoteInventoryCache.send(isCopyPaste, loc.getValue(), loc.getKey());
         }
     }
 

@@ -1,8 +1,8 @@
-package com.direwolf20.buildinggadgets.common.network.fabricpacket.bidirection;
+package com.direwolf20.buildinggadgets.common.network.bidirection;
 
 import com.direwolf20.buildinggadgets.client.ClientProxy;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.Target;
+import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.Target;
 import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateIO;

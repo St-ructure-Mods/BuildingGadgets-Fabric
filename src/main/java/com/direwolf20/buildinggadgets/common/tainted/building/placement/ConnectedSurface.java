@@ -77,8 +77,8 @@ public class ConnectedSurface implements Iterable<BlockPos> {
         BlockState selectedBlock = getReferenceFor(searchingCenter);
 
         return new AbstractIterator<BlockPos>() {
-            private Queue<BlockPos> queue = new LinkedList<>();
-            private Set<BlockPos> searched = new HashSet<>(searchingRegion.size());
+            private final Queue<BlockPos> queue = new LinkedList<>();
+            private final Set<BlockPos> searched = new HashSet<>(searchingRegion.size());
 
             {
                 if (isValid(searchingCenter)) { //The destruction Gadget might be facing Bedrock or something similar - this would not be valid!

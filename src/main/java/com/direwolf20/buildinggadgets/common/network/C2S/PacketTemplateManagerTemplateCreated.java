@@ -1,10 +1,10 @@
-package com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S;
+package com.direwolf20.buildinggadgets.common.network.C2S;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.Target;
+import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.Target;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tileentities.TemplateManagerTileEntity;

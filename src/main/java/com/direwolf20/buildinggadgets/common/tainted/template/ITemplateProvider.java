@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.tainted.template;
 
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.Target;
+import com.direwolf20.buildinggadgets.common.network.Target;
 import dev.onyxstudios.cca.api.v3.component.Component;
 import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
 

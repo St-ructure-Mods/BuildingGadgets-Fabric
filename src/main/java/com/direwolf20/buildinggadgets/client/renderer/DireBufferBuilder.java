@@ -3,21 +3,16 @@ package com.direwolf20.buildinggadgets.client.renderer;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Floats;
-import com.mojang.blaze3d.vertex.DefaultedVertexConsumer;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.BufferVertexConsumer;
+import com.mojang.blaze3d.platform.MemoryTracker;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.IntArrays;
-import com.mojang.blaze3d.platform.MemoryTracker;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.BitSet;
@@ -88,8 +83,8 @@ public class DireBufferBuilder extends DefaultedVertexConsumer implements Buffer
 
         int[] aint = new int[i];
 
-        for (int k = 0; k < aint.length; aint[k] = k++) {
-            ;
+        for (int k = 0; k < aint.length; k++) {
+            aint[k] = k;
         }
 
         IntArrays.mergeSort(aint, (p_227830_1_, p_227830_2_) -> {

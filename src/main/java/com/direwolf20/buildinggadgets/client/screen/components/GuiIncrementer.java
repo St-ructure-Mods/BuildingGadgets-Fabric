@@ -14,17 +14,17 @@ public class GuiIncrementer extends AbstractWidget {
     // this is the width of all components in a line
     public static final int WIDTH = 64;
 
-    private int x;
-    private int y;
-    private int min;
-    private int max;
+    private final int x;
+    private final int y;
+    private final int min;
+    private final int max;
 
     private int value;
-    private IIncrementerChanged onChange;
+    private final IIncrementerChanged onChange;
 
-    private DireButton minusButton;
-    private GuiTextFieldBase field;
-    private DireButton plusButton;
+    private final DireButton minusButton;
+    private final GuiTextFieldBase field;
+    private final DireButton plusButton;
 
     public GuiIncrementer(int x, int y, int min, int max, @Nullable IIncrementerChanged onChange) {
         super(x, y, WIDTH, 20, TextComponent.EMPTY);

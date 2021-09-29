@@ -2,8 +2,7 @@ package com.direwolf20.buildinggadgets.client.screen.components;
 
 import com.direwolf20.buildinggadgets.client.ClientProxy;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketChangeRange;
+import com.direwolf20.buildinggadgets.common.network.C2S.PacketChangeRange;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -24,7 +23,7 @@ public class GuiSliderInt extends AbstractSliderButton {
     private final int colorBackground;
     private final int colorSliderBackground;
     private final int colorSlider;
-    private BiConsumer<GuiSliderInt, Integer> increment;
+    private final BiConsumer<GuiSliderInt, Integer> increment;
     private double value;
     private final double minVal;
     private final double maxVal;
@@ -128,7 +127,7 @@ public class GuiSliderInt extends AbstractSliderButton {
     }
 
     private static class GuiButtonIncrement extends Button {
-        private GuiSliderInt parent;
+        private final GuiSliderInt parent;
 
         public GuiButtonIncrement(GuiSliderInt parent, int x, int y, int width, int height, Component buttonText, OnPress action) {
             super(x, y, width, height, buttonText, action);

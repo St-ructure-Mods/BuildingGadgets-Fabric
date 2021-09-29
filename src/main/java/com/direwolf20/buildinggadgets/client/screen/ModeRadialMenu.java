@@ -13,8 +13,7 @@ import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.items.*;
 import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
 import com.direwolf20.buildinggadgets.common.items.modes.ExchangingModes;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.*;
+import com.direwolf20.buildinggadgets.common.network.C2S.*;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.lang.GuiTranslation;
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
@@ -583,7 +582,7 @@ public class ModeRadialMenu extends Screen {
     }
 
     private static class PositionedIconActionable extends GuiIconActionable {
-        private ScreenPosition position;
+        private final ScreenPosition position;
 
         PositionedIconActionable(RadialTranslation message, String icon, ScreenPosition position, boolean isSelectable, Predicate<Boolean> action) {
             super(0, 0, icon, message.componentTranslation(), isSelectable, action);

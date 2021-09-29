@@ -21,8 +21,8 @@ import java.util.function.IntFunction;
  * @see DataCompressor
  */
 public class DataDecompressor<T> implements IntFunction<T> {
-    private Int2ObjectMap<T> int2ObjectMap;
-    private IntFunction<T> defaultFun;
+    private final Int2ObjectMap<T> int2ObjectMap;
+    private final IntFunction<T> defaultFun;
 
     public DataDecompressor(ListTag list, Function<Tag, T> deserializer, IntFunction<T> defaultFun) {
         int2ObjectMap = new Int2ObjectOpenHashMap<>(list.size());

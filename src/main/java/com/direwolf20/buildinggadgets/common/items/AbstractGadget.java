@@ -50,10 +50,10 @@ import java.util.function.Supplier;
 import static com.direwolf20.buildinggadgets.common.util.GadgetUtils.withSuffix;
 
 public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
-    private BaseRenderer renderer;
+    private final BaseRenderer renderer;
     private final Tag.Named<Block> whiteList;
     private final Tag.Named<Block> blackList;
-    private Supplier<UndoWorldSave> saveSupplier;
+    private final Supplier<UndoWorldSave> saveSupplier;
 
     public AbstractGadget(Properties builder, long undoLengthSupplier, String undoName, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
         super(builder.defaultDurability(0));

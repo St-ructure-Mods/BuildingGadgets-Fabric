@@ -3,8 +3,7 @@ package com.direwolf20.buildinggadgets.client.screen;
 import com.direwolf20.buildinggadgets.client.screen.components.GuiIncrementer;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketCopyCoords;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.C2S.PacketCopyCoords;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.util.lang.GuiTranslation;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -29,11 +28,11 @@ public class CopyGUI extends Screen {
     private int x;
     private int y;
 
-    private ItemStack copyPasteTool;
+    private final ItemStack copyPasteTool;
     private BlockPos startPos;
     private BlockPos endPos;
 
-    private List<GuiIncrementer> fields = new ArrayList<>();
+    private final List<GuiIncrementer> fields = new ArrayList<>();
 
     public CopyGUI(ItemStack tool) {
         super(new TextComponent(""));

@@ -42,7 +42,7 @@ class AndMaterialListEntry extends SubMaterialListEntry {
                 .map(MaterialEntryWrapper::new)
                 .collect(Collectors.toCollection(LinkedList::new));
         return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<IUniqueObject<?>>>() {
-            private Deque<MaterialEntryWrapper> dequeue = list;
+            private final Deque<MaterialEntryWrapper> dequeue = list;
 
             @Override
             protected ImmutableMultiset<IUniqueObject<?>> computeNext() {

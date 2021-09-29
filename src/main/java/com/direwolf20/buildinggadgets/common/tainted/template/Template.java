@@ -55,7 +55,7 @@ public final class Template {
 
     private final ImmutableMap<BlockPos, BlockData> map;
     private TemplateHeader header; //the only modification, this may ever receive, is evaluating the requiredItems!
-    private boolean isNormalized;
+    private final boolean isNormalized;
 
     public Template(ImmutableMap<BlockPos, BlockData> map, TemplateHeader header) {
         this(map, header, false);

@@ -7,8 +7,7 @@ package com.direwolf20.buildinggadgets.client.screen;
 
 import com.direwolf20.buildinggadgets.client.screen.components.GuiIncrementer;
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketPasteGUI;
+import com.direwolf20.buildinggadgets.common.network.C2S.PacketPasteGUI;
 import com.direwolf20.buildinggadgets.common.util.lang.GuiTranslation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -24,8 +23,8 @@ import java.util.List;
 
 public class PasteGUI extends Screen {
     private GuiIncrementer X, Y, Z;
-    private List<GuiIncrementer> fields = new ArrayList<>();
-    private ItemStack copyPasteTool;
+    private final List<GuiIncrementer> fields = new ArrayList<>();
+    private final ItemStack copyPasteTool;
 
     PasteGUI(ItemStack tool) {
         super(new TextComponent(""));

@@ -10,7 +10,6 @@ import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.config.RecipeConstructionPaste.Serializer;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
 import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
@@ -90,7 +89,6 @@ public final class BuildingGadgets implements ModInitializer {
         theMod = (BuildingGadgets) ModLoadingContext.get().getActiveContainer().getMod();
 
         CapabilityTemplate.register();
-        PacketHandler.register();
     }
 
     private void registerRegistries(RegistryEvent.NewRegistry event) {

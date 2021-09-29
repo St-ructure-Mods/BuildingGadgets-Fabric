@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -40,7 +41,7 @@ public class DireButton extends Button {
                 j = 16777120;
             }
 
-            this.drawCenteredString(matrices, fontrenderer, this.getMessage().getString(), this.x + this.width / 2, this.y + (this.height - 7) / 2, j);
+            drawCenteredString(matrices, fontrenderer, this.getMessage().getString(), this.x + this.width / 2, this.y + (this.height - 7) / 2, j);
         }
     }
 }

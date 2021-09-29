@@ -1,7 +1,7 @@
-package com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S;
+package com.direwolf20.buildinggadgets.common.network.C2S;
 
 import com.direwolf20.buildinggadgets.common.items.GadgetDestruction;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;

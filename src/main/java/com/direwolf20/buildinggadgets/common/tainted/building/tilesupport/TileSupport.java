@@ -17,7 +17,7 @@ import java.util.Objects;
 public final class TileSupport {
     private TileSupport() {}
 
-    private static ITileDataFactory DATA_PROVIDER_FACTORY = new DataProviderFactory();
+    private static final ITileDataFactory DATA_PROVIDER_FACTORY = new DataProviderFactory();
 
     /**
      * Returns an adapter for {@link ITileDataFactory} and {@link ITileDataProvider}. If a {@link TileEntity} is an instance of {@link ITileDataProvider} this {@link ITileDataFactory}

@@ -1,4 +1,4 @@
-package com.direwolf20.buildinggadgets.common.network.fabricpacket;
+package com.direwolf20.buildinggadgets.common.network;
 
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,10 +1,9 @@
 package com.direwolf20.buildinggadgets.common.tainted.save;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.Target;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.bidirection.PacketRequestTemplate;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.bidirection.SplitPacketUpdateTemplate;
+import com.direwolf20.buildinggadgets.common.network.Target;
+import com.direwolf20.buildinggadgets.common.network.bidirection.PacketRequestTemplate;
+import com.direwolf20.buildinggadgets.common.network.bidirection.SplitPacketUpdateTemplate;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;

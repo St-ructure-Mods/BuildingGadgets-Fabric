@@ -137,7 +137,7 @@ public final class MaterialList implements Iterable<ImmutableMultiset<IUniqueObj
     }
 
     public static final class SubEntryBuilder {
-        private ImmutableList.Builder<MaterialListEntry<?>> subBuilder;
+        private final ImmutableList.Builder<MaterialListEntry<?>> subBuilder;
         private final Function<ImmutableList<MaterialListEntry<?>>, MaterialListEntry<?>> factory;
 
         private SubEntryBuilder(Function<ImmutableList<MaterialListEntry<?>>, MaterialListEntry<?>> factory) {
@@ -206,7 +206,7 @@ public final class MaterialList implements Iterable<ImmutableMultiset<IUniqueObj
     }
 
     public static final class SimpleBuilder {
-        private ImmutableMultiset.Builder<IUniqueObject<?>> requiredItems;
+        private final ImmutableMultiset.Builder<IUniqueObject<?>> requiredItems;
 
         private SimpleBuilder() {
             requiredItems = ImmutableMultiset.builder();

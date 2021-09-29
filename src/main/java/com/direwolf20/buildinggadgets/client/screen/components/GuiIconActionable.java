@@ -22,16 +22,16 @@ import java.util.function.Predicate;
  * down!
  */
 public class GuiIconActionable extends Button {
-    private Predicate<Boolean> action;
+    private final Predicate<Boolean> action;
     private boolean selected;
-    private boolean isSelectable;
+    private final boolean isSelectable;
 
-    private Color selectedColor     = Color.GREEN;
-    private Color deselectedColor   = new Color(255, 255, 255);
+    private final Color selectedColor     = Color.GREEN;
+    private final Color deselectedColor   = new Color(255, 255, 255);
     private Color activeColor;
 
-    private ResourceLocation selectedTexture;
-    private ResourceLocation deselectedTexture;
+    private final ResourceLocation selectedTexture;
+    private final ResourceLocation deselectedTexture;
 
     public GuiIconActionable(int x, int y, String texture, Component message, boolean isSelectable, Predicate<Boolean> action) {
         super(x, y, 25, 25, message, (b) -> {});

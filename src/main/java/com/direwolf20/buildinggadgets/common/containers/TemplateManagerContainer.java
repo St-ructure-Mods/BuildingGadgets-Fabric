@@ -16,7 +16,7 @@ public class TemplateManagerContainer extends BaseContainer {
     public static final String TEXTURE_LOC_SLOT_TOOL = Reference.MODID + ":gui/slot_copy_paste_gadget";
     public static final String TEXTURE_LOC_SLOT_TEMPLATE = Reference.MODID + ":gui/slot_template";
 
-    private TemplateManagerTileEntity be;
+    private final TemplateManagerTileEntity be;
 
     public TemplateManagerContainer(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
         super(OurContainers.TEMPLATE_MANAGER_CONTAINER_TYPE, windowId);
@@ -83,7 +83,7 @@ public class TemplateManagerContainer extends BaseContainer {
     }
 
     public static class SlotTemplateManager extends Slot {
-        private String backgroundLoc;
+        private final String backgroundLoc;
 
         public SlotTemplateManager(Container container, int index, int xPosition, int yPosition, String backgroundLoc) {
             super(container, index, xPosition, yPosition);

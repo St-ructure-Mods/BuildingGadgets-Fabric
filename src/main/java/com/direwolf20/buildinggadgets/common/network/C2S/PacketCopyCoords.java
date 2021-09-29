@@ -1,7 +1,7 @@
-package com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S;
+package com.direwolf20.buildinggadgets.common.network.C2S;
 
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.direwolf20.buildinggadgets.common.util.lang.Styles;

@@ -50,7 +50,7 @@ import java.util.function.Predicate;
 @MethodsReturnNonnullByDefault
 public class MockDelegationWorld implements LevelAccessor {
     private final LevelAccessor delegate;
-    private Map<BlockPos, BlockInfo> posToBlock;
+    private final Map<BlockPos, BlockInfo> posToBlock;
 
     public MockDelegationWorld(LevelAccessor delegate) {
         this.delegate = Objects.requireNonNull(delegate);

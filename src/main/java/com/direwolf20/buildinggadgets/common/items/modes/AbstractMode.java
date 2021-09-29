@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class AbstractMode {
-    private boolean isExchanging;
+    private final boolean isExchanging;
 
     public AbstractMode(boolean isExchanging) {
         this.isExchanging = isExchanging;

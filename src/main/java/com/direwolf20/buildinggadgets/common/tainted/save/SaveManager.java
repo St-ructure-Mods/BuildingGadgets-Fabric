@@ -15,9 +15,9 @@ import java.util.function.Supplier;
 
 public enum SaveManager {
     INSTANCE;
-    private SaveTemplateProvider templateProvider;
+    private final SaveTemplateProvider templateProvider;
     private TemplateSave templateSave;
-    private List<UndoSaveContainer> undoSaves;
+    private final List<UndoSaveContainer> undoSaves;
 
     SaveManager() {
         this.templateProvider = new SaveTemplateProvider(this::getTemplateSave);

@@ -19,7 +19,7 @@ public final class SerialisationSupport {
     private SerialisationSupport() {}
 
     @ObjectHolder(Reference.TileDataSerializerReference.DUMMY_SERIALIZER)
-    private static ITileDataSerializer DUMMY_TILE_DATA_SERIALIZER = new DummyTileDataSerializer()
+    private static final ITileDataSerializer DUMMY_TILE_DATA_SERIALIZER = new DummyTileDataSerializer()
             .setRegistryName(Reference.TileDataSerializerReference.DUMMY_SERIALIZER_RL);
 
     public static ITileDataSerializer dummyDataSerializer() {
@@ -44,7 +44,7 @@ public final class SerialisationSupport {
     }
 
     @ObjectHolder(Reference.TileDataSerializerReference.NBT_TILE_ENTITY_DATA_SERIALIZER)
-    private static ITileDataSerializer NBT_TILE_DATA_SERIALIZER = new NBTTileEntityDataSerializer()
+    private static final ITileDataSerializer NBT_TILE_DATA_SERIALIZER = new NBTTileEntityDataSerializer()
             .setRegistryName(Reference.TileDataSerializerReference.NBT_TILE_ENTITY_DATA_SERIALIZER_RL);
 
     public static ITileDataSerializer nbtTileDataSerializer() {
@@ -76,7 +76,7 @@ public final class SerialisationSupport {
     }
 
     @ObjectHolder(Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID)
-    private static IUniqueObjectSerializer UNIQUE_ITEM_SERIALIZER = new UniqueItem.Serializer()
+    private static final IUniqueObjectSerializer UNIQUE_ITEM_SERIALIZER = new UniqueItem.Serializer()
             .setRegistryName(Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL);
 
     public static IUniqueObjectSerializer uniqueItemSerializer() {

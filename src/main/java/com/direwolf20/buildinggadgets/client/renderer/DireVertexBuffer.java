@@ -45,7 +45,7 @@ public class DireVertexBuffer implements AutoCloseable {
             });
         } else {
             this.uploadRaw(bufferIn);
-            return CompletableFuture.completedFuture((Void) null);
+            return CompletableFuture.completedFuture(null);
         }
     }
 

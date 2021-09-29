@@ -41,7 +41,7 @@ class ScrollingMaterialList extends EntryList<Entry> {
     private static final int ENTRY_HEIGHT = Math.max(SLOT_SIZE + MARGIN * 2, Minecraft.getInstance().font.lineHeight * 2 + MARGIN * 3);
     private static final int LINE_SIDE_MARGIN = 8;
 
-    private MaterialListGUI gui;
+    private final MaterialListGUI gui;
 
     private SortingModes sortingMode;
     private long lastUpdate;
@@ -112,17 +112,17 @@ class ScrollingMaterialList extends EntryList<Entry> {
 
     static class Entry extends ObjectSelectionList.Entry<Entry> {
 
-        private ScrollingMaterialList parent;
-        private int required;
-        private int available;
+        private final ScrollingMaterialList parent;
+        private final int required;
+        private final int available;
 
-        private ItemStack stack;
+        private final ItemStack stack;
 
-        private String itemName;
-        private String amount;
+        private final String itemName;
+        private final String amount;
 
-        private int widthItemName;
-        private int widthAmount;
+        private final int widthItemName;
+        private final int widthAmount;
 
         public Entry(ScrollingMaterialList parent, IUniqueObject<?> item, int required, int available) {
             this.parent = parent;

@@ -104,9 +104,9 @@ public final class Undo {
         return new Builder();
     }
 
-    private ResourceKey<Level> dim;
-    private Map<BlockPos, BlockInfo> dataMap;
-    private Region boundingBox;
+    private final ResourceKey<Level> dim;
+    private final Map<BlockPos, BlockInfo> dataMap;
+    private final Region boundingBox;
 
     public Undo(ResourceKey<Level> dim, Map<BlockPos, BlockInfo> dataMap, Region boundingBox) {
         this.dim = dim;

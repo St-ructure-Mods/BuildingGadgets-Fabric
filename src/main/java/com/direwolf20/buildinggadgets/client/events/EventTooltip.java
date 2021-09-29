@@ -51,7 +51,7 @@ public class EventTooltip {
             .thenComparing(e -> e.getElement().getObjectRegistryName());
 
     private static final int STACKS_PER_LINE = 8;
-    private static RemoteInventoryCache cache = new RemoteInventoryCache(true);
+    private static final RemoteInventoryCache cache = new RemoteInventoryCache(true);
 
     public static void setCache(Multiset<UniqueItem> cache) {
         EventTooltip.cache.setCache(cache);

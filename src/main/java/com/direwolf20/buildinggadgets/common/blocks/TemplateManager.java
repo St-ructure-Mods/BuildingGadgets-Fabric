@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.Target;
+import com.direwolf20.buildinggadgets.common.network.Target;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;

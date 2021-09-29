@@ -19,8 +19,8 @@ public enum GuiMod {
     DESTRUCTION(GadgetDestruction::getGadget, stack -> () -> new DestructionGUI(stack)),
     MATERIAL_LIST(TemplateItem::getTemplateItem, stack -> () -> new MaterialListGUI(stack));
 
-    private Function<Player, ItemStack> stackReader;
-    private Function<ItemStack, Supplier<? extends Screen>> clientScreenProvider;
+    private final Function<Player, ItemStack> stackReader;
+    private final Function<ItemStack, Supplier<? extends Screen>> clientScreenProvider;
 
     GuiMod(Function<Player, ItemStack> stackReader, Function<ItemStack, Supplier<? extends Screen>> clientScreenProvider) {
         this.stackReader = stackReader;

@@ -14,8 +14,8 @@ import com.google.common.collect.Multisets;
  */
 public final class RecordingItemIndex implements IItemIndex {
     private final IItemIndex other;
-    private Multiset<IUniqueObject<?>> extractedItems;
-    private Multiset<IUniqueObject<?>> insertedItems;
+    private final Multiset<IUniqueObject<?>> extractedItems;
+    private final Multiset<IUniqueObject<?>> insertedItems;
 
     public RecordingItemIndex(IItemIndex other) {
         this.other = other;

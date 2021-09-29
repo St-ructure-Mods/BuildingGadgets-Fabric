@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.client.KeyBindings;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.client.screen.ModeRadialMenu;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.*;
+import com.direwolf20.buildinggadgets.common.network.C2S.*;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;

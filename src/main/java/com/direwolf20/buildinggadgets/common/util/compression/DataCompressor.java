@@ -28,8 +28,8 @@ import java.util.function.ToIntFunction;
  */
 public final class DataCompressor<T> implements ToIntFunction<T> {
     private int cur;
-    private Object2IntMap<T> objectMap;
-    private List<T> reverseMap;
+    private final Object2IntMap<T> objectMap;
+    private final List<T> reverseMap;
 
     public DataCompressor(int expectedSize) {
         cur = 0;

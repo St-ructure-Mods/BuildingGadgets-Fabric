@@ -86,7 +86,7 @@ public interface ImplContainer extends Container {
     }
 
     @Override
-    default void clearContent() { getItems().clear(); };
+    default void clearContent() { getItems().clear(); }
 
     /**
      * Marks the state as dirty.

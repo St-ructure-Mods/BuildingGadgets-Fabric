@@ -38,7 +38,7 @@ public final class PlacementScheduler extends SteppedScheduler {
     private final PlacementChecker checker;
     private boolean lastWasSuccess;
     private Consumer<PlacementScheduler> finisher;
-    private Undo.Builder undoBuilder;
+    private final Undo.Builder undoBuilder;
 
     private PlacementScheduler(IBuildView view, PlacementChecker checker, int steps) {
         super(steps);

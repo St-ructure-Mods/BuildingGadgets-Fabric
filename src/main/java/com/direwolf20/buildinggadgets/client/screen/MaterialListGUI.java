@@ -44,7 +44,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
 
     private int backgroundX;
     private int backgroundY;
-    private ItemStack item;
+    private final ItemStack item;
 
     private String title;
     private int titleLeft;

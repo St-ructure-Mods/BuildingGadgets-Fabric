@@ -19,10 +19,10 @@ import java.util.function.Function;
  * created.
  */
 public final class PositionalBuildView implements IBuildView {
-    private Map<BlockPos, BlockData> map;
+    private final Map<BlockPos, BlockData> map;
     private Region boundingBox;
     private BlockPos translation;
-    private BuildContext context;
+    private final BuildContext context;
 
 
     public static PositionalBuildView createUnsafe(BuildContext context, Map<BlockPos, BlockData> map, Region boundingBox) {

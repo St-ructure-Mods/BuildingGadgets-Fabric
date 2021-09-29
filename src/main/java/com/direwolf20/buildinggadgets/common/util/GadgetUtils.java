@@ -2,13 +2,12 @@ package com.direwolf20.buildinggadgets.common.util;
 
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
-import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.items.GadgetBuilding;
 import com.direwolf20.buildinggadgets.common.items.GadgetExchanger;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
-import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketRotateMirror;
+import com.direwolf20.buildinggadgets.common.network.C2S.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
@@ -240,7 +239,7 @@ public class GadgetUtils {
             return false;
 
         BlockData blockData = getToolBlock(stack);
-        AbstractMode.UseContext context = new AbstractMode.UseContext(player.level, blockData.getState(), startBlock, stack, sideHit, stack.getItem() instanceof GadgetBuilding && GadgetBuilding.shouldPlaceAtop(stack), stack.getItem() instanceof GadgetBuilding ? GadgetBuilding.getConnectedArea(stack) : GadgetExchanger.getConnectedArea(stack));
+        AbstractMode.UseContext context = new AbstractMode.UseContext(player.level, blockData.getState(), startBlock, stack, sideHit, stack.getItem() instanceof GadgetBuilding && GadgetBuilding.shouldPlaceAtop(stack), GadgetBuilding.getConnectedArea(stack));
 
         List<BlockPos> coords = stack.getItem() instanceof GadgetBuilding
                 ? GadgetBuilding.getToolMode(stack).getMode().getCollection(context, player)
