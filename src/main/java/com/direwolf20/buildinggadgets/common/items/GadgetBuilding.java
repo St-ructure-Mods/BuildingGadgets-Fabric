@@ -255,9 +255,9 @@ public class GadgetBuilding extends AbstractGadget {
                 useConstructionPaste = true;
         }
 
-        BlockSnapshot blockSnapshot = BlockSnapshot.create(world.dimension(), world, pos);
-        if (ForgeEventFactory.onBlockPlace(player, blockSnapshot, Direction.UP) || ! world.mayInteract(player, pos) || !this.canUse(heldItem, player) || !setBlock.getState().canSurvive(world, pos))
-            return;
+        //BlockSnapshot blockSnapshot = BlockSnapshot.create(world.dimension(), world, pos);
+        //if (ForgeEventFactory.onBlockPlace(player, blockSnapshot, Direction.UP) || ! world.mayInteract(player, pos) || !this.canUse(heldItem, player) || !setBlock.getState().canSurvive(world, pos))
+        //    return;
 
         this.applyDamage(heldItem, player);
 
@@ -285,5 +285,20 @@ public class GadgetBuilding extends AbstractGadget {
     public boolean performMirror(ItemStack stack, Player player) {
         GadgetUtils.rotateOrMirrorToolBlock(stack, player, PacketRotateMirror.Operation.MIRROR);
         return true;
+    }
+
+    @Override
+    public long getEnergyCapacity() {
+        return 0;
+    }
+
+    @Override
+    public long getEnergyMaxInput() {
+        return 0;
+    }
+
+    @Override
+    public long getEnergyMaxOutput() {
+        return 0;
     }
 }
