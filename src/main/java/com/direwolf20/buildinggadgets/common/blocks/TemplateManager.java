@@ -1,12 +1,15 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.Target;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
 import com.direwolf20.buildinggadgets.common.tileentities.TemplateManagerTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -66,7 +69,7 @@ public class TemplateManager extends BaseEntityBlock {
                 for (int i = 0; i < be.getItems().size(); i++) {
                     ItemStack itemStack = be.getItems().get(i);
                     ITemplateKey key;
-                    if((key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(itemStack)) != null) templateProvider.requestRemoteUpdate(key, );
+                    if((key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(itemStack)) != null) templateProvider.requestRemoteUpdate(key, new Target(PacketFlow.CLIENTBOUND, (ServerPlayer) player));
                 }
         if(!worldIn.isClientSide) {
             MenuProvider menuProvider = state.getMenuProvider(worldIn, pos);
