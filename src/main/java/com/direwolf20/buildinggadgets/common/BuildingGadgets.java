@@ -9,9 +9,6 @@ import com.direwolf20.buildinggadgets.common.commands.OverrideBuildSizeCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.config.RecipeConstructionPaste.Serializer;
-import com.direwolf20.buildinggadgets.common.containers.OurContainers;
-import com.direwolf20.buildinggadgets.common.entities.OurEntities;
-import com.direwolf20.buildinggadgets.common.events.BlockPlaceEvent;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
@@ -27,22 +24,16 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -125,12 +116,12 @@ public final class BuildingGadgets implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             server.getCommands().getDispatcher().register(
                     Commands.literal(Reference.MODID)
-                        .then(OverrideBuildSizeCommand.registerToggle())
-                        .then(OverrideCopySizeCommand.registerToggle())
-                        .then(ForceUnloadedCommand.registerToggle())
-                        .then(OverrideBuildSizeCommand.registerList())
-                        .then(OverrideCopySizeCommand.registerList())
-                        .then(ForceUnloadedCommand.registerList()));
+                            .then(OverrideBuildSizeCommand.registerToggle())
+                            .then(OverrideCopySizeCommand.registerToggle())
+                            .then(ForceUnloadedCommand.registerToggle())
+                            .then(OverrideBuildSizeCommand.registerList())
+                            .then(OverrideCopySizeCommand.registerList())
+                            .then(ForceUnloadedCommand.registerList()));
         });
     }
 
@@ -140,14 +131,6 @@ public final class BuildingGadgets implements ModInitializer {
 
     private void serverStopped() {
         SaveManager.INSTANCE.onServerStopped();
-    }
-
-    private void onRecipeRegister(final RegistryEvent.Register<RecipeSerializer<?>> e) {
-        e.getRegistry().register(
-                Serializer.INSTANCE.setRegistryName(
-                    new ResourceLocation(Reference.MODID, "construction_paste")
-            )
-        );
     }
 
     private void onEnqueueIMC(InterModEnqueueEvent event) {
@@ -163,5 +146,7 @@ public final class BuildingGadgets implements ModInitializer {
         serverLoad();
         serverLoaded();
         serverStopped();
+
+        Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(Reference.MODID, "construction_paste"), Serializer.INSTANCE);
     }
 }
