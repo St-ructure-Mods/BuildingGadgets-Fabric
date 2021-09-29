@@ -132,7 +132,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
 
         // Check the template cap from the world
         // Fetch the template key (because for some reason this is it's own cap)
-        world.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).ifPresent(provider -> heldItem.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> {
+        world.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).ifPresent((ITemplateProvider provider) -> heldItem.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey key) -> {
             // Finally get the data from the render.
             GadgetCopyPaste.getActivePos(player, heldItem).ifPresent(startPos -> {
                 MockDelegationWorld fakeWorld = new MockDelegationWorld(world);

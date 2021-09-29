@@ -294,12 +294,12 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
     }
 
     private void pasteTemplateToStack(Level world, ItemStack stack, Template newTemplate, boolean replaced) {
-        world.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).ifPresent(provider ->
+        world.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).ifPresent((ITemplateProvider provider) ->
                 pasteTemplateToStack(provider, stack, newTemplate, replaced && world.isClientSide()));
     }
 
     private void pasteTemplateToStack(ITemplateProvider provider, ItemStack stack, Template newTemplate, boolean replaced) {
-        stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> {
+        stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey key) -> {
             provider.setTemplate(key, newTemplate);
             if (replaced) {
                 PacketTemplateManagerTemplateCreated.send(provider.getId(key), be.getBlockPos());
@@ -328,7 +328,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         if (nameField.getValue().isEmpty())
             return;
 
-        stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> templateProvider.ifPresent(provider -> {
+        stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey key) -> templateProvider.ifPresent((ITemplateProvider provider) -> {
             Template template = provider.getTemplateForKey(key);
             template = template.withName(nameField.getValue());
             provider.setTemplate(key, template);
@@ -531,7 +531,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
     // Events
     // we need to ensure that the Template we want to look at is recent, before we take any further action
     private void runAfterUpdate(int slot, Runnable runnable) {
-        container.getSlot(slot).getItem().getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> templateProvider.ifPresent(provider -> {
+        container.getSlot(slot).getItem().getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey key) -> templateProvider.ifPresent((ITemplateProvider provider) -> {
             provider.registerUpdateListener(new IUpdateListener() {
                 @Override
                 public void onTemplateUpdate(ITemplateProvider provider, ITemplateKey updateKey, Template template) {
@@ -555,8 +555,8 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         }
 
         runAfterUpdate(0, () -> { //we are copying form 0 to 1 => slot 0 needs to be the recent one
-            templateProvider.ifPresent(provider -> {
-                left.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> {
+            templateProvider.ifPresent((ITemplateProvider provider) -> {
+                left.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey key) -> {
                     Template templateToSave = provider.getTemplateForKey(key).withName(nameField.getValue());
                     pasteTemplateToStack(provider, right, templateToSave, replaced);
                 });
@@ -574,8 +574,8 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         }
 
         runAfterUpdate(1, () -> { //we are copying form 1 to 0 => slot 1 needs to be the recent one
-            templateProvider.ifPresent(provider -> {
-                right.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> {
+            templateProvider.ifPresent((ITemplateProvider provider) -> {
+                right.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey key) -> {
                     Template templateToSave = provider.getTemplateForKey(key);
                     pasteTemplateToStack(provider, left, templateToSave, replaced);
                 });
@@ -586,8 +586,8 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
     private void onCopy() {
         runAfterUpdate(0, () -> { //we are copying from slot 1 => slot 1 needs to be updated
             ItemStack stack = container.getSlot(0).getItem();
-            stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> {
-                templateProvider.ifPresent(provider -> {
+            stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey key) -> {
+                templateProvider.ifPresent((ITemplateProvider provider) -> {
                     Player player = getMinecraft().player;
                     assert player != null;
 

@@ -188,7 +188,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
 
     @Override
     public void onTemplateUpdate(ITemplateProvider provider, ITemplateKey key, Template template) {
-        item.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(itemKey -> {
+        item.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent((ITemplateKey itemKey) -> {
             UUID keyId = provider.getId(key);
             UUID itemId = provider.getId(itemKey);
             if (keyId.equals(itemId)) {
