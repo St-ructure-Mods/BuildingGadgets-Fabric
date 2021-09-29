@@ -4,6 +4,8 @@ import com.direwolf20.buildinggadgets.common.network.packets.*;
 import com.direwolf20.buildinggadgets.common.network.split.PacketSplitManager;
 import com.direwolf20.buildinggadgets.common.network.split.SplitPacket;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.impl.networking.client.ClientPlayNetworkAddon;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,21 +37,6 @@ public class PacketHandler {
     }
 
     public static void register() {
-        // Server side
-        registerMessage(PacketAnchor.class, PacketAnchor::encode, PacketAnchor::decode, PacketAnchor.Handler::handle);
-        registerMessage(PacketBindTool.class, PacketBindTool::encode, PacketBindTool::decode, PacketBindTool.Handler::handle);
-        registerMessage(PacketToggleFuzzy.class, PacketToggleFuzzy::encode, PacketToggleFuzzy::decode, PacketToggleFuzzy.Handler::handle);
-        registerMessage(PacketToggleFluidOnly.class, PacketToggleFluidOnly::encode, PacketToggleFluidOnly::decode, PacketToggleFluidOnly.Handler::handle);
-        registerMessage(PacketToggleConnectedArea.class, PacketToggleConnectedArea::encode, PacketToggleConnectedArea::decode, PacketToggleConnectedArea.Handler::handle);
-        registerMessage(PacketToggleRayTraceFluid.class, PacketToggleRayTraceFluid::encode, PacketToggleRayTraceFluid::decode, PacketToggleRayTraceFluid.Handler::handle);
-        registerMessage(PacketToggleBlockPlacement.class, PacketToggleBlockPlacement::encode, PacketToggleBlockPlacement::decode, PacketToggleBlockPlacement.Handler::handle);
-        registerMessage(PacketChangeRange.class, PacketChangeRange::encode, PacketChangeRange::decode, PacketChangeRange.Handler::handle);
-        registerMessage(PacketRotateMirror.class, PacketRotateMirror::encode, PacketRotateMirror::decode, PacketRotateMirror.Handler::handle);
-        registerMessage(PacketCopyCoords.class, PacketCopyCoords::encode, PacketCopyCoords::decode, PacketCopyCoords.Handler::handle);
-        registerMessage(PacketDestructionGUI.class, PacketDestructionGUI::encode, PacketDestructionGUI::decode, PacketDestructionGUI.Handler::handle);
-        registerMessage(PacketPasteGUI.class, PacketPasteGUI::encode, PacketPasteGUI::decode, PacketPasteGUI.Handler::handle);
-        registerMessage(PacketToggleMode.class, PacketToggleMode::encode, PacketToggleMode::decode, PacketToggleMode.Handler::handle);
-        registerMessage(PacketUndo.class, PacketUndo::encode, PacketUndo::decode, PacketUndo.Handler::handle);
 
         // Both Sides
         registerMessage(SplitPacket.class, SPLIT_MANAGER::encode, SPLIT_MANAGER::decode, SPLIT_MANAGER::handle);
@@ -57,6 +44,7 @@ public class PacketHandler {
 
         registerMessage(PacketSetRemoteInventoryCache.class, PacketSetRemoteInventoryCache::encode, PacketSetRemoteInventoryCache::decode, PacketSetRemoteInventoryCache.Handler::handle);
         registerMessage(PacketRequestTemplate.class, PacketRequestTemplate::encode, PacketRequestTemplate::new, PacketRequestTemplate::handle);
+
         //Client side
         registerMessage(PacketTemplateManagerTemplateCreated.class, PacketTemplateManagerTemplateCreated::encode, PacketTemplateManagerTemplateCreated::new, PacketTemplateManagerTemplateCreated::handle);
     }
@@ -67,10 +55,6 @@ public class PacketHandler {
 
     public static void sendToServer(Object msg) {
         HANDLER.sendToServer(msg);
-    }
-
-    public static void send(Object msg, PacketDistributor.PacketTarget target) {
-        HANDLER.send(target, msg);
     }
 
     private static <MSG> void registerMessage(Class<MSG> messageType, BiConsumer<MSG, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {

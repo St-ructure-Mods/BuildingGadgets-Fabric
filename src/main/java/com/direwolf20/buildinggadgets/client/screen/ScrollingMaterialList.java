@@ -84,7 +84,7 @@ class ScrollingMaterialList extends EntryList<Entry> {
 
     @Override
     protected int getScrollbarPosition() {
-        return getRight() - MARGIN - SCROLL_BAR_WIDTH;
+        return x1 - MARGIN - SCROLL_BAR_WIDTH;
     }
 
     @Override

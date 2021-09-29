@@ -2,10 +2,8 @@ package com.direwolf20.buildinggadgets.client.screen;
 
 import com.direwolf20.buildinggadgets.client.screen.components.GuiSliderInt;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.GadgetDestruction;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.packets.PacketDestructionGUI;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketDestructionGUI;
 import com.direwolf20.buildinggadgets.common.util.lang.GuiTranslation;
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,6 +14,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -53,7 +52,7 @@ public class DestructionGUI extends Screen {
             }
 
             if (isWithinBounds()) {
-                PacketHandler.sendToServer(new PacketDestructionGUI(left.getValueInt(), right.getValueInt(), up.getValueInt(), down.getValueInt(), depth.getValueInt()));
+                PacketDestructionGUI.send(left.getValueInt(), right.getValueInt(), up.getValueInt(), down.getValueInt(), depth.getValueInt());
                 this.onClose();
             }
             else
@@ -96,12 +95,12 @@ public class DestructionGUI extends Screen {
     private void updateIsValid() {
         this.isValidSize = isWithinBounds();
         if (!isValidSize && this.confirm.active) {
-            this.confirm.setFGColor(0xFF2000);
+            //this.confirm.setFGColor(0xFF2000);
             this.confirm.active = false;
         }
 
         if (isValidSize && !this.confirm.active) {
-            this.confirm.clearFGColor();
+            //this.confirm.clearFGColor();
             this.confirm.active = true;
         }
     }
@@ -111,7 +110,7 @@ public class DestructionGUI extends Screen {
     }
 
     @Override
-    public void render(@Nonnull PoseStack matrices, int mouseX, int mouseY, float partialTicks) {
+    public void render(@NotNull PoseStack matrices, int mouseX, int mouseY, float partialTicks) {
         super.render(matrices, mouseX, mouseY, partialTicks);
 
         drawCenteredString(matrices, font, this.sizeString, width / 2, (height / 2) + 40, this.isValidSize ? 0x00FF00 : 0xFF2000);
@@ -144,17 +143,16 @@ public class DestructionGUI extends Screen {
 
         GuiDestructionSlider(int x, int y, String prefix, int current) {
             super(
-                    x, y, width, height, new TextComponent(String.format("%s ", prefix)), new TextComponent(""), min, max, current, false, true, Color.DARK_GRAY, null,
-                    (slider, amount) -> {
+                    x, y, width, height, new TextComponent(String.format("%s ", prefix)), min, max, current, Color.DARK_GRAY, (slider, amount) -> {
                         slider.setValue(Mth.clamp(slider.getValueInt() + amount, min, max));
-                        slider.updateSlider();
+                        slider.applyValue();
                     }
             );
         }
 
         @Override
-        public void updateSlider() {
-            super.updateSlider();
+        public void applyValue() {
+            super.applyValue();
             DestructionGUI.this.updateSizeString();
             DestructionGUI.this.updateIsValid();
         }

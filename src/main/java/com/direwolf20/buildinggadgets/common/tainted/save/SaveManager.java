@@ -54,7 +54,7 @@ public enum SaveManager {
         BuildingGadgets.LOG.debug("Finished clearing save caches");
     }
 
-    public static UndoWorldSave getUndoSave(ServerLevel world, IntSupplier maxLengthSupplier, String name) {
+    public static UndoWorldSave getUndoSave(ServerLevel world, long maxLengthSupplier, String name) {
         return world.getDataStorage().computeIfAbsent(UndoWorldSave::loads, () -> new UndoWorldSave(maxLengthSupplier), name);
     }
 

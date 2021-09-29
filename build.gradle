@@ -28,6 +28,10 @@ repositories {
         name = 'Ladysnake Mods'
         url = 'https://ladysnake.jfrog.io/artifactory/mods'
     }
+    maven {
+        name = "ParchmentMC"
+        url = "https://maven.parchmentmc.org/"
+    }
 }
 
 sourceCompatibility = JavaVersion.VERSION_16
@@ -45,7 +49,10 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings minecraft.officialMojangMappings()
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.17.1:2021.09.05@zip")
+    }
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"

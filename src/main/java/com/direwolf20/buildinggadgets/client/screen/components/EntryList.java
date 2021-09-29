@@ -26,8 +26,8 @@ public class EntryList<E extends Entry<E>> extends ObjectSelectionList<E> {
         double guiScaleFactor = Minecraft.getInstance().getWindow().getGuiScale();
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int)(getLeft()  * guiScaleFactor),
-                (int)(Minecraft.getInstance().getWindow().getHeight() - (getBottom() * guiScaleFactor)),
+        GL11.glScissor((int)(x0  * guiScaleFactor),
+                (int)(Minecraft.getInstance().getWindow().getHeight() - (y1 * guiScaleFactor)),
                 (int)(width * guiScaleFactor),
                 (int)(height * guiScaleFactor));
 
@@ -46,7 +46,7 @@ public class EntryList<E extends Entry<E>> extends ObjectSelectionList<E> {
         renderContentBackground(matrices, tessellator, bufferbuilder);
 
         int k = getRowLeft();
-        int l = getTop() + 4 - (int) getScrollAmount();
+        int l = y0 + 4 - (int) getScrollAmount();
         renderHeader(matrices, k, l, tessellator);
 
         renderList(matrices, k, l, mouseX, mouseY, partialTicks);
@@ -54,21 +54,21 @@ public class EntryList<E extends Entry<E>> extends ObjectSelectionList<E> {
 
         int j1 = getMaxScroll();
         if (j1 > 0) {
-            int k1 = (int) ((float) ((getBottom() - getTop()) * (getBottom() - getTop())) / (float) getMaxPosition());
-            k1 = Mth.clamp(k1, 32, getBottom() - getTop() - 8);
-            int l1 = (int) getScrollAmount() * (getBottom() - getTop() - k1) / j1 + getTop();
-            if (l1 < getTop()) {
-                l1 = getTop();
+            int k1 = (int) ((float) ((y1 - y0) * (y1 - y0)) / (float) getMaxPosition());
+            k1 = Mth.clamp(k1, 32, y1 - y0 - 8);
+            int l1 = (int) getScrollAmount() * (y1 - y0 - k1) / j1 + y0;
+            if (l1 < y0) {
+                l1 = y0;
             }
             int x1 = getScrollbarPosition();
             int x2 = x1 + 6;
 
             RenderSystem.disableTexture();
             bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-            bufferbuilder.vertex(x1, getBottom(), 0.0D).color(0, 0, 0, 255).endVertex();
-            bufferbuilder.vertex(x2, getBottom(), 0.0D).color(0, 0, 0, 255).endVertex();
-            bufferbuilder.vertex(x2, getTop(), 0.0D).color(0, 0, 0, 255).endVertex();
-            bufferbuilder.vertex(x1, getTop(), 0.0D).color(0, 0, 0, 255).endVertex();
+            bufferbuilder.vertex(x1, y1, 0.0D).color(0, 0, 0, 255).endVertex();
+            bufferbuilder.vertex(x2, y1, 0.0D).color(0, 0, 0, 255).endVertex();
+            bufferbuilder.vertex(x2, y0, 0.0D).color(0, 0, 0, 255).endVertex();
+            bufferbuilder.vertex(x1, y0, 0.0D).color(0, 0, 0, 255).endVertex();
 
             bufferbuilder.vertex(x1, (l1 + k1), 0.0D).color(128, 128, 128, 255).endVertex();
             bufferbuilder.vertex(x2, (l1 + k1), 0.0D).color(128, 128, 128, 255).endVertex();
@@ -88,7 +88,7 @@ public class EntryList<E extends Entry<E>> extends ObjectSelectionList<E> {
     }
 
     protected void renderContentBackground(PoseStack matrices, Tesselator tessellator, BufferBuilder bufferbuilder) {
-        fillGradient(matrices, getLeft(), getTop(), getRight(), getBottom(), 0xC0101010, 0xD0101010);
+        fillGradient(matrices, x0, y0, x1, y1, 0xC0101010, 0xD0101010);
     }
 
     @Override
@@ -119,10 +119,5 @@ public class EntryList<E extends Entry<E>> extends ObjectSelectionList<E> {
             setScrollAmount(getScrollAmount() - dy);
         }
         return true;
-    }
-
-    // Copied from AbstractList#getMaxScroll because it is private
-    public final int getMaxScroll() {
-        return Math.max(0, this.getMaxPosition() - (this.getBottom() - this.getTop() - 4));
     }
 }

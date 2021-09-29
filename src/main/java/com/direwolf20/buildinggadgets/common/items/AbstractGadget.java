@@ -3,9 +3,6 @@ package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
-import com.direwolf20.buildinggadgets.common.capability.CapabilityProviderEnergy;
-import com.direwolf20.buildinggadgets.common.capability.IPrivateEnergy;
-import com.direwolf20.buildinggadgets.common.capability.provider.MultiCapabilityProvider;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
 import com.direwolf20.buildinggadgets.common.tainted.concurrent.UndoScheduler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
@@ -21,10 +18,10 @@ import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,7 +30,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
@@ -42,12 +38,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fml.DistExecutor;
 
 import org.jetbrains.annotations.Nullable;
+import team.reborn.energy.api.base.SimpleBatteryItem;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,19 +49,18 @@ import java.util.function.Supplier;
 
 import static com.direwolf20.buildinggadgets.common.util.GadgetUtils.withSuffix;
 
-public abstract class AbstractGadget extends Item {
+public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     private BaseRenderer renderer;
     private final Tag.Named<Block> whiteList;
     private final Tag.Named<Block> blackList;
     private Supplier<UndoWorldSave> saveSupplier;
-    protected final long energyCapacity = 0;
 
     public AbstractGadget(Properties builder, long undoLengthSupplier, String undoName, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
         super(builder.defaultDurability(0));
 
-        renderer = DistExecutor.runForDist(this::createRenderFactory, () -> () -> null);
-        this.whiteList = BlockTags.bind(whiteListTag.toString());
-        this.blackList = BlockTags.bind(blackListTag.toString());
+        renderer = createRenderFactory().get();
+        this.whiteList = TagFactory.BLOCK.create(whiteListTag);
+        this.blackList = TagFactory.BLOCK.create(blackListTag);
         saveSupplier = SaveManager.INSTANCE.registerUndoSave(w -> SaveManager.getUndoSave(w, undoLengthSupplier, undoName));
     }
 
@@ -87,22 +80,11 @@ public abstract class AbstractGadget extends Item {
         return renderer;
     }
 
+    @Environment(EnvType.CLIENT)
     protected abstract Supplier<BaseRenderer> createRenderFactory();
 
     protected UndoWorldSave getUndoSave() {
         return saveSupplier.get();
-    }
-
-    protected void addCapabilityProviders(ImmutableList.Builder<ICapabilityProvider> providerBuilder, ItemStack stack, @Nullable CompoundTag tag) {
-        providerBuilder.add(new CapabilityProviderEnergy(stack, this::getEnergyMax));
-    }
-
-    @Override
-    @Nullable
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag tag) {
-        ImmutableList.Builder<ICapabilityProvider> providerBuilder = ImmutableList.builder();
-        addCapabilityProviders(providerBuilder, stack, tag);
-        return new MultiCapabilityProvider(providerBuilder.build());
     }
 
     @Override
@@ -118,7 +100,7 @@ public abstract class AbstractGadget extends Item {
 
     @Override
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return !toRepair.getCapability(CapabilityEnergy.ENERGY).isPresent() && repair.getItem() == Items.DIAMOND;
+        return repair.getItem() instanceof AbstractGadget && repair.getItem() == Items.DIAMOND;
     }
 
     public boolean isAllowedBlock(Block block) {
@@ -142,25 +124,25 @@ public abstract class AbstractGadget extends Item {
         if (player.isCreative() || getEnergyMax() == 0)
             return true;
 
-        return getEnergyCost(tool) <= tool.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+        return getEnergyCost(tool) <= SimpleBatteryItem.getStoredEnergyUnchecked(tool);
     }
 
     public void applyDamage(ItemStack tool, ServerPlayer player) {
         if (player.isCreative() || getEnergyMax() == 0)
             return;
 
-        tool.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((IPrivateEnergy) e).extractPower(getEnergyCost(tool), false));
+        ((AbstractGadget) tool.getItem()).tryUseEnergy(tool, getEnergyCost(tool));
     }
 
     protected void addEnergyInformation(List<Component> tooltip, ItemStack stack) {
         if( getEnergyMax() == 0 )
             return;
 
-        stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(energy -> {
+        if(stack.getItem() instanceof SimpleBatteryItem) {
             tooltip.add(TooltipTranslation.GADGET_ENERGY
-                                .componentTranslation(withSuffix(energy.getEnergyStored()), withSuffix(energy.getMaxEnergyStored()))
+                                .componentTranslation(withSuffix((int) getStoredEnergy(stack)), withSuffix((int) getEnergyCapacity()))
                                 .setStyle(Styles.GRAY));
-        });
+        }
     }
 
     public final void onRotate(ItemStack stack, Player player) {

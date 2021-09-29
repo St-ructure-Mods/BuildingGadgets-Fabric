@@ -2,10 +2,9 @@ package com.direwolf20.buildinggadgets.client.screen;
 
 import com.direwolf20.buildinggadgets.client.screen.components.GuiIncrementer;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.packets.PacketCopyCoords;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketCopyCoords;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.util.lang.GuiTranslation;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -66,7 +65,7 @@ public class CopyGUI extends Screen {
 
         updateTextFields();
 
-        List<AbstractButton> buttons = new ArrayList<AbstractButton>() {{
+        List<AbstractButton> buttons = new ArrayList<>() {{
             add(new CenteredButton(y + 20, 50, GuiTranslation.SINGLE_CONFIRM.componentTranslation(), (button) -> {
                 if (absoluteCoords) {
                     startPos = new BlockPos(startX.getValue(), startY.getValue(), startZ.getValue());
@@ -75,15 +74,15 @@ public class CopyGUI extends Screen {
                     startPos = new BlockPos(startPos.getX() + startX.getValue(), startPos.getY() + startY.getValue(), startPos.getZ() + startZ.getValue());
                     endPos = new BlockPos(startPos.getX() + endX.getValue(), startPos.getY() + endY.getValue(), startPos.getZ() + endZ.getValue());
                 }
-                PacketHandler.sendToServer(new PacketCopyCoords(startPos, endPos));
+                PacketCopyCoords.send(startPos, endPos);
             }));
             add(new CenteredButton(y + 20, 50, GuiTranslation.SINGLE_CLOSE.componentTranslation(), (button) -> onClose()));
             add(new CenteredButton(y + 20, 50, GuiTranslation.SINGLE_CLEAR.componentTranslation(), (button) -> {
-                PacketHandler.sendToServer(new PacketCopyCoords(BlockPos.ZERO, BlockPos.ZERO));
+                PacketCopyCoords.send(BlockPos.ZERO, BlockPos.ZERO);
                 onClose();
             }));
 
-            if( BuildingGadgets.config.GENERAL.allowAbsoluteCoords ) {
+            if (BuildingGadgets.config.GENERAL.allowAbsoluteCoords) {
                 add(new CenteredButton(y + 20, 120, GuiTranslation.COPY_BUTTON_ABSOLUTE.componentTranslation(), (button) -> {
                     coordsModeSwitch();
                     updateTextFields();

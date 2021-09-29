@@ -8,7 +8,7 @@ package com.direwolf20.buildinggadgets.client.screen;
 import com.direwolf20.buildinggadgets.client.screen.components.GuiIncrementer;
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.packets.PacketPasteGUI;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketPasteGUI;
 import com.direwolf20.buildinggadgets.common.util.lang.GuiTranslation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -50,7 +50,7 @@ public class PasteGUI extends Screen {
 
         List<AbstractButton> buttons = new ArrayList<AbstractButton>() {{
             add(new CopyGUI.CenteredButton(y + 20, 70, GuiTranslation.SINGLE_CONFIRM.componentTranslation(), (button) -> {
-                PacketHandler.sendToServer(new PacketPasteGUI(X.getValue(), Y.getValue(), Z.getValue()));
+                PacketPasteGUI.send(X.getValue(), Y.getValue(), Z.getValue());
                 onClose();
             }));
 
@@ -69,11 +69,11 @@ public class PasteGUI extends Screen {
     }
 
     private void sendPacket() {
-        PacketHandler.sendToServer(new PacketPasteGUI(X.getValue(), Y.getValue(), Z.getValue()));
+        PacketPasteGUI.send(X.getValue(), Y.getValue(), Z.getValue());
     }
 
     private void onChange(int value) {
-        PacketHandler.sendToServer(new PacketPasteGUI(X.getValue(), Y.getValue(), Z.getValue()));
+        PacketPasteGUI.send(X.getValue(), Y.getValue(), Z.getValue());
     }
 
     @Override

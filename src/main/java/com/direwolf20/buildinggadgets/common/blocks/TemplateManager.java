@@ -1,16 +1,12 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
+import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
 import com.direwolf20.buildinggadgets.common.tileentities.TemplateManagerTileEntity;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -67,13 +63,11 @@ public class TemplateManager extends BaseEntityBlock {
         TemplateManagerTileEntity be = (TemplateManagerTileEntity) worldIn.getBlockEntity(pos);
 
         ITemplateProvider templateProvider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.getNullable(worldIn);
-        provider -> {
                 for (int i = 0; i < be.getItems().size(); i++) {
                     ItemStack itemStack = be.getItems().get(i);
-                    itemStack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key ->
-                            templateProvider.requestRemoteUpdate(key, PacketDistributor.PLAYER.with(() -> (ServerPlayer) player)));
+                    ITemplateKey key;
+                    if((key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(itemStack)) != null) templateProvider.requestRemoteUpdate(key, );
                 }
-            };
         if(!worldIn.isClientSide) {
             MenuProvider menuProvider = state.getMenuProvider(worldIn, pos);
             if(menuProvider != null)player.openMenu(menuProvider);

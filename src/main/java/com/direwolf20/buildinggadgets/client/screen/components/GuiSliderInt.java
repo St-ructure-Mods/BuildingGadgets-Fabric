@@ -3,25 +3,31 @@ package com.direwolf20.buildinggadgets.client.screen.components;
 import com.direwolf20.buildinggadgets.client.ClientProxy;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.packets.PacketChangeRange;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketChangeRange;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 
 import java.awt.*;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 
 public class GuiSliderInt extends AbstractSliderButton {
-    private int colorBackground, colorSliderBackground, colorSlider;
+    private final int colorBackground;
+    private final int colorSliderBackground;
+    private final int colorSlider;
     private BiConsumer<GuiSliderInt, Integer> increment;
-    private int value;
+    private double value;
+    private final double minVal;
+    private final double maxVal;
 
     public GuiSliderInt(int xPos, int yPos, int width, int height, Component prefix, double minVal, double maxVal,
                         double currentVal, Color color,
@@ -32,8 +38,21 @@ public class GuiSliderInt extends AbstractSliderButton {
         colorBackground = GuiMod.getColor(color, 200).getRGB();
         colorSliderBackground = GuiMod.getColor(color.darker(), 200).getRGB();
         colorSlider = GuiMod.getColor(color.brighter().brighter(), 200).getRGB();
+        this.minVal = minVal;
+        this.maxVal = maxVal;
 
         this.increment = increment;
+    }
+
+    //copied from AbstractSliderButton because it was private and i couldnt be bother accesswidening it
+    public void setValue(int value) {
+        double e = this.value;
+        this.value = Mth.clamp(value, minVal, maxVal);
+        if (e != this.value) {
+            this.applyValue();
+        }
+
+        this.updateMessage();
     }
 
     @Override
@@ -42,25 +61,19 @@ public class GuiSliderInt extends AbstractSliderButton {
         setValue(getValueInt());
     }
 
+    public int getValueInt() {
+        return (int) value;
+    }
+
     @Override
     protected void updateMessage() {
 
     }
 
     @Override
-    protected void applyValue() {
-
-    }
-
-    @Override
-    public void updateSlider() {
-        super.updateSlider();
-        int valueInt = getValueInt();
-        if (value != valueInt) {
-            value = valueInt;
-            playSound();
-            PacketHandler.sendToServer(new PacketChangeRange(getValueInt()));
-        }
+    public void applyValue() {
+        playSound();
+        PacketChangeRange.send((int) value);
     }
 
     private void playSound() {
@@ -79,7 +92,7 @@ public class GuiSliderInt extends AbstractSliderButton {
         renderText(matrices, mc, this);
     }
 
-    private void renderText(PoseStack matrices, Minecraft mc, Button component) {
+    private void renderText(PoseStack matrices, Minecraft mc, AbstractWidget component) {
         int color = ! active ? 10526880 : (isHovered ? 16777120 : - 1);
         String buttonText = component.getMessage().getString();
         int strWidth = mc.font.width(buttonText);
@@ -98,12 +111,7 @@ public class GuiSliderInt extends AbstractSliderButton {
         if (!visible)
             return;
 
-        if (dragging) {
-            sliderValue = (mouseX - (x + 4)) / (float) (width - 8);
-            updateSlider();
-        }
-
-        drawBorderedRect(matrices, x + (int) (sliderValue * (width - 8)), y, 8, height);
+        drawBorderedRect(matrices, (int) (x + (value * (width - 8))), y, 8, height);
     }
 
     private void drawBorderedRect(PoseStack matrices, int x, int y, int width, int height) {
@@ -111,7 +119,7 @@ public class GuiSliderInt extends AbstractSliderButton {
         fill(matrices, ++ x, ++ y, x + width - 2, y + height - 2, colorSlider);
     }
 
-    public Collection<Button> getComponents() {
+    public Collection<AbstractWidget> getComponents() {
         return ImmutableSet.of(
                 this,
                 new GuiButtonIncrement(this, x - height, y, height, height, new TextComponent("-"), b -> increment.accept(this, - 1)),

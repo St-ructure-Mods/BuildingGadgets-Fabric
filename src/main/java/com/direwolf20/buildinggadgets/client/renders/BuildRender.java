@@ -29,11 +29,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 
 import java.util.List;
 import java.util.Optional;
@@ -86,7 +81,7 @@ public class BuildRender extends BaseRenderer {
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 
         //Save the current position that is being rendered (I think)
-        PoseStack matrix = evt.getMatrixStack();
+        PoseStack matrix = evt.matrixStack();
         matrix.pushPose();
         matrix.translate(-playerPos.x(), -playerPos.y(), -playerPos.z());
 
@@ -110,7 +105,7 @@ public class BuildRender extends BaseRenderer {
             OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
             try {
                 dispatcher.renderSingleBlock(
-                        state, matrix, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE
+                        state, matrix, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY
                 );
             } catch (Exception ignored) {} // I'm sure if this is an issue someone will report it
 
@@ -132,13 +127,10 @@ public class BuildRender extends BaseRenderer {
             BuildContext context = new BuildContext(player.level, player, heldItem);
 
             MaterialList materials = data.getRequiredItems(context, null, null);
-            int hasEnergy = getEnergy(player, heldItem);
-
-            LazyOptional<IEnergyStorage> energyCap = heldItem.getCapability(CapabilityEnergy.ENERGY);
+            long hasEnergy = getEnergy(player, heldItem);
 
             for (BlockPos coordinate : coordinates) { //Now run through the UNSORTED list of coords, to show which blocks won't place if you don't have enough of them.
                 boolean renderFree = false;
-                if (energyCap.isPresent())
                     hasEnergy -= ((AbstractGadget) heldItem.getItem()).getEnergyCost(heldItem);
 
                 builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);

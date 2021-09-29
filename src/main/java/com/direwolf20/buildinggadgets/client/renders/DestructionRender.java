@@ -18,7 +18,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 public class DestructionRender extends BaseRenderer {
 
@@ -41,7 +40,7 @@ public class DestructionRender extends BaseRenderer {
 
         Vec3 playerPos = getMc().gameRenderer.getMainCamera().getPosition();
 
-        PoseStack stack = evt.getMatrixStack();
+        PoseStack stack = evt.matrixStack();
         stack.pushPose();
         stack.translate(-playerPos.x(), -playerPos.y(), -playerPos.z());
 

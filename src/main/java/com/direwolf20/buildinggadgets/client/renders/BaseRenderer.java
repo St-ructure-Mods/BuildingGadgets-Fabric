@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.client.renders;
 
 import com.direwolf20.buildinggadgets.client.cache.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
+import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
@@ -25,6 +26,7 @@ import com.mojang.math.Matrix4f;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
+import team.reborn.energy.api.base.SimpleBatteryItem;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -81,11 +83,10 @@ public abstract class BaseRenderer {
 
 
     long getEnergy(Player player, ItemStack heldItem) {
-        LazyOptional<IEnergyStorage> energy = heldItem.getCapability(CapabilityEnergy.ENERGY);
-        if (player.isCreative() || !energy.isPresent())
+        if (player.isCreative() || !(heldItem.getItem() instanceof AbstractGadget))
             return Integer.MAX_VALUE;
 
-        return energy.map(IEnergyStorage::getEnergyStored).orElse(0);
+        return SimpleBatteryItem.getStoredEnergyUnchecked(heldItem);
     }
 
     protected static void renderMissingBlock(Matrix4f matrix, VertexConsumer builder, BlockPos pos) {

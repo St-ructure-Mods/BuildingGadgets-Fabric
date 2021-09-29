@@ -1,15 +1,13 @@
 package com.direwolf20.buildinggadgets.common.tainted.template;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.Target;
 import dev.onyxstudios.cca.api.v3.component.Component;
 import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.UUID;
 
-public interface ITemplateProvider extends Component{
+public interface ITemplateProvider extends Component {
     UUID getId(ITemplateKey key);
 
     Template getTemplateForKey(ITemplateKey key);
@@ -42,10 +40,10 @@ public interface ITemplateProvider extends Component{
     /**
      * Requests an update from the specified target.
      *
-     * @param channel The channel to which to request the update
+     * @param target The target to which to request the update
      * @see #requestUpdate(ITemplateKey)
      */
-    boolean requestUpdate(ITemplateKey key, ResourceLocation channel);
+    boolean requestUpdate(ITemplateKey key, Target target);
 
     /**
      * Requests an update <b>for<b/> the other side - aka sends an update packet to it. On the client this will send the data to the server,
@@ -58,10 +56,10 @@ public interface ITemplateProvider extends Component{
     /**
      * Requests a remote update for the specified target.
      *
-     * @param channel The channel for which to request an update
+     * @param target The target for which to request an update
      * @see #requestRemoteUpdate(ITemplateKey)
      */
-    boolean requestRemoteUpdate(ITemplateKey key, ResourceLocation channel);
+    boolean requestRemoteUpdate(ITemplateKey key, Target target);
 
 
     /**

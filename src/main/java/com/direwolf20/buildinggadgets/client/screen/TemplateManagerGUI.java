@@ -7,6 +7,7 @@ package com.direwolf20.buildinggadgets.client.screen;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.containers.TemplateManagerContainer;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
@@ -66,7 +67,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
 
 import java.awt.*;
 import java.util.Comparator;
@@ -89,7 +89,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
     private final TemplateManagerTileEntity be;
     private final TemplateManagerContainer container;
-    private final LazyOptional<ITemplateProvider> templateProvider = getWorld().getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY);
+    private final ITemplateProvider templateProvider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.getNullable(getWorld());
 
     // It is so stupid I can't get the key from the template.
     private Template template;
@@ -161,13 +161,13 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
             return;
         }
 
-        container.getSlot(0).getItem().getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> templateProvider.ifPresent(provider -> {
+        ITemplateKey key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(container.getSlot(0).getItem());
             // Make sure we're not re-creating the same cache.
-            Template template = provider.getTemplateForKey(key);
-            if( this.template == template )
-                return;
+        Template template = templateProvider.getTemplateForKey(key);
+        if( this.template == template )
+            return;
 
-            this.template = template;
+        this.template = template;
 
 //            IBuildView view = template.createViewInContext(
 //                    SimpleBuildContext.builder()
@@ -182,7 +182,6 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
 //            GlStateManager.endList();
 //            this.displayList = displayList;
-        }));
     }
 
     private void renderStructure(IBuildView view, float partialTicks) {

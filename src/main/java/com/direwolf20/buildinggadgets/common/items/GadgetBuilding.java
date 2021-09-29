@@ -2,9 +2,10 @@ package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketBindTool;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
-import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
@@ -15,8 +16,6 @@ import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.client.renders.BuildRender;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.packets.PacketBindTool;
-import com.direwolf20.buildinggadgets.common.network.packets.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
@@ -46,8 +45,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.ForgeEventFactory;
 
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -153,7 +150,7 @@ public class GadgetBuilding extends AbstractGadget {
             if (player.isShiftKeyDown()) {
                 InteractionResultHolder<Block> result = selectBlock(itemstack, player);
                 if( !result.getResult().consumesAction() ) {
-                    player.displayClientMessage(MessageTranslation.INVALID_BLOCK.componentTranslation(result.getObject().getRegistryName()).setStyle(Styles.AQUA), true);
+                    player.displayClientMessage(MessageTranslation.INVALID_BLOCK.componentTranslation(result.getObject().getName()).setStyle(Styles.AQUA), true);
                     return super.use(world, player, hand);
                 }
             } else if (player instanceof ServerPlayer) {
@@ -164,7 +161,7 @@ public class GadgetBuilding extends AbstractGadget {
                 BaseRenderer.updateInventoryCache();
             } else {
                 if (Screen.hasControlDown()) {
-                    PacketHandler.sendToServer(new PacketBindTool());
+                    PacketBindTool.send();
                 }
             }
         }
@@ -182,9 +179,9 @@ public class GadgetBuilding extends AbstractGadget {
         int range = getToolRange(heldItem);
         int changeAmount = (getToolMode(heldItem) != BuildingModes.SURFACE || (range % 2 == 0)) ? 1 : 2;
         if (player.isShiftKeyDown())
-            range = (range == 1) ? Config.GADGETS.maxRange.get() : range - changeAmount;
+            range = (range == 1) ? BuildingGadgets.config.GADGETS.maxRange : range - changeAmount;
         else
-            range = (range >= Config.GADGETS.maxRange.get()) ? 1 : range + changeAmount;
+            range = (range >= BuildingGadgets.config.GADGETS.maxRange) ? 1 : range + changeAmount;
 
         setToolRange(heldItem, range);
         player.displayClientMessage(MessageTranslation.RANGE_SET.componentTranslation(range).setStyle(Styles.AQUA), true);

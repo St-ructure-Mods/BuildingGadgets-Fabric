@@ -10,12 +10,11 @@ import com.direwolf20.buildinggadgets.client.OurSounds;
 import com.direwolf20.buildinggadgets.client.screen.components.GuiIconActionable;
 import com.direwolf20.buildinggadgets.client.screen.components.GuiSliderInt;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.*;
 import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
 import com.direwolf20.buildinggadgets.common.items.modes.ExchangingModes;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.packets.*;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.*;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.lang.GuiTranslation;
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
@@ -27,12 +26,14 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -40,7 +41,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fmllegacy.ForgeI18n;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -105,13 +105,13 @@ public class ModeRadialMenu extends Screen {
         } else {
             addRenderableWidget(new PositionedIconActionable(RadialTranslation.ROTATE, "rotate", left, false, send -> {
                 if (send)
-                    PacketHandler.sendToServer(new PacketRotateMirror(PacketRotateMirror.Operation.ROTATE));
+                    PacketRotateMirror.send(PacketRotateMirror.Operation.ROTATE);
 
                 return false;
             }));
             addRenderableWidget(new PositionedIconActionable(RadialTranslation.MIRROR, "mirror", left, false, send -> {
                 if (send)
-                    PacketHandler.sendToServer(new PacketRotateMirror(PacketRotateMirror.Operation.MIRROR));
+                    PacketRotateMirror.send(PacketRotateMirror.Operation.MIRROR);
 
                 return false;
             }));
@@ -120,7 +120,7 @@ public class ModeRadialMenu extends Screen {
             if (!isDestruction || BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled) {
                 Button button = new PositionedIconActionable(RadialTranslation.FUZZY, "fuzzy", right, send -> {
                     if (send)
-                        PacketHandler.sendToServer(new PacketToggleFuzzy());
+                        PacketToggleFuzzy.send();
 
                     return AbstractGadget.getFuzzy(getGadget());
                 });
@@ -130,7 +130,7 @@ public class ModeRadialMenu extends Screen {
             if( !isDestruction ) {
                 Button button = new PositionedIconActionable(RadialTranslation.CONNECTED_SURFACE, "connected_area", right, send -> {
                     if (send)
-                        PacketHandler.sendToServer(new PacketToggleConnectedArea());
+                        PacketToggleConnectedArea.send();
 
                     return AbstractGadget.getConnectedArea(getGadget());
                 });
@@ -140,17 +140,15 @@ public class ModeRadialMenu extends Screen {
             if (!isDestruction) {
                 int widthSlider = 82;
                 GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), 1, BuildingGadgets.config.GADGETS.maxRange,
-                        GadgetUtils.getToolRange(tool), false, true, Color.DARK_GRAY, slider -> {
-                    GuiSliderInt sliderI = (GuiSliderInt) slider;
-                    sendRangeUpdate(sliderI.getValueInt());
-                }, (slider, amount) -> {
+                        GadgetUtils.getToolRange(tool), Color.DARK_GRAY, (slider, integer) -> {
+                    sendRangeUpdate(slider.getValueInt());
                     int value = slider.getValueInt();
-                    int valueNew = Mth.clamp(value + amount, 1, Config.GADGETS.maxRange.get());
+                    int valueNew = Mth.clamp(value + integer, 1, BuildingGadgets.config.GADGETS.maxRange);
                     sendRangeUpdate(valueNew);
                     slider.setValue(valueNew);
-                    slider.updateSlider();
+                    slider.applyValue();
                 });
-                sliderRange.precision = 1;
+                //sliderRange.precision = 1;
                 sliderRange.getComponents().forEach(this::addRenderableWidget);
             }
         } else {
@@ -181,21 +179,21 @@ public class ModeRadialMenu extends Screen {
         }
         addRenderableWidget(new PositionedIconActionable(RadialTranslation.RAYTRACE_FLUID, "raytrace_fluid", right, send -> {
             if (send)
-                PacketHandler.sendToServer(new PacketToggleRayTraceFluid());
+                PacketToggleRayTraceFluid.send();
 
             return AbstractGadget.shouldRayTraceFluid(getGadget());
         }));
         if (tool.getItem() instanceof GadgetBuilding) {
             addRenderableWidget(new PositionedIconActionable(RadialTranslation.PLACE_ON_TOP, "building_place_atop", right, send -> {
                 if (send)
-                    PacketHandler.sendToServer(new PacketToggleBlockPlacement());
+                    PacketToggleBlockPlacement.send();
 
                 return GadgetBuilding.shouldPlaceAtop(getGadget());
             }));
         }
         addRenderableWidget(new PositionedIconActionable(RadialTranslation.ANCHOR, "anchor", left, send -> {
             if (send)
-                PacketHandler.sendToServer(new PacketAnchor());
+                PacketAnchorHandler.send();
 
             ItemStack stack = getGadget();
             if (stack.getItem() instanceof GadgetCopyPaste || stack.getItem() instanceof GadgetDestruction)
@@ -207,8 +205,7 @@ public class ModeRadialMenu extends Screen {
         if (!(tool.getItem() instanceof GadgetExchanger)) {
             addRenderableWidget(new PositionedIconActionable(RadialTranslation.UNDO, "undo", left, false, send -> {
                 if (send)
-                    PacketHandler.sendToServer(new PacketUndo());
-
+                    PacketUndo.send();
                 return false;
             }));
         }
@@ -240,7 +237,7 @@ public class ModeRadialMenu extends Screen {
                 offset = -70 - dim;
             }
             button.setWidth(dim);
-            button.setHeight(dim);
+            //button.setHeight(dim);
             if (isDestruction)
                 button.y = height / 2 + (isRight ? 10 : -button.getHeight() - 10);
             else
@@ -376,8 +373,10 @@ public class ModeRadialMenu extends Screen {
                 if ((int) i == (int) (degPer / 2))
                     nameData.add(new NameDisplayData((int) xp, (int) yp, mouseInSector, shouldCenter && (seg == indexBottom || seg == indexTop)));
 
-                float angle1 = startAngle + (i / (float) segments) * angle;
-                float angle2 = startAngle + ((i + 1) / (float) segments) * angle;
+                //TODO: `startangle` idk what that is so init to 0
+
+                float angle1 = 0 + (i / (float) segments) * angle;
+                float angle2 = 0 + ((i + 1) / (float) segments) * angle;
 
                 float z = 1;
                 float pos1InX = x + radiusMin * (float) Math.cos(angle1);
@@ -417,9 +416,9 @@ public class ModeRadialMenu extends Screen {
 
             String name;
             if (tool.getItem() instanceof GadgetBuilding)
-                name = ForgeI18n.getPattern(BuildingModes.values()[i].getTranslationKey());
+                name = I18n.get(BuildingModes.values()[i].getTranslationKey());
             else if (tool.getItem() instanceof GadgetExchanger)
-                name = TranslatableComponent.ExchangingModes.values()[i].getTranslationKey());
+                name = I18n.get(ExchangingModes.values()[i].getTranslationKey());
             else
                 name = GadgetCopyPaste.ToolMode.values()[i].getTranslation().format();
 
@@ -477,16 +476,16 @@ public class ModeRadialMenu extends Screen {
             // be a pretty solid idea for the next guy to touch this code.
             String mode;
             if (gadget instanceof GadgetBuilding)
-                mode = ForgeI18n.getPattern(BuildingModes.values()[slotSelected].getTranslationKey());
+                mode = I18n.get(BuildingModes.values()[slotSelected].getTranslationKey());
             else if (gadget instanceof GadgetExchanger)
-                mode = ForgeI18n.getPattern(ExchangingModes.values()[slotSelected].getTranslationKey());
+                mode = I18n.get(ExchangingModes.values()[slotSelected].getTranslationKey());
             else
                 mode = GadgetCopyPaste.ToolMode.values()[slotSelected].getTranslation().format();
 
             assert Minecraft.getInstance().player != null;
             Minecraft.getInstance().player.displayClientMessage(MessageTranslation.MODE_SET.componentTranslation(mode).setStyle(Styles.AQUA), true);
 
-            PacketHandler.sendToServer(new PacketToggleMode(slotSelected));
+            PacketToggleMode.send(slotSelected);
             OurSounds.BEEP.playSound();
         }
     }
@@ -499,14 +498,14 @@ public class ModeRadialMenu extends Screen {
 
     @Override
     public void tick() {
-        if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), KeyBindings.menuSettings.getKey().getValue())) {
+        if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), KeyBindingHelper.getBoundKeyOf(KeyBindings.menuSettings).getValue())) {
             onClose();
             changeMode();
         }
 
         ImmutableSet<KeyMapping> set = ImmutableSet.of(Minecraft.getInstance().options.keyUp, Minecraft.getInstance().options.keyLeft, Minecraft.getInstance().options.keyDown, Minecraft.getInstance().options.keyRight, Minecraft.getInstance().options.keyShift, Minecraft.getInstance().options.keySprint, Minecraft.getInstance().options.keyJump);
         for (KeyMapping k : set)
-            KeyMapping.set(k.getKey(), k.isDown());
+            KeyMapping.set(KeyBindingHelper.getBoundKeyOf(k), k.isDown());
 
         timeIn++;
         ItemStack tool = getGadget();
@@ -547,7 +546,7 @@ public class ModeRadialMenu extends Screen {
 
     private void sendRangeUpdate(int valueNew) {
         if (valueNew != GadgetUtils.getToolRange(getGadget()))
-            PacketHandler.sendToServer(new PacketChangeRange(valueNew));
+            PacketChangeRange.send(valueNew);
     }
 
     private static final class NameDisplayData {

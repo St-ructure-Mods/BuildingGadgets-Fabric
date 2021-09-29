@@ -16,6 +16,7 @@ import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -46,7 +47,7 @@ import java.util.function.Supplier;
  *  This entire class could do with some refactoring and cleaning :grin:
  */
 public class InventoryHelper {
-    public static final MaterialList PASTE_LIST = MaterialList.of(new UniqueItem(OurItems.CONSTRUCTION_PASTE_ITEM.get()));
+    public static final MaterialList PASTE_LIST = MaterialList.of(new UniqueItem(OurItems.CONSTRUCTION_PASTE_ITEM));
 
     private static final Set<Property<?>> UNSAFE_PROPERTIES =
             ImmutableSet.<Property<?>>builder()
@@ -124,7 +125,7 @@ public class InventoryHelper {
         List<Integer> slots = findItem(itemStack.getItem(), inv);
         for (int slot : slots) {
             ItemStack stackInSlot = inv.getItem(slot);
-            if (stackInSlot.getCount() < stackInSlot.getItem().getItemStackLimit(stackInSlot)) {
+            if (stackInSlot.getCount() < stackInSlot.getItem().getMaxStackSize()) {
                 ItemStack giveItemStack = itemStack.copy();
                 boolean success = inv.add(giveItemStack);
                 if (success) return true;
@@ -149,11 +150,12 @@ public class InventoryHelper {
         }
 
 
-        List<IItemHandler> invContainers = findInvContainers(inv);
+        List<ItemStack> invContainers = findInvContainers(inv);
         if (invContainers.size() > 0) {
-            for (IItemHandler container : invContainers) {
-                for (int i = 0; i < container.getSlots(); i++) {
-                    ItemStack containerItem = container.getStackInSlot(i);
+            for (ItemStack stack : invContainers) {
+                Container container = (Container) stack.getItem();
+                for (int i = 0; i < container.getContainerSize(); i++) {
+                    ItemStack containerItem = container.getItem(i);
                     ItemStack giveItemStack = itemStack.copy();
                     if (containerItem.getItem() == giveItemStack.getItem()) {
                         giveItemStack = container.insertItem(i, giveItemStack, false);
@@ -213,23 +215,24 @@ public class InventoryHelper {
         return itemStack;
     }
 
-    private static List<IItemHandler> findInvContainers(Inventory inv) {
-        List<IItemHandler> containers = new ArrayList<>();
+    private static List<ItemStack> findInvContainers(Inventory inv) {
+        List<ItemStack> containers = new ArrayList<>();
 
         for (int i = 0; i < 36; ++i) {
             ItemStack stack = inv.getItem(i);
-            stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-                    .ifPresent(containers::add);
+            if(stack.getItem() instanceof Container) {
+                containers.add(stack);
+            }
         }
 
         return containers;
     }
 
-    public static int countInContainer(IItemHandler container, Item item) {
+    public static int countInContainer(Container container, Item item) {
         int count = 0;
         ItemStack tempItem;
-        for (int i = 0; i < container.getSlots(); ++i) {
-            tempItem = container.getStackInSlot(i);
+        for (int i = 0; i < container.getContainerSize(); ++i) {
+            tempItem = container.getItem(i);
             if (tempItem.getItem() == item) {
                 count += tempItem.getCount();
             }
@@ -270,12 +273,12 @@ public class InventoryHelper {
 
     public static Optional<BlockData> getSafeBlockData(Player player, BlockPos pos, BlockPlaceContext useContext) {
         Level world = player.level;
-        Boolean isCopyPasteGadget = (AbstractGadget.getGadget(player).getItem() instanceof GadgetCopyPaste);
+        boolean isCopyPasteGadget = (AbstractGadget.getGadget(player).getItem() instanceof GadgetCopyPaste);
         BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof LiquidBlock)
             return Optional.empty();
 
-        if (state.getBlock() == OurBlocks.CONSTRUCTION_BLOCK.get()) {
+        if (state.getBlock() == OurBlocks.CONSTRUCTION_BLOCK) {
             BlockEntity be = world.getBlockEntity(pos);
             if (be instanceof ConstructionBlockTileEntity) //should already be checked
                 return Optional.of(((ConstructionBlockTileEntity) be).getConstructionBlockData());

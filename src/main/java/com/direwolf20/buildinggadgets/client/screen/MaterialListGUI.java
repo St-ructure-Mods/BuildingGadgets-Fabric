@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.client.screen;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
@@ -23,7 +24,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
 
 import java.awt.*;
 import java.util.List;
@@ -63,7 +63,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
 
     public MaterialListGUI(ItemStack item) {
         super(MaterialListTranslation.TITLE.componentTranslation());
-        Preconditions.checkArgument(item.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).isPresent());
+        Preconditions.checkArgument(BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(item) != null);
         this.item = item;
     }
 
@@ -171,12 +171,12 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
                 return provider.getTemplateForKey(key);
             }
             BuildingGadgets.LOG.warn("Item used for material list does not have an ITemplateKey capability!");
-            getMinecraft().player.closeContainer();
+            minecraft.player.closeContainer();
             return null;
         }
 
         BuildingGadgets.LOG.warn("Client world used for material list does not have an ITemplateProvider capability!");
-        getMinecraft().player.closeContainer();
+        minecraft.player.closeContainer();
         return null;
     }
 

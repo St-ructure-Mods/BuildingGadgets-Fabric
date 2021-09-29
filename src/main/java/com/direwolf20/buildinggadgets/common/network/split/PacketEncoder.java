@@ -3,8 +3,8 @@ package com.direwolf20.buildinggadgets.common.network.split;
 import com.google.common.collect.AbstractIterator;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.function.BiConsumer;
 
@@ -26,7 +26,7 @@ final class PacketEncoder<MSG> {
             private short curSession = PacketEncoder.this.curSession++;
 
             @Override
-            @Nonnull
+            @NotNull
             public Iterator<SplitPacket> iterator() {
                 return new AbstractIterator<SplitPacket>() {
                     private FriendlyByteBuf messageBuffer = new FriendlyByteBuf(Unpooled.buffer(Short.MAX_VALUE, Integer.MAX_VALUE));

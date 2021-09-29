@@ -2,15 +2,18 @@ package com.direwolf20.buildinggadgets.client.cache;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.packets.PacketRequestTemplate;
-import com.direwolf20.buildinggadgets.common.network.packets.SplitPacketUpdateTemplate;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.Target;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.bidirection.PacketRequestTemplate;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.bidirection.SplitPacketUpdateTemplate;
 import com.direwolf20.buildinggadgets.common.tainted.Tainted;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +32,7 @@ public final class CacheTemplateProvider implements ITemplateProvider {
     private final Cache<UUID, Template> cache;
     private final Set<IUpdateListener> updateListeners;
 
-    public CacheTemplateProvider() {
+    public CacheTemplateProvider(Level world) {
         this.cache = CacheBuilder
                 .newBuilder()
                 .expireAfterAccess(1, TimeUnit.MINUTES)
@@ -43,7 +46,7 @@ public final class CacheTemplateProvider implements ITemplateProvider {
         UUID id = getId(key);
         try {
             return cache.get(id, () -> {
-                requestUpdate(id, PacketDistributor.SERVER.noArg());
+                requestUpdate(id, new Target(PacketFlow.SERVERBOUND, null));
                 return new Template();
             });
         } catch (ExecutionException e) {
@@ -61,33 +64,33 @@ public final class CacheTemplateProvider implements ITemplateProvider {
 
     @Override
     public boolean requestUpdate(ITemplateKey key) {
-        return requestUpdate(key, PacketDistributor.SERVER.noArg());
+        return requestUpdate(key, new Target(PacketFlow.SERVERBOUND, null));
     }
 
     @Override
-    public boolean requestUpdate(ITemplateKey key, ResourceLocation channel) {
-        return requestUpdate(key.getTemplateId(UUID::randomUUID), channel);
+    public boolean requestUpdate(ITemplateKey key, Target target) {
+        return requestUpdate(key.getTemplateId(UUID::randomUUID), target);
     }
 
-    private boolean requestUpdate(UUID id, ResourceLocation channel) {
-        PacketHandler.send(new PacketRequestTemplate(id), channel);
+    private boolean requestUpdate(UUID id, Target target) {
+        PacketRequestTemplate.sendToTarget(target, id);
         return true;
     }
 
     @Override
-    public boolean requestRemoteUpdate(ITemplateKey key, ResourceLocation channel) {
+    public boolean requestRemoteUpdate(ITemplateKey key, Target target) {
         UUID id = getId(key);
         Template template = cache.getIfPresent(id);
         if (template != null) {
             notifyListeners(key, template, l -> l::onTemplateUpdateSend);
-            PacketHandler.getSplitManager().send(new SplitPacketUpdateTemplate(id, template), target);
+            SplitPacketUpdateTemplate.sendToTarget(target, id, template);
         }
         return template != null;
     }
 
     @Override
     public boolean requestRemoteUpdate(ITemplateKey key) {
-        return requestRemoteUpdate(key, PacketDistributor.SERVER.noArg());
+        return requestRemoteUpdate(key, new Target(PacketFlow.SERVERBOUND, null));
     }
 
     @Override
@@ -122,5 +125,15 @@ public final class CacheTemplateProvider implements ITemplateProvider {
                 BuildingGadgets.LOG.error("Update listener threw an exception!", e);
             }
         }
+    }
+
+    @Override
+    public void readFromNbt(CompoundTag tag) {
+
+    }
+
+    @Override
+    public void writeToNbt(CompoundTag tag) {
+
     }
 }

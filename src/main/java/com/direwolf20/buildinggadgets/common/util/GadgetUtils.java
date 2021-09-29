@@ -1,17 +1,19 @@
 package com.direwolf20.buildinggadgets.common.util;
 
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.capability.CapabilityTemplate;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.items.GadgetBuilding;
 import com.direwolf20.buildinggadgets.common.items.GadgetExchanger;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
-import com.direwolf20.buildinggadgets.common.network.packets.PacketRotateMirror;
+import com.direwolf20.buildinggadgets.common.network.fabricpacket.C2S.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
+import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
+import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateHeader;
 import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
@@ -22,7 +24,6 @@ import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -31,7 +32,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
@@ -72,22 +72,21 @@ public class GadgetUtils {
 
     public static void addTooltipNameAndAuthor(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
         if (world != null) {
-            world.getCapability(CapabilityTemplate.TEMPLATE_PROVIDER_CAPABILITY).ifPresent(provider -> {
-                stack.getCapability(CapabilityTemplate.TEMPLATE_KEY_CAPABILITY).ifPresent(key -> {
-                    Template template = provider.getTemplateForKey(key);
+            ITemplateProvider provider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.getNullable(world);
+            ITemplateKey key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(stack);
+            Template template = provider.getTemplateForKey(key);
                     TemplateHeader header = template.getHeader();
                     if (header.getName() != null && ! header.getName().isEmpty())
                         tooltip.add(TooltipTranslation.TEMPLATE_NAME.componentTranslation(header.getName()).setStyle(Styles.AQUA));
                     if (header.getAuthor() != null && ! header.getAuthor().isEmpty())
                         tooltip.add(TooltipTranslation.TEMPLATE_AUTHOR.componentTranslation(header.getAuthor()).setStyle(Styles.AQUA));
-                });
-            });
-        }
-        EventTooltip.addTemplatePadding(stack, tooltip);
-    }
+                }
+                EventTooltip.addTemplatePadding(stack, tooltip);
+            }
+
 
     @Nullable
-    public static ByteArrayOutputStream getPasteStream(@Nonnull CompoundTag compound, @Nullable String name) throws IOException {
+    public static ByteArrayOutputStream getPasteStream(@NotNull CompoundTag compound, @Nullable String name) throws IOException {
         CompoundTag withText = name != null && !name.isEmpty() ? compound.copy() : compound;
         if (name != null && !name.isEmpty()) withText.putString(NBTKeys.TEMPLATE_NAME, name);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

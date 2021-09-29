@@ -3,7 +3,6 @@ package com.direwolf20.buildinggadgets.common.tainted.save;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.packets.PacketRequestTemplate;
-import com.direwolf20.buildinggadgets.common.network.packets.SplitPacketUpdateTemplate;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
