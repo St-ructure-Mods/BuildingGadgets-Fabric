@@ -453,8 +453,7 @@ public class GadgetCopyPaste extends AbstractGadget {
                 EnergyStorage.ITEM.find(stack, ContainerItemContext.withInitial(stack)),
                 t -> energyCost,
                 index,
-                (c, t) -> overwrite ? c.getWorld().getBlockState(t.getPos()).canBeReplaced(useContext) : c.getWorld().isEmptyBlock(t.getPos()),
-                true);
+                (c, t) -> overwrite ? c.getWorld().getBlockState(t.getPos()).canBeReplaced(useContext) : c.getWorld().isEmptyBlock(t.getPos()));
         PlacementScheduler.schedulePlacement(view, checker, BuildingGadgets.config.GADGETS.placeSteps)
                 .withFinisher(p -> {
                     pushUndo(stack, p.getUndoBuilder().build(view.getContext().getServerWorld()));

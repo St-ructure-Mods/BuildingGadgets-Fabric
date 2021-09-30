@@ -254,9 +254,8 @@ public class GadgetBuilding extends AbstractGadget {
                 useConstructionPaste = true;
         }
 
-        //BlockSnapshot blockSnapshot = BlockSnapshot.create(world.dimension(), world, pos);
-        //if (ForgeEventFactory.onBlockPlace(player, blockSnapshot, Direction.UP) || ! world.mayInteract(player, pos) || !this.canUse(heldItem, player) || !setBlock.getState().canSurvive(world, pos))
-        //    return;
+        if (!(world.mayInteract(player, pos) && this.canUse(heldItem, player) && setBlock.getState().canSurvive(world, pos)))
+            return;
 
         this.applyDamage(heldItem, player);
 
