@@ -19,7 +19,7 @@ import java.util.*;
  */
 public final class PlayerItemIndex implements IItemIndex {
     //use a class map first, to allow for non-Item IUniqueObjects...
-    private Map<Class<?>, Map<Object, List<IObjectHandle<?>>>> handleMap;
+    private Map<Class<?>, Map<Object, List<IObjectHandle>>> handleMap;
     private List<IInsertProvider> insertProviders;
     private final ItemStack stack;
     private final Player player;
@@ -31,10 +31,10 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     @Override
-    public Multiset<IUniqueObject<?>> insert(Multiset<IUniqueObject<?>> items, boolean simulate) {
-        Multiset<IUniqueObject<?>> copy = HashMultiset.create(items);
-        Multiset<IUniqueObject<?>> toRemove = HashMultiset.create();
-        for (Multiset.Entry<IUniqueObject<?>> entry : copy.entrySet()) {
+    public Multiset<IUniqueObject> insert(Multiset<IUniqueObject> items, boolean simulate) {
+        Multiset<IUniqueObject> copy = HashMultiset.create(items);
+        Multiset<IUniqueObject> toRemove = HashMultiset.create();
+        for (Multiset.Entry<IUniqueObject> entry : copy.entrySet()) {
             int remainingCount = insertObject(entry.getElement(), entry.getCount(), simulate);
             if (remainingCount < entry.getCount())
                 toRemove.add(entry.getElement(), entry.getCount() - remainingCount);
@@ -44,7 +44,7 @@ public final class PlayerItemIndex implements IItemIndex {
         return copy;
     }
 
-    private int insertObject(IUniqueObject<?> obj, int count, boolean simulate) {
+    private int insertObject(IUniqueObject obj, int count, boolean simulate) {
         if (obj.preferStackInsert())
             return obj.tryCreateInsertStack(Collections.unmodifiableMap(handleMap), count)
                     .map(itemStack -> performSimpleInsert(itemStack, count, simulate))
@@ -121,14 +121,14 @@ public final class PlayerItemIndex implements IItemIndex {
         }
     }
 
-    private int performComplexInsert(IUniqueObject<?> obj, int count, boolean simulate) {
+    private int performComplexInsert(IUniqueObject obj, int count, boolean simulate) {
         int remainingCount = count;
-        List<IObjectHandle<?>> handles = handleMap
+        List<IObjectHandle> handles = handleMap
                 .getOrDefault(obj.getIndexClass(), ImmutableMap.of())
                 .getOrDefault(obj.getIndexObject(), ImmutableList.of());
 
-        for (Iterator<IObjectHandle<?>> it = handles.iterator(); it.hasNext() && remainingCount >= 0; ) {
-            IObjectHandle<?> handle = it.next();
+        for (Iterator<IObjectHandle> it = handles.iterator(); it.hasNext() && remainingCount >= 0; ) {
+            IObjectHandle handle = it.next();
             int match = handle.insert(obj, remainingCount, simulate);
             if (match > 0)
                 remainingCount -= match;
@@ -149,7 +149,7 @@ public final class PlayerItemIndex implements IItemIndex {
     @Override
     public MatchResult tryMatch(MaterialList list) {
         MatchResult result = null;
-        for (ImmutableMultiset<IUniqueObject<?>> multiset : list) {
+        for (ImmutableMultiset<IUniqueObject> multiset : list) {
             result = match(list, multiset, true);
             if (result.isSuccess())
                 return MatchResult.success(list, result.getFoundItems(), multiset);
@@ -158,9 +158,9 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     private MatchResult evaluateFailingOptionFoundItems(MaterialList list) {
-        Multiset<IUniqueObject<?>> multiset = HashMultiset.create();
-        for (ImmutableMultiset<IUniqueObject<?>> option : list.getItemOptions()) {
-            for (Entry<IUniqueObject<?>> entry : option.entrySet()) {
+        Multiset<IUniqueObject> multiset = HashMultiset.create();
+        for (ImmutableMultiset<IUniqueObject> option : list.getItemOptions()) {
+            for (Entry<IUniqueObject> entry : option.entrySet()) {
                 multiset.setCount(entry.getElement(), Math.max(multiset.count(entry.getElement()), entry.getCount()));
             }
         }
@@ -168,21 +168,21 @@ public final class PlayerItemIndex implements IItemIndex {
         MatchResult result = match(list, multiset, true);
         if (result.isSuccess())
             throw new RuntimeException("This should not be possible! The the content changed between matches?!?");
-        Iterator<ImmutableMultiset<IUniqueObject<?>>> it = list.iterator();
+        Iterator<ImmutableMultiset<IUniqueObject>> it = list.iterator();
         return it.hasNext() ? MatchResult.failure(list, result.getFoundItems(), it.next()) : result;
     }
 
-    private MatchResult match(MaterialList list, Multiset<IUniqueObject<?>> multiset, boolean simulate) {
-        ImmutableMultiset.Builder<IUniqueObject<?>> availableBuilder = ImmutableMultiset.builder();
+    private MatchResult match(MaterialList list, Multiset<IUniqueObject> multiset, boolean simulate) {
+        ImmutableMultiset.Builder<IUniqueObject> availableBuilder = ImmutableMultiset.builder();
         boolean failure = false;
-        for (Entry<IUniqueObject<?>> entry : multiset.entrySet()) {
+        for (Entry<IUniqueObject> entry : multiset.entrySet()) {
             int remainingCount = entry.getCount();
             Class<?> indexClass = entry.getElement().getIndexClass();
-            List<IObjectHandle<?>> entries = handleMap
+            List<IObjectHandle> entries = handleMap
                     .getOrDefault(indexClass, ImmutableMap.of())
                     .getOrDefault(entry.getElement().getIndexObject(), ImmutableList.of());
-            for (Iterator<IObjectHandle<?>> it = entries.iterator(); it.hasNext() && remainingCount >= 0; ) {
-                IObjectHandle<?> handle = it.next();
+            for (Iterator<IObjectHandle> it = entries.iterator(); it.hasNext() && remainingCount >= 0; ) {
+                IObjectHandle handle = it.next();
                 int match = handle.match(entry.getElement(), remainingCount, simulate);
                 if (match > 0)
                     remainingCount -= match;

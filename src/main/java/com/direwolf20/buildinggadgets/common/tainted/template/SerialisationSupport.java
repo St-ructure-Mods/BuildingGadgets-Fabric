@@ -8,25 +8,22 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.Materia
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObjectSerializer;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.base.Preconditions;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.ObjectHolder;
 
 public final class SerialisationSupport {
-    private SerialisationSupport() {}
+    private SerialisationSupport() {
+    }
 
-    @ObjectHolder(Reference.TileDataSerializerReference.DUMMY_SERIALIZER)
-    private static final ITileDataSerializer DUMMY_TILE_DATA_SERIALIZER = new DummyTileDataSerializer()
-            .setRegistryName(Reference.TileDataSerializerReference.DUMMY_SERIALIZER_RL);
+    // TODO: Register as Reference.TileDataSerializerReference.DUMMY_SERIALIZER_RL
+    private static final ITileDataSerializer DUMMY_TILE_DATA_SERIALIZER = new DummyTileDataSerializer();
 
     public static ITileDataSerializer dummyDataSerializer() {
         return DUMMY_TILE_DATA_SERIALIZER;
     }
 
-    private static final class DummyTileDataSerializer extends ForgeRegistryEntry<ITileDataSerializer> implements ITileDataSerializer {
+    private static final class DummyTileDataSerializer implements ITileDataSerializer {
 
         private DummyTileDataSerializer() {
             super();
@@ -43,16 +40,16 @@ public final class SerialisationSupport {
         }
     }
 
-    @ObjectHolder(Reference.TileDataSerializerReference.NBT_TILE_ENTITY_DATA_SERIALIZER)
-    private static final ITileDataSerializer NBT_TILE_DATA_SERIALIZER = new NBTTileEntityDataSerializer()
-            .setRegistryName(Reference.TileDataSerializerReference.NBT_TILE_ENTITY_DATA_SERIALIZER_RL);
+    // TODO: Register as Reference.TileDataSerializerReference.NBT_TILE_ENTITY_DATA_SERIALIZER_RL
+    private static final ITileDataSerializer NBT_TILE_DATA_SERIALIZER = new NBTTileEntityDataSerializer();
 
     public static ITileDataSerializer nbtTileDataSerializer() {
         return NBT_TILE_DATA_SERIALIZER;
     }
 
-    private static final class NBTTileEntityDataSerializer extends ForgeRegistryEntry<ITileDataSerializer> implements ITileDataSerializer {
-        private NBTTileEntityDataSerializer() {}
+    private static final class NBTTileEntityDataSerializer implements ITileDataSerializer {
+        private NBTTileEntityDataSerializer() {
+        }
 
         @Override
         public CompoundTag serialize(ITileEntityData data, boolean persisted) {
@@ -75,9 +72,8 @@ public final class SerialisationSupport {
         }
     }
 
-    @ObjectHolder(Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID)
-    private static final IUniqueObjectSerializer UNIQUE_ITEM_SERIALIZER = new UniqueItem.Serializer()
-            .setRegistryName(Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL);
+    // TODO: Register as Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL
+    private static final IUniqueObjectSerializer UNIQUE_ITEM_SERIALIZER = new UniqueItem.Serializer();
 
     public static IUniqueObjectSerializer uniqueItemSerializer() {
         return UNIQUE_ITEM_SERIALIZER;

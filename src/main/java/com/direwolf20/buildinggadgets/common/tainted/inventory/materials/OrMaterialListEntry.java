@@ -35,15 +35,15 @@ class OrMaterialListEntry extends SubMaterialListEntry {
      * Applies an "or" by iterating over all contained entries in the order in which they appear, and then in-turn iterating over the items.
      */
     @Override
-    public PeekingIterator<ImmutableMultiset<IUniqueObject<?>>> iterator() {
+    public PeekingIterator<ImmutableMultiset<IUniqueObject>> iterator() {
         if (! getAllSubEntries().findFirst().isPresent())
             return Iterators.peekingIterator(Iterators.singletonIterator(ImmutableMultiset.of()));
         Iterator<MaterialListEntry<?>> entryIterator = getAllSubEntries().iterator();
-        return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<IUniqueObject<?>>>() {
-            private Iterator<ImmutableMultiset<IUniqueObject<?>>> itemIterator;
+        return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<IUniqueObject>>() {
+            private Iterator<ImmutableMultiset<IUniqueObject>> itemIterator;
 
             @Override
-            protected ImmutableMultiset<IUniqueObject<?>> computeNext() {
+            protected ImmutableMultiset<IUniqueObject> computeNext() {
                 if (itemIterator == null) {
                     if (entryIterator.hasNext())
                         itemIterator = entryIterator.next().iterator();

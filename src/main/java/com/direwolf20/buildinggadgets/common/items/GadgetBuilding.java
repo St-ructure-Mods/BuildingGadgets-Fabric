@@ -260,7 +260,7 @@ public class GadgetBuilding extends AbstractGadget {
         this.applyDamage(heldItem, player);
 
         if (index.applyMatch(match)) {
-            ImmutableMultiset<IUniqueObject<?>> usedItems = match.getChosenOption();
+            ImmutableMultiset<IUniqueObject> usedItems = match.getChosenOption();
             builder.record(world, pos, setBlock, usedItems, ImmutableMultiset.of());
             EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.PLACE, useConstructionPaste);
         }

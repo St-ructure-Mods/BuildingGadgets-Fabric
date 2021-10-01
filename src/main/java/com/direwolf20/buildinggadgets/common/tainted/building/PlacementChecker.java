@@ -44,7 +44,7 @@ public final class PlacementChecker {
         if (target.getPos().getY() > context.getWorld().getMaxBuildHeight() || target.getPos().getY() < 0 || !placeCheck.test(context, target))
             return new CheckResult(MatchResult.failure(), ImmutableMultiset.of(), false, false);
         long energy = energyFun.applyAsLong(target);
-        Multiset<IUniqueObject<?>> insertedItems = ImmutableMultiset.of();
+        Multiset<IUniqueObject> insertedItems = ImmutableMultiset.of();
         boolean isCreative = context.getPlayer() != null && context.getPlayer().isCreative();
 
         try (Transaction transaction = Transaction.openOuter()) {
@@ -108,18 +108,18 @@ public final class PlacementChecker {
 
     public static final class CheckResult {
         private final MatchResult match;
-        private final Multiset<IUniqueObject<?>> insertedItems;
+        private final Multiset<IUniqueObject> insertedItems;
         private final boolean success;
         private final boolean usingPaste;
 
-        private CheckResult(MatchResult match, Multiset<IUniqueObject<?>> insertedItems, boolean success, boolean usingPaste) {
+        private CheckResult(MatchResult match, Multiset<IUniqueObject> insertedItems, boolean success, boolean usingPaste) {
             this.match = match;
             this.insertedItems = insertedItems;
             this.success = success;
             this.usingPaste = usingPaste;
         }
 
-        public Multiset<IUniqueObject<?>> getInsertedItems() {
+        public Multiset<IUniqueObject> getInsertedItems() {
             return insertedItems;
         }
 

@@ -35,20 +35,20 @@ class AndMaterialListEntry extends SubMaterialListEntry {
      * the contained entries.
      */
     @Override
-    public PeekingIterator<ImmutableMultiset<IUniqueObject<?>>> iterator() {
+    public PeekingIterator<ImmutableMultiset<IUniqueObject>> iterator() {
         if (! getAllSubEntries().findFirst().isPresent())
             return Iterators.peekingIterator(Iterators.singletonIterator(ImmutableMultiset.of()));
         LinkedList<MaterialEntryWrapper> list = getAllSubEntries()
                 .map(MaterialEntryWrapper::new)
                 .collect(Collectors.toCollection(LinkedList::new));
-        return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<IUniqueObject<?>>>() {
+        return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<IUniqueObject>>() {
             private final Deque<MaterialEntryWrapper> dequeue = list;
 
             @Override
-            protected ImmutableMultiset<IUniqueObject<?>> computeNext() {
+            protected ImmutableMultiset<IUniqueObject> computeNext() {
                 if (dequeue.isEmpty())
                     return endOfData();
-                ImmutableMultiset.Builder<IUniqueObject<?>> builder = ImmutableMultiset.builder();
+                ImmutableMultiset.Builder<IUniqueObject> builder = ImmutableMultiset.builder();
                 for (MaterialEntryWrapper wrapper : dequeue) {
                     if (wrapper.hasNext())
                         builder.addAll(wrapper.peek());
@@ -106,7 +106,7 @@ class AndMaterialListEntry extends SubMaterialListEntry {
     }
 
     private static final class MaterialEntryWrapper {
-        private PeekingIterator<ImmutableMultiset<IUniqueObject<?>>> curIterator;
+        private PeekingIterator<ImmutableMultiset<IUniqueObject>> curIterator;
         private final MaterialListEntry<?> entry;
 
         private MaterialEntryWrapper(MaterialListEntry<?> entry) {
@@ -114,7 +114,7 @@ class AndMaterialListEntry extends SubMaterialListEntry {
             this.curIterator = entry.iterator();
         }
 
-        private ImmutableMultiset<IUniqueObject<?>> peek() {
+        private ImmutableMultiset<IUniqueObject> peek() {
             return curIterator.peek();
         }
 

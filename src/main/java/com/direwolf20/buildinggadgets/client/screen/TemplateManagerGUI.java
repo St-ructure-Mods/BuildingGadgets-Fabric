@@ -264,15 +264,15 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
         // The things you have to do to get anything from this system is just stupid.
         MatchResult list = InventoryHelper.CREATIVE_INDEX.tryMatch(requirements);
-        ImmutableMultiset<IUniqueObject<?>> foundItems = list.getFoundItems();
+        ImmutableMultiset<IUniqueObject> foundItems = list.getFoundItems();
 
         // Reverse sorted list of items required.
-        List<Multiset.Entry<IUniqueObject<?>>> sortedEntries = ImmutableList.sortedCopyOf(Comparator
-                .<Multiset.Entry<IUniqueObject<?>>, Integer>comparing(Multiset.Entry::getCount)
+        List<Multiset.Entry<IUniqueObject>> sortedEntries = ImmutableList.sortedCopyOf(Comparator
+                .<Multiset.Entry<IUniqueObject>, Integer>comparing(Multiset.Entry::getCount)
                 .reversed(), list.getChosenOption().entrySet());
 
         int index = 0, column = 0;
-        for(Multiset.Entry<IUniqueObject<?>> e: sortedEntries) {
+        for(Multiset.Entry<IUniqueObject> e: sortedEntries) {
             ItemStack stack = e.getElement().createStack();
             int x = (-20 - (column * 25)), y = (20 + (index * 25));
 

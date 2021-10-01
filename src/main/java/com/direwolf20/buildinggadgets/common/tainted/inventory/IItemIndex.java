@@ -15,18 +15,18 @@ import com.google.common.collect.Multiset;
  * @see CreativeItemIndex
  */
 public interface IItemIndex {
-    default Multiset<IUniqueObject<?>> insert(Multiset<IUniqueObject<?>> items) {
+    default Multiset<IUniqueObject> insert(Multiset<IUniqueObject> items) {
         return insert(items, false);
     }
 
     //returns the remaining items
-    Multiset<IUniqueObject<?>> insert(Multiset<IUniqueObject<?>> items, boolean simulate);
+    Multiset<IUniqueObject> insert(Multiset<IUniqueObject> items, boolean simulate);
 
     void reIndex();
 
     MatchResult tryMatch(MaterialList list);
 
-    default MatchResult tryMatch(Multiset<IUniqueObject<?>> items) {
+    default MatchResult tryMatch(Multiset<IUniqueObject> items) {
         return tryMatch(MaterialList.of(items));
     }
 

@@ -10,11 +10,11 @@ import com.google.common.collect.ImmutableMultiset;
  */
 public final class MatchResult {
     private final MaterialList matchedList;
-    private final ImmutableMultiset<IUniqueObject<?>> foundItems;
-    private final ImmutableMultiset<IUniqueObject<?>> chosenOption;
+    private final ImmutableMultiset<IUniqueObject> foundItems;
+    private final ImmutableMultiset<IUniqueObject> chosenOption;
     private final boolean isSuccess;
 
-    public static MatchResult success(MaterialList matchedList, ImmutableMultiset<IUniqueObject<?>> foundItems, ImmutableMultiset<IUniqueObject<?>> chosenOption) {
+    public static MatchResult success(MaterialList matchedList, ImmutableMultiset<IUniqueObject> foundItems, ImmutableMultiset<IUniqueObject> chosenOption) {
         return new MatchResult(matchedList, foundItems, chosenOption, true);
     }
 
@@ -22,11 +22,11 @@ public final class MatchResult {
         return new MatchResult(MaterialList.empty(), ImmutableMultiset.of(), ImmutableMultiset.of(), false);
     }
 
-    public static MatchResult failure(MaterialList matchedList, ImmutableMultiset<IUniqueObject<?>> foundItems, ImmutableMultiset<IUniqueObject<?>> chosenOption) {
+    public static MatchResult failure(MaterialList matchedList, ImmutableMultiset<IUniqueObject> foundItems, ImmutableMultiset<IUniqueObject> chosenOption) {
         return new MatchResult(matchedList, foundItems, chosenOption, false);
     }
 
-    MatchResult(MaterialList matchedList, ImmutableMultiset<IUniqueObject<?>> foundItems, ImmutableMultiset<IUniqueObject<?>> chosenOption, boolean isSuccess) {
+    MatchResult(MaterialList matchedList, ImmutableMultiset<IUniqueObject> foundItems, ImmutableMultiset<IUniqueObject> chosenOption, boolean isSuccess) {
         this.matchedList = matchedList;
         this.foundItems = foundItems;
         this.chosenOption = chosenOption;
@@ -44,11 +44,11 @@ public final class MatchResult {
      *
      * @return The found items
      */
-    public ImmutableMultiset<IUniqueObject<?>> getFoundItems() {
+    public ImmutableMultiset<IUniqueObject> getFoundItems() {
         return foundItems;
     }
 
-    public ImmutableMultiset<IUniqueObject<?>> getChosenOption() {
+    public ImmutableMultiset<IUniqueObject> getChosenOption() {
         return chosenOption;
     }
 

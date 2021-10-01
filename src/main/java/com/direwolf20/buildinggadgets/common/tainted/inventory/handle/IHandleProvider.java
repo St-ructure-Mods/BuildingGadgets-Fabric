@@ -13,5 +13,5 @@ public interface IHandleProvider {
      * @param indexedClasses The Set of indexed classes. An {@code IHandleProvider} should add all classes that were indexed by itself to this Set and
      *                       should also query it, whether any indexing should be performed.
      */
-    boolean index(ICapabilityProvider capProvider, Map<Class<?>, Map<Object, List<IObjectHandle<?>>>> indexMap, Set<Class<?>> indexedClasses);
+    boolean index(ICapabilityProvider capProvider, Map<Class<?>, Map<Object, List<IObjectHandle>>> indexMap, Set<Class<?>> indexedClasses);
 }

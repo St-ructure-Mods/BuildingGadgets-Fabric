@@ -18,7 +18,7 @@ import java.util.*;
  * to an indexed map of available Items.
  */
 public final class ItemHandlerProvider implements IHandleProvider {
-    public static void index(Storage<ItemVariant> handler, Map<Class<?>, Map<Object, List<IObjectHandle<?>>>> indexMap) {
+    public static void index(Storage<ItemVariant> handler, Map<Class<?>, Map<Object, List<IObjectHandle>>> indexMap) {
         List<ItemStack> stacks = new ArrayList<>(handler.getSlots());
         //first index all sub-providers
         for (int i = 0; i < handler.getSlots(); ++i) {
@@ -43,7 +43,7 @@ public final class ItemHandlerProvider implements IHandleProvider {
     }
 
     @Override
-    public boolean index(ICapabilityProvider capProvider, Map<Class<?>, Map<Object, List<IObjectHandle<?>>>> indexMap, Set<Class<?>> indexedClasses) {
+    public boolean index(ICapabilityProvider capProvider, Map<Class<?>, Map<Object, List<IObjectHandle>>> indexMap, Set<Class<?>> indexedClasses) {
         if (indexedClasses.contains(Item.class))
             return false;
         LazyOptional<IItemHandler> cap = capProvider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);

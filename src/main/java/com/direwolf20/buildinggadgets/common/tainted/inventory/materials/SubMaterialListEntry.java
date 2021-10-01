@@ -80,7 +80,7 @@ abstract class SubMaterialListEntry implements MaterialListEntry<SubMaterialList
     private SimpleMaterialListEntry combine(List<SimpleMaterialListEntry> simpleEntries) {
         if (simpleEntries.size() == 1)
             return simpleEntries.get(0);
-        ImmutableMultiset.Builder<IUniqueObject<?>> builder = ImmutableMultiset.builder();
+        ImmutableMultiset.Builder<IUniqueObject> builder = ImmutableMultiset.builder();
         for (SimpleMaterialListEntry entry:simpleEntries) {
             builder.addAll(entry.getItems());
         }
@@ -89,7 +89,7 @@ abstract class SubMaterialListEntry implements MaterialListEntry<SubMaterialList
 
     protected abstract SubMaterialListEntry createFrom(ImmutableList<MaterialListEntry<?>> subEntries, ImmutableList<SimpleMaterialListEntry> constantEntry, boolean simplified);
 
-    protected Iterable<ImmutableMultiset<IUniqueObject<?>>> viewOnlySubEntries() {
+    protected Iterable<ImmutableMultiset<IUniqueObject>> viewOnlySubEntries() {
         return createFrom(getSubEntries(), ImmutableList.of(), simplified);
     }
 

@@ -1,12 +1,11 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.handle;
 
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObject;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public final class StackHandlerItemHandle implements IObjectHandle<Item> {
+public final class StackHandlerItemHandle implements IObjectHandle {
     private final IItemHandler handler;
     private final int slot;
 
@@ -16,17 +15,12 @@ public final class StackHandlerItemHandle implements IObjectHandle<Item> {
     }
 
     @Override
-    public Class<Item> getIndexClass() {
-        return Item.class;
-    }
-
-    @Override
     public boolean shouldCleanup() {
         return getStack().isEmpty();
     }
 
     @Override
-    public int match(IUniqueObject<?> item, int count, boolean simulate) {
+    public int match(IUniqueObject item, int count, boolean simulate) {
         ItemStack stack = getStack();
         if (item.matches(stack)) {
             ItemStack resultStack = handler.extractItem(slot, count, simulate);
@@ -36,19 +30,14 @@ public final class StackHandlerItemHandle implements IObjectHandle<Item> {
     }
 
     @Override
-    public Item getIndexObject() {
-        return getStack().getItem();
-    }
-
-    @Override
-    public int insert(IUniqueObject<?> item, int count, boolean simulate) {
+    public int insert(IUniqueObject item, int count, boolean simulate) {
         if (handler instanceof IItemHandlerModifiable) {
             IItemHandlerModifiable modifiable = (IItemHandlerModifiable) handler;
             ItemStack stack = getStack();
-            if (! stack.isEmpty() && ! item.matches(stack))
+            if (!stack.isEmpty() && !item.matches(stack))
                 return 0;
             ItemStack res = item.insertInto(stack, count);
-            if (! simulate)
+            if (!simulate)
                 modifiable.setStackInSlot(slot, res);
             return res.getCount() - stack.getCount();
         }
@@ -62,7 +51,7 @@ public final class StackHandlerItemHandle implements IObjectHandle<Item> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (! (o instanceof StackHandlerItemHandle)) return false;
+        if (!(o instanceof StackHandlerItemHandle)) return false;
 
         StackHandlerItemHandle that = (StackHandlerItemHandle) o;
 

@@ -146,7 +146,7 @@ public final class Registries {
             return handleProviders;
         }
 
-        public static boolean indexCapProvider(ICapabilityProvider provider, Map<Class<?>, Map<Object, List<IObjectHandle<?>>>> indexMap) {
+        public static boolean indexCapProvider(ICapabilityProvider provider, Map<Class<?>, Map<Object, List<IObjectHandle>>> indexMap) {
             Set<Class<?>> evaluatedClasses = new HashSet<>();
             boolean indexed = false;
             for (IHandleProvider handleProvider : getHandleProviders().getValuesInOrder()) {

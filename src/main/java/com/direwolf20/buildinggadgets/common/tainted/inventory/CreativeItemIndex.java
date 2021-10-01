@@ -12,7 +12,7 @@ import java.util.Iterator;
  */
 public final class CreativeItemIndex implements IItemIndex {
     @Override
-    public Multiset<IUniqueObject<?>> insert(Multiset<IUniqueObject<?>> items, boolean simulate) {
+    public Multiset<IUniqueObject> insert(Multiset<IUniqueObject> items, boolean simulate) {
         return items;
     }
 
@@ -23,8 +23,8 @@ public final class CreativeItemIndex implements IItemIndex {
 
     @Override
     public MatchResult tryMatch(MaterialList list) {
-        Iterator<ImmutableMultiset<IUniqueObject<?>>> it = list.iterator();
-        ImmutableMultiset<IUniqueObject<?>> chosen = it.hasNext() ? it.next() : ImmutableMultiset.of();
+        Iterator<ImmutableMultiset<IUniqueObject>> it = list.iterator();
+        ImmutableMultiset<IUniqueObject> chosen = it.hasNext() ? it.next() : ImmutableMultiset.of();
         return MatchResult.success(list, chosen, chosen);
     }
 

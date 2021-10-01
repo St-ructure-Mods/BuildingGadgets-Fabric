@@ -4,10 +4,7 @@
  * {@link com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.ITileDataFactory ITileDataFactories} or as a specialisation of these
  * {@link com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.ITileDataProvider ITileDataProviders}.
  */
-@ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 package com.direwolf20.buildinggadgets.common.tainted.building.tilesupport;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;

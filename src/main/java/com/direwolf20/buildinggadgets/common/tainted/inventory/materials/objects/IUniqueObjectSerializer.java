@@ -6,11 +6,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public interface IUniqueObjectSerializer extends IForgeRegistryEntry<IUniqueObjectSerializer> {
-    CompoundTag serialize(IUniqueObject<?> item, boolean persisted);
+    CompoundTag serialize(IUniqueObject item, boolean persisted);
 
-    IUniqueObject<?> deserialize(CompoundTag res);
+    IUniqueObject deserialize(CompoundTag res);
 
-    JsonSerializer<IUniqueObject<?>> asJsonSerializer(boolean printName, boolean extended);
+    JsonSerializer<IUniqueObject> asJsonSerializer(boolean printName, boolean extended);
 
-    JsonDeserializer<IUniqueObject<?>> asJsonDeserializer();
+    JsonDeserializer<IUniqueObject> asJsonDeserializer();
 }

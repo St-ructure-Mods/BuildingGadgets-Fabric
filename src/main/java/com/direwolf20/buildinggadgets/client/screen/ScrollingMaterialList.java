@@ -45,7 +45,7 @@ class ScrollingMaterialList extends EntryList<Entry> {
 
     private SortingModes sortingMode;
     private long lastUpdate;
-    private Iterator<ImmutableMultiset<IUniqueObject<?>>> multisetIterator;
+    private Iterator<ImmutableMultiset<IUniqueObject>> multisetIterator;
 
     public ScrollingMaterialList(MaterialListGUI gui) {
         super(gui.getWindowLeftX(), gui.getWindowTopY() + TOP, gui.getWindowWidth(), gui.getWindowHeight() - TOP - BOTTOM, ENTRY_HEIGHT);
@@ -74,8 +74,8 @@ class ScrollingMaterialList extends EntryList<Entry> {
         IItemIndex index = InventoryHelper.index(gui.getTemplateItem(), player);
         MatchResult result = index.tryMatch(multisetIterator.next());
 
-        for (Multiset.Entry<IUniqueObject<?>> entry : result.getChosenOption().entrySet()) {
-            IUniqueObject<?> item = entry.getElement();
+        for (Multiset.Entry<IUniqueObject> entry : result.getChosenOption().entrySet()) {
+            IUniqueObject item = entry.getElement();
             addEntry(new Entry(this, item, entry.getCount(), result.getFoundItems().count(entry.getElement())));
         }
 
@@ -124,7 +124,7 @@ class ScrollingMaterialList extends EntryList<Entry> {
         private final int widthItemName;
         private final int widthAmount;
 
-        public Entry(ScrollingMaterialList parent, IUniqueObject<?> item, int required, int available) {
+        public Entry(ScrollingMaterialList parent, IUniqueObject item, int required, int available) {
             this.parent = parent;
             this.required = required;
             this.available = Mth.clamp(available, 0, required);

@@ -1,11 +1,10 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects;
 
 import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.IObjectHandle;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.List;
 import java.util.Map;
@@ -14,13 +13,11 @@ import java.util.Optional;
 /**
  * Some sort of Object that can be interpreted as a RequiredMaterial.
  * Because the Object classes are indexed for performance reasons, this must report the index class and object!
- *
- * @param <T>
  */
-public interface IUniqueObject<T> {
-    Class<T> getIndexClass();
+public interface IUniqueObject {
+    Class<Item> getIndexClass();
 
-    T getIndexObject();
+    Item getIndexObject();
 
     boolean matches(ItemStack stack);
 
@@ -33,7 +30,7 @@ public interface IUniqueObject<T> {
         return getIndexClass() == Item.class;
     }
 
-    default Optional<ItemStack> tryCreateInsertStack(Map<Class<?>, Map<Object, List<IObjectHandle<?>>>> index, int count) {
+    default Optional<ItemStack> tryCreateInsertStack(Map<Class<?>, Map<Object, List<IObjectHandle>>> index, int count) {
         return Optional.of(createStack(count));
     }
 
@@ -43,10 +40,7 @@ public interface IUniqueObject<T> {
 
     //used for writing material-list to a json-String
     default ResourceLocation getObjectRegistryName() {
-        T indexObj = getIndexObject();
-        if (indexObj instanceof IForgeRegistryEntry)
-            return ((IForgeRegistryEntry) indexObj).getRegistryName();
-        return new ResourceLocation(Reference.MODID, getIndexClass().getSimpleName());
+        return Registry.ITEM.getKey(getIndexObject());
     }
 
     ItemStack createStack(int count);

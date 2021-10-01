@@ -286,8 +286,8 @@ public class GadgetExchanger extends AbstractGadget {
                     world.clip(new ClipContext(player.position(), Vec3.atLowerCornerOf(pos), ClipContext.Block.COLLIDER, Fluid.NONE, player)),
                     pos);
 
-            Iterator<ImmutableMultiset<IUniqueObject<?>>> it = materials.iterator();
-            Multiset<IUniqueObject<?>> producedItems = LinkedHashMultiset.create();
+            Iterator<ImmutableMultiset<IUniqueObject>> it = materials.iterator();
+            Multiset<IUniqueObject> producedItems = LinkedHashMultiset.create();
 
             if (buildContext.getStack().isEnchanted() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, buildContext.getStack()) > 0) {
                 producedItems = it.hasNext() ? it.next() : ImmutableMultiset.of();

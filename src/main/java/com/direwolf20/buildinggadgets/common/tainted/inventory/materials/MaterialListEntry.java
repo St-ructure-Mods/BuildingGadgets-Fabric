@@ -11,9 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 /* This is currently hidden, to avoid having yet another Registry
  - if it turns out someone needs something else then the default implementations, we can still add that and make it public
  */
-interface MaterialListEntry<T extends MaterialListEntry<T>> extends Iterable<ImmutableMultiset<IUniqueObject<?>>> {
+interface MaterialListEntry<T extends MaterialListEntry<T>> extends Iterable<ImmutableMultiset<IUniqueObject>> {
     @Override
-    PeekingIterator<ImmutableMultiset<IUniqueObject<?>>> iterator();
+    PeekingIterator<ImmutableMultiset<IUniqueObject>> iterator();
 
     Serializer<T> getSerializer();
 
