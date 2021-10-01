@@ -43,16 +43,18 @@ public class PacketTemplateManagerTemplateCreated implements ServerPlayNetworkin
                 BlockEntity blockEntity = level.getBlockEntity(pos);
                 if (blockEntity instanceof TemplateManagerTileEntity) {
                     ItemStack stack = new ItemStack(OurItems.TEMPLATE_ITEM);
-                    ITemplateKey key = BGComponent.TEMPLATE_KEY_COMPONENT.get(stack);
-                    UUID id = key.getTemplateId(() -> uuid);
+                    BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent(key -> {
+                        UUID id = key.getTemplateId(() -> uuid);
 
-                    if (!id.equals(uuid)) {
-                        BuildingGadgets.LOG.error("Failed to apply Template id on server!");
-                    } else {
-                        ((TemplateManagerTileEntity) blockEntity).setItem(1, stack);
-                        ITemplateProvider provider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.getNullable(level);
-                        provider.requestUpdate(key, new Target(PacketFlow.CLIENTBOUND, player));
-                    }
+                        if (!id.equals(uuid)) {
+                            BuildingGadgets.LOG.error("Failed to apply Template id on server!");
+                        } else {
+                            ((TemplateManagerTileEntity) blockEntity).setItem(1, stack);
+                            BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(level).ifPresent(provider -> {
+                                provider.requestUpdate(key, new Target(PacketFlow.CLIENTBOUND, player));
+                            });
+                        }
+                    });
                 }
             }
         });

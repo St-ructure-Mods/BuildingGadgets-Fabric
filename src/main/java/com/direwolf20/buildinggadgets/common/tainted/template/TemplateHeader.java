@@ -11,12 +11,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
 import com.google.gson.*;
 import net.fabricmc.fabric.api.util.NbtType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.util.VersionNumber;
+
 import java.lang.reflect.Type;
 import java.util.Objects;
 
@@ -40,24 +42,24 @@ public final class TemplateHeader {
      */
     public static final String LOWEST_MC_VERSION = "1.14.4";
 
-    private static final ComparableVersion COMP_VERSION = new ComparableVersion(VERSION);
-    private static final ComparableVersion HIGHEST_MC_COMP = new ComparableVersion(HIGHEST_MC_VERSION);
-    private static final ComparableVersion LOWEST_MC_COMP = new ComparableVersion(LOWEST_MC_VERSION);
+    private static final VersionNumber COMP_VERSION = VersionNumber.parse(VERSION);
+    private static final VersionNumber HIGHEST_MC_COMP = VersionNumber.parse(HIGHEST_MC_VERSION);
+    private static final VersionNumber LOWEST_MC_COMP = VersionNumber.parse(LOWEST_MC_VERSION);
 
     // todo: add support for previous templates from older versions
-    private static final JsonBiDiSerializer<TemplateHeader> BI_DI_SERIALIZER = new JsonBiDiSerializer<TemplateHeader>() {
+    private static final JsonBiDiSerializer<TemplateHeader> BI_DI_SERIALIZER = new JsonBiDiSerializer<>() {
         @Override
         public TemplateHeader deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject data = json.getAsJsonObject();
 
             String mcVersion = data.getAsJsonPrimitive(JsonKeys.HEADER_MC_VERSION).getAsString();
-            ComparableVersion templateMcVersion = new ComparableVersion(mcVersion);
+            VersionNumber templateMcVersion = VersionNumber.parse(mcVersion);
 
             if (templateMcVersion.compareTo(LOWEST_MC_COMP) < 0 || templateMcVersion.compareTo(HIGHEST_MC_COMP) > 0)
                 throw new IllegalMinecraftVersionException(mcVersion);
 
             String version = data.getAsJsonPrimitive(JsonKeys.HEADER_VERSION).getAsString();
-            if (new ComparableVersion(version).compareTo(COMP_VERSION) > 0)
+            if (VersionNumber.parse(version).compareTo(COMP_VERSION) > 0)
                 throw new UnknownTemplateVersionException(version);
 
             TemplateHeader.Builder builder;
@@ -213,7 +215,7 @@ public final class TemplateHeader {
 
     /**
      * @param persisted whether or not the save may be persisted
-     * @return A new {@link CompoundNBT} which can be used for {@link #fromNBT(CompoundNBT)}
+     * @return A new {@link CompoundTag} which can be used for {@link #fromNBT(CompoundTag)}
      * @implNote If this is called with persisted=false then this will never write {@link #getRequiredItems()}.
      * This is done in order not to prevent updates from changing the required Items for an {@link Template}.
      */

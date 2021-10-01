@@ -70,18 +70,18 @@ public class GadgetUtils {
     }
 
     public static void addTooltipNameAndAuthor(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
-        if (world != null) {
-            ITemplateProvider provider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.getNullable(world);
-            ITemplateKey key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(stack);
+            BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(world).ifPresent(provider -> {
+            BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent(key -> {
             Template template = provider.getTemplateForKey(key);
                     TemplateHeader header = template.getHeader();
                     if (header.getName() != null && ! header.getName().isEmpty())
                         tooltip.add(TooltipTranslation.TEMPLATE_NAME.componentTranslation(header.getName()).setStyle(Styles.AQUA));
                     if (header.getAuthor() != null && ! header.getAuthor().isEmpty())
                         tooltip.add(TooltipTranslation.TEMPLATE_AUTHOR.componentTranslation(header.getAuthor()).setStyle(Styles.AQUA));
-                }
+                });
                 EventTooltip.addTemplatePadding(stack, tooltip);
-            }
+        });
+    }
 
 
     @Nullable
