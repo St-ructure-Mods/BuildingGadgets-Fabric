@@ -3,12 +3,14 @@ package com.direwolf20.buildinggadgets.common.network.C2S;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 import com.mojang.datafixers.util.Either;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.EnvironmentInterface;
@@ -16,6 +18,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;
@@ -26,11 +31,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @EnvironmentInterface(value = EnvType.CLIENT, itf = ClientPlayNetworking.PlayChannelHandler.class)
 public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayChannelHandler, ClientPlayNetworking.PlayChannelHandler {
@@ -54,23 +55,33 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
         Data data = Data.read(buf);
 
         server.execute(() -> data.either.ifRight(location -> {
-            Set<UniqueItem> itemTypes = new HashSet<>();
-            ImmutableMultiset.Builder<UniqueItem> builder = ImmutableMultiset.builder();
+            Multiset<UniqueItem> items = HashMultiset.create();
+
             InventoryLinker.getLinkedInventory(player.level, location.blockPos, location.level, null).ifPresent(inventory -> {
-                for (int i = 0; i < inventory.getSlots(); i++) {
-                    ItemStack stack = inventory.getStackInSlot(i);
-                    if (!stack.isEmpty()) {
-                        Item item = stack.getItem();
-                        UniqueItem uniqueItem = new UniqueItem(item);
-                        if (!itemTypes.contains(uniqueItem)) {
-                            itemTypes.add(uniqueItem);
-                            builder.addCopies(uniqueItem, InventoryHelper.countInContainer(inventory, item));
+                try (Transaction transaction = Transaction.openOuter()) {
+                    Object2IntMap<Item> counts = new Object2IntOpenHashMap<>();
+
+                    for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
+                        if (!view.isResourceBlank()) {
+                            Item item = view.getResource().getItem();
+                            counts.put(item, counts.getInt(item) + 1);
+                        }
+                    }
+
+                    for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
+                        if (!view.isResourceBlank()) {
+                            Item item = view.getResource().getItem();
+                            UniqueItem uniqueItem = new UniqueItem(item);
+
+                            if (!items.contains(uniqueItem)) {
+                                items.add(uniqueItem, counts.getInt(item));
+                            }
                         }
                     }
                 }
             });
 
-            send(new Data(data.isCopyPaste, Either.left(new Cache(builder.build()))), player);
+            send(new Data(data.isCopyPaste, Either.left(new Cache(ImmutableMultiset.copyOf(items)))), player);
         }));
     }
 

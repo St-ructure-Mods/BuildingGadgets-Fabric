@@ -2,7 +2,11 @@ package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -10,22 +14,20 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
-
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class InventoryLinker {
     /**
      * Perform the link to the inventory
      */
     public static Result linkInventory(Level world, ItemStack stack, BlockHitResult trace) {
-        BlockEntity tileEntity = world.getBlockEntity(trace.getBlockPos());
-        if (tileEntity == null || !tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+        Storage<ItemVariant> storage = ItemStorage.SIDED.find(world, trace.getBlockPos(), trace.getDirection());
+
+        if (storage == null) {
             return Result.fail(MessageTranslation.INVALID_BOUND_TILE);
         }
 
@@ -49,28 +51,29 @@ public class InventoryLinker {
      * Directly fetch the linked inventory if the tile exists (removes if not) and if the tile holds
      * a capability.
      */
-    public static LazyOptional<IItemHandler> getLinkedInventory(Level world, BlockPos pos, ResourceKey<Level> registry, @Nullable ItemStack stack) {
+    public static Optional<Storage<ItemVariant>> getLinkedInventory(Level world, BlockPos pos, ResourceKey<Level> registry, @Nullable ItemStack stack) {
         if (!world.dimension().equals(registry)) {
-            return LazyOptional.empty();
+            return Optional.empty();
         }
 
-        BlockEntity tileEntity = world.getBlockEntity(pos);
-        if (tileEntity == null) {
-            // Unlink if the tile entity no longer exists
+        Storage<ItemVariant> storage = ItemStorage.SIDED.find(world, pos, Direction.UP);
+
+        if (storage == null) {
+            // Unlink if the storage no longer exists
             if (stack != null) {
                 removeDataFromStack(stack);
             }
 
-            return LazyOptional.empty();
+            return Optional.empty();
         }
 
-        return tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        return Optional.ofNullable(storage);
     }
 
-    public static LazyOptional<IItemHandler> getLinkedInventory(Level world, ItemStack stack) {
+    public static Optional<Storage<ItemVariant>> getLinkedInventory(Level world, ItemStack stack) {
         Pair<BlockPos, ResourceKey<Level>> dataFromStack = getDataFromStack(stack);
         if (dataFromStack == null) {
-            return LazyOptional.empty();
+            return Optional.empty();
         }
 
         return getLinkedInventory(world, dataFromStack.getKey(), dataFromStack.getValue(), stack);
@@ -117,22 +120,15 @@ public class InventoryLinker {
 
         ResourceKey<Level> dimKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(compound.getString(NBTKeys.REMOTE_INVENTORY_DIM)));
         return Pair.of(
-            NbtUtils.readBlockPos(compound.getCompound(NBTKeys.REMOTE_INVENTORY_POS)),
-            dimKey
+                NbtUtils.readBlockPos(compound.getCompound(NBTKeys.REMOTE_INVENTORY_POS)),
+                dimKey
         );
     }
 
     /**
      * Handles if the Link was successful and a message to go with it.
      */
-    public final static class Result {
-        private final MessageTranslation i18n;
-        private final boolean successful;
-
-        public Result(MessageTranslation i18n, boolean successful) {
-            this.i18n = i18n;
-            this.successful = successful;
-        }
+    public record Result(MessageTranslation i18n, boolean successful) {
 
         public static Result fail(MessageTranslation i18n) {
             return new Result(i18n, false);
@@ -144,14 +140,6 @@ public class InventoryLinker {
 
         public static Result removed() {
             return new Result(MessageTranslation.UNBOUND_TO_TILE, true);
-        }
-
-        public MessageTranslation getI18n() {
-            return i18n;
-        }
-
-        public boolean isSuccessful() {
-            return successful;
         }
     }
 }

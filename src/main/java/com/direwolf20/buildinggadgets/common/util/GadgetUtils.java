@@ -173,7 +173,7 @@ public class GadgetUtils {
             return;
 
         InventoryLinker.Result result = InventoryLinker.linkInventory(player.level, stack, lookingAt);
-        player.displayClientMessage(result.getI18n().componentTranslation(), true);
+        player.displayClientMessage(result.i18n().componentTranslation(), true);
     }
 
     public static InteractionResultHolder<Block> selectBlock(ItemStack stack, Player player) {

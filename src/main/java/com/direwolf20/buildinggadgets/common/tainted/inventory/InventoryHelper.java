@@ -4,17 +4,18 @@ import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.items.*;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.IHandleProvider;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.IObjectHandle;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.ItemHandlerProvider;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
-import com.direwolf20.buildinggadgets.common.tainted.registry.TopologicalRegistryBuilder;
 import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.util.CommonUtils;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -34,13 +35,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 /*
  * @MichaelHillcox
@@ -77,36 +73,42 @@ public class InventoryHelper {
     static List<IInsertProvider> indexInsertProviders(ItemStack tool, Player player) {
         ImmutableList.Builder<IInsertProvider> builder = ImmutableList.builder();
 
-        InventoryLinker.getLinkedInventory(player.level, tool).ifPresent(e -> builder.add(new HandlerInsertProvider(e)));
-        builder.add(new PlayerInventoryInsertProvider(player));
+        for (Storage<ItemVariant> storage : getHandlers(tool, player)) {
+            builder.add((stack, count, simulate) -> {
+                try (Transaction transaction = Transaction.openOuter()) {
+                    return (int) storage.insert(ItemVariant.of(stack), count, transaction);
+                }
+            });
+        }
 
         return builder.build();
     }
 
     static Map<Class<?>, Map<Object, List<IObjectHandle<?>>>> indexMap(ItemStack tool, Player player) {
         Map<Class<?>, Map<Object, List<IObjectHandle<?>>>> map = new HashMap<>();
-        for (IItemHandler handler : getHandlers(tool, player)) {
-            if (handler != null && handler.getSlots() > 0)
-                ItemHandlerProvider.index(handler, map);
+
+        for (Storage<ItemVariant> handler : getHandlers(tool, player)) {
+            ItemHandlerProvider.index(handler, map);
         }
+
         return map;
     }
 
-    static List<IItemHandler> getHandlers(ItemStack stack, Player player) {
-        List<IItemHandler> handlers = new ArrayList<>();
+    static List<Storage<ItemVariant>> getHandlers(ItemStack stack, Player player) {
+        List<Storage<ItemVariant>> handlers = new ArrayList<>();
 
         InventoryLinker.getLinkedInventory(player.level, stack).ifPresent(handlers::add);
-        player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handlers::add);
+        handlers.add(PlayerInventoryStorage.of(player));
 
         return handlers;
     }
 
     public static void registerHandleProviders() {
-        InterModComms.sendTo(Reference.MODID, Reference.HandleProviderReference.IMC_METHOD_HANDLE_PROVIDER, () -> (Supplier<TopologicalRegistryBuilder<IHandleProvider>>)
-                (() -> TopologicalRegistryBuilder.<IHandleProvider>create()
-                        .addMarker(Reference.MARKER_AFTER_RL)
-                        .addValue(Reference.HandleProviderReference.STACK_HANDLER_ITEM_HANDLE_RL, new ItemHandlerProvider())
-                        .addDependency(Reference.HandleProviderReference.STACK_HANDLER_ITEM_HANDLE_RL, Reference.MARKER_AFTER_RL)));
+        // InterModComms.sendTo(Reference.MODID, Reference.HandleProviderReference.IMC_METHOD_HANDLE_PROVIDER, () -> (Supplier<TopologicalRegistryBuilder<IHandleProvider>>)
+        //         (() -> TopologicalRegistryBuilder.<IHandleProvider>create()
+        //                 .addMarker(Reference.MARKER_AFTER_RL)
+        //                 .addValue(Reference.HandleProviderReference.STACK_HANDLER_ITEM_HANDLE_RL, new ItemHandlerProvider())
+        //                 .addDependency(Reference.HandleProviderReference.STACK_HANDLER_ITEM_HANDLE_RL, Reference.MARKER_AFTER_RL)));
     }
 
     public static boolean giveItem(ItemStack itemStack, Player player, Level world) {
@@ -134,39 +136,40 @@ public class InventoryHelper {
 
         //Try to insert into the remote inventory.
         ItemStack tool = AbstractGadget.getGadget(player);
-        IItemHandler remoteInventory = InventoryLinker.getLinkedInventory(world, tool).orElse(new EmptyHandler());
-        if (remoteInventory.getSlots() > 0) {
-            for (int i = 0; i < remoteInventory.getSlots(); i++) {
-                ItemStack containerItem = remoteInventory.getStackInSlot(i);
-                ItemStack giveItemStack = itemStack.copy();
-                if (containerItem.getItem() == itemStack.getItem() || containerItem.isEmpty()) {
-                    giveItemStack = remoteInventory.insertItem(i, giveItemStack, false);
-                    if (giveItemStack.isEmpty())
-                        return true;
+        Optional<Storage<ItemVariant>> linkedInventory = InventoryLinker.getLinkedInventory(world, tool);
 
-                    itemStack = giveItemStack.copy();
+        if (linkedInventory.isPresent()) {
+            Storage<ItemVariant> storage = linkedInventory.get();
+            ItemVariant variant = ItemVariant.of(itemStack);
+
+            try (Transaction transaction = Transaction.openOuter()) {
+                itemStack.setCount((int) storage.insert(variant, itemStack.getCount(), transaction));
+
+                if (itemStack.isEmpty()) {
+                    return true;
                 }
             }
         }
 
+        // TODO: AFAIK there's no API for interacting with items storing items in 1.16 fabric
+        // List<ItemStack> invContainers = findInvContainers(inv);
+        // if (invContainers.size() > 0) {
+        //     for (ItemStack stack : invContainers) {
+        //         Container container = (Container) stack.getItem();
+        //         for (int i = 0; i < container.getContainerSize(); i++) {
+        //             ItemStack containerItem = container.getItem(i);
+        //             ItemStack giveItemStack = itemStack.copy();
+        //             if (containerItem.getItem() == giveItemStack.getItem()) {
+        //                 giveItemStack = container.insertItem(i, giveItemStack, false);
+        //                 if (giveItemStack.isEmpty())
+        //                     return true;
 
-        List<ItemStack> invContainers = findInvContainers(inv);
-        if (invContainers.size() > 0) {
-            for (ItemStack stack : invContainers) {
-                Container container = (Container) stack.getItem();
-                for (int i = 0; i < container.getContainerSize(); i++) {
-                    ItemStack containerItem = container.getItem(i);
-                    ItemStack giveItemStack = itemStack.copy();
-                    if (containerItem.getItem() == giveItemStack.getItem()) {
-                        giveItemStack = container.insertItem(i, giveItemStack, false);
-                        if (giveItemStack.isEmpty())
-                            return true;
+        //                 itemStack = giveItemStack.copy();
+        //             }
+        //         }
+        //     }
+        // }
 
-                        itemStack = giveItemStack.copy();
-                    }
-                }
-            }
-        }
         ItemStack giveItemStack = itemStack.copy();
         return inv.add(giveItemStack);
     }
@@ -220,24 +223,12 @@ public class InventoryHelper {
 
         for (int i = 0; i < 36; ++i) {
             ItemStack stack = inv.getItem(i);
-            if(stack.getItem() instanceof Container) {
+            if (stack.getItem() instanceof Container) {
                 containers.add(stack);
             }
         }
 
         return containers;
-    }
-
-    public static int countInContainer(Container container, Item item) {
-        int count = 0;
-        ItemStack tempItem;
-        for (int i = 0; i < container.getContainerSize(); ++i) {
-            tempItem = container.getItem(i);
-            if (tempItem.getItem() == item) {
-                count += tempItem.getCount();
-            }
-        }
-        return count;
     }
 
     private static List<Integer> findItem(Item item, Inventory inv) {
