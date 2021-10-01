@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects;
 
+import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.IObjectHandle;
 import com.direwolf20.buildinggadgets.common.tainted.template.SerialisationSupport;
 import com.direwolf20.buildinggadgets.common.util.ref.JsonKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
@@ -22,14 +23,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 /**
- * An {@link IUniqueObject} which represents all defining (unique) properties of an ItemStack: the item and the 2 types of nbt.
+ * An {@link UniqueItem} which represents all defining (unique) properties of an ItemStack: the item and the 2 types of nbt.
  * For convenience 2 match types are provided for the nbt data.
  */
-public final class UniqueItem implements IUniqueObject {
+public final class UniqueItem {
     public enum ComparisonMode {
         EXACT_MATCH(0) {
             @Override
@@ -119,12 +119,10 @@ public final class UniqueItem implements IUniqueObject {
         this.hash = Registry.ITEM.getKey(item).hashCode() + 31 * hash;
     }
 
-    @Override
     public Class<Item> getIndexClass() {
         return Item.class;
     }
 
-    @Override
     public Item getIndexObject() {
         return item;
     }
@@ -134,14 +132,16 @@ public final class UniqueItem implements IUniqueObject {
         return tagCompound != null ? tagCompound.copy() : null;
     }
 
-    @Override
+    public ItemStack createStack() {
+        return createStack(1);
+    }
+
     public ItemStack createStack(int count) {
         ItemStack res = new ItemStack(item, count);
         res.setTag(tagCompound);
         return res;
     }
 
-    @Override
     public boolean matches(ItemStack stack) {
         if (stack.getItem() != getIndexObject()) {
             return false;
@@ -149,7 +149,6 @@ public final class UniqueItem implements IUniqueObject {
         return tagCompound == null || tagMatch.match(tagCompound, stack.getTag());
     }
 
-    @Override
     public ItemStack insertInto(ItemStack stack, int count) {
         stack.setCount(Math.min(stack.getCount() + count, stack.getMaxStackSize()));
         if (tagCompound != null) {
@@ -158,7 +157,6 @@ public final class UniqueItem implements IUniqueObject {
         return stack;
     }
 
-    @Override
     public IUniqueObjectSerializer getSerializer() {
         return SerialisationSupport.uniqueItemSerializer();
     }
@@ -184,6 +182,14 @@ public final class UniqueItem implements IUniqueObject {
         return capMatch == that.capMatch;
     }
 
+    private ResourceLocation getObjectRegistryName() {
+        return Registry.ITEM.getKey(getIndexObject());
+    }
+
+    public Optional<ItemStack> tryCreateInsertStack(Map<Class<?>, Map<Object, List<IObjectHandle>>> index, int count) {
+        return Optional.of(createStack(count));
+    }
+
     @Override
     public int hashCode() {
         return hash;
@@ -201,7 +207,7 @@ public final class UniqueItem implements IUniqueObject {
 
     public static final class Serializer implements IUniqueObjectSerializer {
         @Override
-        public CompoundTag serialize(IUniqueObject obj, boolean persisted) {
+        public CompoundTag serialize(UniqueItem obj, boolean persisted) {
             UniqueItem item = (UniqueItem) obj;
             CompoundTag res = new CompoundTag();
             if (item.tagCompound != null) {
@@ -214,7 +220,7 @@ public final class UniqueItem implements IUniqueObject {
         }
 
         @Override
-        public IUniqueObject deserialize(CompoundTag res) {
+        public UniqueItem deserialize(CompoundTag res) {
             Preconditions.checkArgument(res.contains(NBTKeys.KEY_ID), "Cannot construct a UniqueItem without an Item!");
             CompoundTag nbt = res.getCompound(NBTKeys.KEY_DATA);
             ComparisonMode mode = ComparisonMode.byId(res.getByte(NBTKeys.KEY_DATA_COMPARISON));
@@ -225,7 +231,7 @@ public final class UniqueItem implements IUniqueObject {
         }
 
         @Override
-        public JsonSerializer<IUniqueObject> asJsonSerializer(boolean printName, boolean extended) {
+        public JsonSerializer<UniqueItem> asJsonSerializer(boolean printName, boolean extended) {
             return (uobj, typeOfSrc, context) -> {
                 JsonObject obj = new JsonObject();
                 UniqueItem element = (UniqueItem) uobj;
@@ -243,7 +249,7 @@ public final class UniqueItem implements IUniqueObject {
         }
 
         @Override
-        public JsonDeserializer<IUniqueObject> asJsonDeserializer() {
+        public JsonDeserializer<UniqueItem> asJsonDeserializer() {
             return (json, typeOfT, context) -> {
                 JsonObject object = json.getAsJsonObject();
                 ResourceLocation registryName = context.deserialize(object.get(JsonKeys.MATERIAL_LIST_ITEM_ID), ResourceLocation.class);

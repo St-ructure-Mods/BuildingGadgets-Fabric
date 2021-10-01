@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.tainted.building.view;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObject;
+import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.util.CommonUtils;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +19,7 @@ import java.util.Spliterators;
  * A "snapshot" view of a specific buildable TemplateItem providing the ability to iterate over the represented {@link PlacementTarget}'s.
  * It also allows for translating to a specific position via {@link #translateTo(BlockPos)}.<br>
  * Furthermore an {@code IBuildView} should provide a hint for users to check the amount of blocks an {@link IBuildView} of this {@code TemplateItem} is going to
- * produce at most via {@link #estimateSize()} in combination with hinting the amount of {@link IUniqueObject}'s required.
+ * produce at most via {@link #estimateSize()} in combination with hinting the amount of {@link UniqueItem}'s required.
  * However this is not strictly necessary and when computation might be costly it is not advised to return an accurate value.
  * <p>
  * The {@code IBuildView} is constructed given an instance of {@link BuildContext}. This
@@ -58,7 +58,7 @@ public interface IBuildView extends Iterable<PlacementTarget> {
     IBuildView translateTo(BlockPos pos);
 
     /**
-     * Attempts to compute the amount of required {@link IUniqueObject}'s. Should never be more than might be needed,
+     * Attempts to compute the amount of required {@link UniqueItem}'s. Should never be more than might be needed,
      * but may be fewer if exact requirements are hard or expensive to compute.
      *
      * @param simulatePos nullable BlockPos used to simulate

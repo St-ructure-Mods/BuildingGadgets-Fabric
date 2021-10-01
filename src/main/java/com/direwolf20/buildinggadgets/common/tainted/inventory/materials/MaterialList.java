@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials;
 
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObject;
+import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.direwolf20.buildinggadgets.common.util.ref.JsonKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.tools.JsonBiDiSerializer;
@@ -24,7 +24,7 @@ import java.util.function.Function;
  * Represents the required Item options for a single block, or a set of blocks. The option with the highest priority is listed
  * first, followed by the remaining options in descending priority order.
  */
-public final class MaterialList implements Iterable<ImmutableMultiset<IUniqueObject>> {
+public final class MaterialList implements Iterable<ImmutableMultiset<UniqueItem>> {
 
     private static final MaterialList EMPTY = new MaterialList();
 
@@ -40,11 +40,11 @@ public final class MaterialList implements Iterable<ImmutableMultiset<IUniqueObj
         return empty();
     }
 
-    public static MaterialList of(IUniqueObject... items) {
+    public static MaterialList of(UniqueItem... items) {
         return simpleBuilder().add(items).build();
     }
 
-    public static MaterialList of(Iterable<IUniqueObject> items) {
+    public static MaterialList of(Iterable<UniqueItem> items) {
         return simpleBuilder().addAll(items).build();
     }
 
@@ -113,13 +113,13 @@ public final class MaterialList implements Iterable<ImmutableMultiset<IUniqueObj
         return rootEntry;
     }
 
-    public Iterable<ImmutableMultiset<IUniqueObject>> getItemOptions() {
+    public Iterable<ImmutableMultiset<UniqueItem>> getItemOptions() {
         return rootEntry instanceof SubMaterialListEntry?
                 ((SubMaterialListEntry) rootEntry).viewOnlySubEntries() :
                 ImmutableList.of();
     }
 
-    public ImmutableMultiset<IUniqueObject> getRequiredItems() {
+    public ImmutableMultiset<UniqueItem> getRequiredItems() {
         SimpleMaterialListEntry simpleEntry = rootEntry instanceof SubMaterialListEntry?
                 ((SubMaterialListEntry) rootEntry).getCombinedConstantEntry() :
                 ((SimpleMaterialListEntry) rootEntry);
@@ -132,7 +132,7 @@ public final class MaterialList implements Iterable<ImmutableMultiset<IUniqueObj
 
     @Override
     @SuppressWarnings("unchecked") //The iterator is independent of the type anyway
-    public PeekingIterator<ImmutableMultiset<IUniqueObject>> iterator() {
+    public PeekingIterator<ImmutableMultiset<UniqueItem>> iterator() {
         return getRootEntry().iterator();
     }
 
@@ -170,12 +170,12 @@ public final class MaterialList implements Iterable<ImmutableMultiset<IUniqueObj
             return addAll(Arrays.asList(elements));
         }
 
-        public SubEntryBuilder addItems(Multiset<IUniqueObject> items) {
+        public SubEntryBuilder addItems(Multiset<UniqueItem> items) {
             subBuilder.add(new SimpleMaterialListEntry(ImmutableMultiset.copyOf(items)));
             return this;
         }
 
-        public SubEntryBuilder addAllItems(Iterable<? extends Multiset<IUniqueObject>> iterable) {
+        public SubEntryBuilder addAllItems(Iterable<? extends Multiset<UniqueItem>> iterable) {
             iterable.forEach(this::addItems);
             return this;
         }
@@ -206,37 +206,37 @@ public final class MaterialList implements Iterable<ImmutableMultiset<IUniqueObj
     }
 
     public static final class SimpleBuilder {
-        private final ImmutableMultiset.Builder<IUniqueObject> requiredItems;
+        private final ImmutableMultiset.Builder<UniqueItem> requiredItems;
 
         private SimpleBuilder() {
             requiredItems = ImmutableMultiset.builder();
         }
 
-        public SimpleBuilder addItem(IUniqueObject item, int count) {
+        public SimpleBuilder addItem(UniqueItem item, int count) {
             requiredItems.addCopies(item, count);
             return this;
         }
 
-        public SimpleBuilder addItem(IUniqueObject item) {
+        public SimpleBuilder addItem(UniqueItem item) {
             return addItem(item, 1);
         }
 
-        public SimpleBuilder addAll(Iterable<IUniqueObject> items) {
+        public SimpleBuilder addAll(Iterable<UniqueItem> items) {
             requiredItems.addAll(items);
             return this;
         }
 
-        public SimpleBuilder setCount(IUniqueObject element, int count) {
+        public SimpleBuilder setCount(UniqueItem element, int count) {
             requiredItems.setCount(element, count);
             return this;
         }
 
-        public SimpleBuilder add(IUniqueObject... elements) {
+        public SimpleBuilder add(UniqueItem... elements) {
             requiredItems.add(elements);
             return this;
         }
 
-        public SimpleBuilder addAll(Iterator<? extends IUniqueObject> elements) {
+        public SimpleBuilder addAll(Iterator<? extends UniqueItem> elements) {
             requiredItems.addAll(elements);
             return this;
         }

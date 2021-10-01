@@ -16,7 +16,7 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObject;
+import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
@@ -286,8 +286,8 @@ public class GadgetExchanger extends AbstractGadget {
                     world.clip(new ClipContext(player.position(), Vec3.atLowerCornerOf(pos), ClipContext.Block.COLLIDER, Fluid.NONE, player)),
                     pos);
 
-            Iterator<ImmutableMultiset<IUniqueObject>> it = materials.iterator();
-            Multiset<IUniqueObject> producedItems = LinkedHashMultiset.create();
+            Iterator<ImmutableMultiset<UniqueItem>> it = materials.iterator();
+            Multiset<UniqueItem> producedItems = LinkedHashMultiset.create();
 
             if (buildContext.getStack().isEnchanted() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, buildContext.getStack()) > 0) {
                 producedItems = it.hasNext() ? it.next() : ImmutableMultiset.of();

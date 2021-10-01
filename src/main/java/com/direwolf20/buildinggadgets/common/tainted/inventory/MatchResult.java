@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObject;
+import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.google.common.collect.ImmutableMultiset;
 
 /**
@@ -10,11 +10,11 @@ import com.google.common.collect.ImmutableMultiset;
  */
 public final class MatchResult {
     private final MaterialList matchedList;
-    private final ImmutableMultiset<IUniqueObject> foundItems;
-    private final ImmutableMultiset<IUniqueObject> chosenOption;
+    private final ImmutableMultiset<UniqueItem> foundItems;
+    private final ImmutableMultiset<UniqueItem> chosenOption;
     private final boolean isSuccess;
 
-    public static MatchResult success(MaterialList matchedList, ImmutableMultiset<IUniqueObject> foundItems, ImmutableMultiset<IUniqueObject> chosenOption) {
+    public static MatchResult success(MaterialList matchedList, ImmutableMultiset<UniqueItem> foundItems, ImmutableMultiset<UniqueItem> chosenOption) {
         return new MatchResult(matchedList, foundItems, chosenOption, true);
     }
 
@@ -22,11 +22,11 @@ public final class MatchResult {
         return new MatchResult(MaterialList.empty(), ImmutableMultiset.of(), ImmutableMultiset.of(), false);
     }
 
-    public static MatchResult failure(MaterialList matchedList, ImmutableMultiset<IUniqueObject> foundItems, ImmutableMultiset<IUniqueObject> chosenOption) {
+    public static MatchResult failure(MaterialList matchedList, ImmutableMultiset<UniqueItem> foundItems, ImmutableMultiset<UniqueItem> chosenOption) {
         return new MatchResult(matchedList, foundItems, chosenOption, false);
     }
 
-    MatchResult(MaterialList matchedList, ImmutableMultiset<IUniqueObject> foundItems, ImmutableMultiset<IUniqueObject> chosenOption, boolean isSuccess) {
+    MatchResult(MaterialList matchedList, ImmutableMultiset<UniqueItem> foundItems, ImmutableMultiset<UniqueItem> chosenOption, boolean isSuccess) {
         this.matchedList = matchedList;
         this.foundItems = foundItems;
         this.chosenOption = chosenOption;
@@ -38,17 +38,17 @@ public final class MatchResult {
     }
 
     /**
-     * If this result is a success, then this will be a reference to the same set returned by {@link #getChosenOption()} as all the {@link IUniqueObject unique objects}
-     * in there will be available. If this match is not a success, then this will return the amount of found Items for all {@link IUniqueObject unique objects} across
+     * If this result is a success, then this will be a reference to the same set returned by {@link #getChosenOption()} as all the {@link UniqueItem unique objects}
+     * in there will be available. If this match is not a success, then this will return the amount of found Items for all {@link UniqueItem unique objects} across
      * all options.
      *
      * @return The found items
      */
-    public ImmutableMultiset<IUniqueObject> getFoundItems() {
+    public ImmutableMultiset<UniqueItem> getFoundItems() {
         return foundItems;
     }
 
-    public ImmutableMultiset<IUniqueObject> getChosenOption() {
+    public ImmutableMultiset<UniqueItem> getChosenOption() {
         return chosenOption;
     }
 

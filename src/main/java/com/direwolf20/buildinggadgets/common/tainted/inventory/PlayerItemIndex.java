@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
 import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.IObjectHandle;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObject;
+import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.google.common.collect.*;
 import com.google.common.collect.Multiset.Entry;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -31,10 +31,10 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     @Override
-    public Multiset<IUniqueObject> insert(Multiset<IUniqueObject> items, boolean simulate) {
-        Multiset<IUniqueObject> copy = HashMultiset.create(items);
-        Multiset<IUniqueObject> toRemove = HashMultiset.create();
-        for (Multiset.Entry<IUniqueObject> entry : copy.entrySet()) {
+    public Multiset<UniqueItem> insert(Multiset<UniqueItem> items, boolean simulate) {
+        Multiset<UniqueItem> copy = HashMultiset.create(items);
+        Multiset<UniqueItem> toRemove = HashMultiset.create();
+        for (Multiset.Entry<UniqueItem> entry : copy.entrySet()) {
             int remainingCount = insertObject(entry.getElement(), entry.getCount(), simulate);
             if (remainingCount < entry.getCount())
                 toRemove.add(entry.getElement(), entry.getCount() - remainingCount);
@@ -44,18 +44,10 @@ public final class PlayerItemIndex implements IItemIndex {
         return copy;
     }
 
-    private int insertObject(IUniqueObject obj, int count, boolean simulate) {
-        if (obj.preferStackInsert())
-            return obj.tryCreateInsertStack(Collections.unmodifiableMap(handleMap), count)
-                    .map(itemStack -> performSimpleInsert(itemStack, count, simulate))
-                    .orElseGet(() -> performComplexInsert(obj, count, simulate));
-        else {
-            // This likely has the same disregard for valid slots as the simple insert does
-            int remainingCount = performComplexInsert(obj, count, simulate);
-            return remainingCount == 0 ? 0 : obj.tryCreateInsertStack(Collections.unmodifiableMap(handleMap), count)
-                    .map(itemStack -> performSimpleInsert(itemStack, count, simulate))
-                    .orElse(remainingCount);
-        }
+    private int insertObject(UniqueItem obj, int count, boolean simulate) {
+        return obj.tryCreateInsertStack(Collections.unmodifiableMap(handleMap), count)
+                .map(itemStack -> performSimpleInsert(itemStack, count, simulate))
+                .orElseGet(() -> performComplexInsert(obj, count, simulate));
     }
 
     private int performSimpleInsert(ItemStack stack, int count, boolean simulate) {
@@ -68,7 +60,7 @@ public final class PlayerItemIndex implements IItemIndex {
 //        if (remainingCount == 0)
 //            return 0;
 
-        if (! simulate)
+        if (!simulate)
             spawnRemainder(stack, remainingCount);
 
         return 0;
@@ -121,7 +113,7 @@ public final class PlayerItemIndex implements IItemIndex {
         }
     }
 
-    private int performComplexInsert(IUniqueObject obj, int count, boolean simulate) {
+    private int performComplexInsert(UniqueItem obj, int count, boolean simulate) {
         int remainingCount = count;
         List<IObjectHandle> handles = handleMap
                 .getOrDefault(obj.getIndexClass(), ImmutableMap.of())
@@ -149,7 +141,7 @@ public final class PlayerItemIndex implements IItemIndex {
     @Override
     public MatchResult tryMatch(MaterialList list) {
         MatchResult result = null;
-        for (ImmutableMultiset<IUniqueObject> multiset : list) {
+        for (ImmutableMultiset<UniqueItem> multiset : list) {
             result = match(list, multiset, true);
             if (result.isSuccess())
                 return MatchResult.success(list, result.getFoundItems(), multiset);
@@ -158,9 +150,9 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     private MatchResult evaluateFailingOptionFoundItems(MaterialList list) {
-        Multiset<IUniqueObject> multiset = HashMultiset.create();
-        for (ImmutableMultiset<IUniqueObject> option : list.getItemOptions()) {
-            for (Entry<IUniqueObject> entry : option.entrySet()) {
+        Multiset<UniqueItem> multiset = HashMultiset.create();
+        for (ImmutableMultiset<UniqueItem> option : list.getItemOptions()) {
+            for (Entry<UniqueItem> entry : option.entrySet()) {
                 multiset.setCount(entry.getElement(), Math.max(multiset.count(entry.getElement()), entry.getCount()));
             }
         }
@@ -168,14 +160,14 @@ public final class PlayerItemIndex implements IItemIndex {
         MatchResult result = match(list, multiset, true);
         if (result.isSuccess())
             throw new RuntimeException("This should not be possible! The the content changed between matches?!?");
-        Iterator<ImmutableMultiset<IUniqueObject>> it = list.iterator();
+        Iterator<ImmutableMultiset<UniqueItem>> it = list.iterator();
         return it.hasNext() ? MatchResult.failure(list, result.getFoundItems(), it.next()) : result;
     }
 
-    private MatchResult match(MaterialList list, Multiset<IUniqueObject> multiset, boolean simulate) {
-        ImmutableMultiset.Builder<IUniqueObject> availableBuilder = ImmutableMultiset.builder();
+    private MatchResult match(MaterialList list, Multiset<UniqueItem> multiset, boolean simulate) {
+        ImmutableMultiset.Builder<UniqueItem> availableBuilder = ImmutableMultiset.builder();
         boolean failure = false;
-        for (Entry<IUniqueObject> entry : multiset.entrySet()) {
+        for (Entry<UniqueItem> entry : multiset.entrySet()) {
             int remainingCount = entry.getCount();
             Class<?> indexClass = entry.getElement().getIndexClass();
             List<IObjectHandle> entries = handleMap
@@ -206,7 +198,7 @@ public final class PlayerItemIndex implements IItemIndex {
 
     @Override
     public boolean applyMatch(MatchResult result) {
-        if (! result.isSuccess())
+        if (!result.isSuccess())
             return false;
         return match(result.getMatchedList(), result.getChosenOption(), false).isSuccess();
     }
