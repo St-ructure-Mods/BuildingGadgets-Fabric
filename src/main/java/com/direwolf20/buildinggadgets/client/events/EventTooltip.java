@@ -22,6 +22,8 @@ import com.google.common.collect.Multiset.Entry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -31,10 +33,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.item.TooltipFlag;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Comparator;
@@ -44,10 +43,10 @@ import java.util.List;
  * This class was adapted from code written by Vazkii
  * Thanks Vazkii!!
  */
-@Mod.EventBusSubscriber(modid = Reference.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class EventTooltip {
     private static final String PLACE_HOLDER = "\u00a77\u00a7r\u00a7r\u00a7r\u00a7r\u00a7r";
-    private static final Comparator<Multiset.Entry<UniqueItem>> ENTRY_COMPARATOR = Comparator
+    public static final Comparator<Multiset.Entry<UniqueItem>> ENTRY_COMPARATOR = Comparator
             .<Multiset.Entry<UniqueItem>, Integer>comparing(Entry::getCount)
             .reversed()
             .thenComparing(e -> e.getElement().getObjectRegistryName());
@@ -96,25 +95,22 @@ public class EventTooltip {
         });
     }
 
-    @SubscribeEvent
-    public static void onDrawTooltip(RenderTooltipEvent.PostText event) {
+    public static void onDrawTooltip(PoseStack poseStack, ItemStack itemStack, int xin, int yin) {
         if (!Screen.hasShiftDown())
             return;
 
         //This method will draw items on the tooltip
-        ItemStack stack = event.getStack();
         Minecraft mc = Minecraft.getInstance();
-        PoseStack matrices = event.getMatrixStack();
 
         if( mc.level == null || mc.player == null )
             return;
 
         BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(mc.level).ifPresent((ITemplateProvider provider) -> {
-            BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent((ITemplateKey templateKey) -> {
+            BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(itemStack).ifPresent((ITemplateKey templateKey) -> {
                 Template template = provider.getTemplateForKey(templateKey);
-                IItemIndex index = InventoryHelper.index(stack, mc.player);
+                IItemIndex index = InventoryHelper.index(itemStack, mc.player);
                 BuildContext buildContext = BuildContext.builder()
-                        .stack(stack)
+                        .stack(itemStack)
                         .player(mc.player)
                         .build(mc.level);
                 TemplateHeader header = template.getHeaderAndForceMaterials(buildContext);
@@ -126,11 +122,10 @@ public class EventTooltip {
                 Multiset<UniqueItem> existing = match.getFoundItems();
                 List<Multiset.Entry<UniqueItem>> sortedEntries = ImmutableList.sortedCopyOf(ENTRY_COMPARATOR, match.getChosenOption().entrySet());
 
-                int bx = event.getX();
-                int by = event.getY();
+                int by = yin;
                 int j = 0;
                 int totalMissing = 0;
-                List<? extends FormattedText> tooltip = event.getLines();
+                List<? extends FormattedText> tooltip = itemStack.getTooltipLines(mc.player, TooltipFlag.Default.NORMAL);
                 Font fontRenderer = Minecraft.getInstance().font;
                 for (FormattedText s : tooltip) {
                     if (s.getString().trim().equals(PLACE_HOLDER))
@@ -143,18 +138,18 @@ public class EventTooltip {
                 RenderSystem.enableBlend();
                 RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 for (Multiset.Entry<UniqueItem> entry : sortedEntries) {
-                    int x = bx + (j % STACKS_PER_LINE) * 18;
+                    int x = xin + (j % STACKS_PER_LINE) * 18;
                     int y = by + (j / STACKS_PER_LINE) * 20;
-                    totalMissing += renderRequiredBlocks(matrices, entry.getElement().createStack(), x, y, existing.count(entry.getElement()), entry.getCount());
+                    totalMissing += renderRequiredBlocks(poseStack, entry.getElement().createStack(), x, y, existing.count(entry.getElement()), entry.getCount());
                     j++;
                 }
                 if (!match.isSuccess()) {
-                    UniqueItem pasteItem = new UniqueItem(OurItems.CONSTRUCTION_PASTE_ITEM.get());
+                    UniqueItem pasteItem = new UniqueItem(OurItems.CONSTRUCTION_PASTE_ITEM);
                     Multiset<UniqueItem> pasteSet = ImmutableMultiset.<UniqueItem>builder()
                             .addCopies(pasteItem, totalMissing)
                             .build();
                     int hasAmt = index.tryMatch(pasteSet).getFoundItems().count(pasteItem);
-                    int x = bx + (j % STACKS_PER_LINE) * 18;
+                    int x = xin + (j % STACKS_PER_LINE) * 18;
                     int y = by + (j / STACKS_PER_LINE) * 20;
 
                     int required = Integer.MAX_VALUE;
@@ -162,7 +157,7 @@ public class EventTooltip {
                         required = Math.toIntExact(totalMissing);
                     } catch (ArithmeticException ignored) {}
 
-                    renderRequiredBlocks(matrices, pasteItem.createStack(), x, y, hasAmt, required);
+                    renderRequiredBlocks(poseStack, pasteItem.createStack(), x, y, hasAmt, required);
                 }
             });
         });

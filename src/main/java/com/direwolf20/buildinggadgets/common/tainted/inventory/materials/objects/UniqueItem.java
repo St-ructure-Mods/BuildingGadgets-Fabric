@@ -182,7 +182,7 @@ public final class UniqueItem {
         return capMatch == that.capMatch;
     }
 
-    private ResourceLocation getObjectRegistryName() {
+    public ResourceLocation getObjectRegistryName() {
         return Registry.ITEM.getKey(getIndexObject());
     }
 
@@ -208,14 +208,13 @@ public final class UniqueItem {
     public static final class Serializer implements IUniqueObjectSerializer {
         @Override
         public CompoundTag serialize(UniqueItem obj, boolean persisted) {
-            UniqueItem item = (UniqueItem) obj;
             CompoundTag res = new CompoundTag();
-            if (item.tagCompound != null) {
-                res.put(NBTKeys.KEY_DATA, item.tagCompound);
+            if (obj.tagCompound != null) {
+                res.put(NBTKeys.KEY_DATA, obj.tagCompound);
             }
-            res.putString(NBTKeys.KEY_ID, item.getObjectRegistryName().toString());
-            res.putByte(NBTKeys.KEY_DATA_COMPARISON, item.tagMatch.getId());
-            res.putByte(NBTKeys.KEY_CAP_COMPARISON, item.capMatch.getId());
+            res.putString(NBTKeys.KEY_ID, obj.getObjectRegistryName().toString());
+            res.putByte(NBTKeys.KEY_DATA_COMPARISON, obj.tagMatch.getId());
+            res.putByte(NBTKeys.KEY_CAP_COMPARISON, obj.capMatch.getId());
             return res;
         }
 
@@ -234,15 +233,14 @@ public final class UniqueItem {
         public JsonSerializer<UniqueItem> asJsonSerializer(boolean printName, boolean extended) {
             return (uobj, typeOfSrc, context) -> {
                 JsonObject obj = new JsonObject();
-                UniqueItem element = (UniqueItem) uobj;
-                Item item = element.getIndexObject();
+                Item item = uobj.getIndexObject();
                 if (printName) {
-                    obj.addProperty(JsonKeys.MATERIAL_LIST_ITEM_NAME, I18n.get(item.getDescriptionId(element.createStack())));
+                    obj.addProperty(JsonKeys.MATERIAL_LIST_ITEM_NAME, I18n.get(item.getDescriptionId(uobj.createStack())));
                 }
-                obj.add(JsonKeys.MATERIAL_LIST_ITEM_ID, context.serialize(element.getObjectRegistryName()));
-                if (extended && element.tagCompound != null && !element.tagCompound.isEmpty()) {
-                    obj.addProperty(JsonKeys.MATERIAL_LIST_ITEM_NBT, element.tagCompound.toString());
-                    obj.add(JsonKeys.MATERIAL_LIST_ITEM_NBT_MATCH, context.serialize(element.tagMatch));
+                obj.add(JsonKeys.MATERIAL_LIST_ITEM_ID, context.serialize(uobj.getObjectRegistryName()));
+                if (extended && uobj.tagCompound != null && !uobj.tagCompound.isEmpty()) {
+                    obj.addProperty(JsonKeys.MATERIAL_LIST_ITEM_NBT, uobj.tagCompound.toString());
+                    obj.add(JsonKeys.MATERIAL_LIST_ITEM_NBT_MATCH, context.serialize(uobj.tagMatch));
                 }
                 return obj;
             };
