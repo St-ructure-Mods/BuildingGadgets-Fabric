@@ -46,14 +46,6 @@ public final class BuildingGadgets implements ModInitializer {
         return new ResourceLocation(Reference.MODID, path);
     }
 
-    private void registerRegistries(RegistryEvent.NewRegistry event) {
-        Registries.onCreateRegistries();
-    }
-
-    private void loadComplete(FMLLoadCompleteEvent event) {
-        Registries.createOrderedRegistries();
-    }
-
     private void serverLoad() {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             server.getCommands().getDispatcher().register(
@@ -84,6 +76,9 @@ public final class BuildingGadgets implements ModInitializer {
         serverLoad();
         serverLoaded();
         serverStopped();
+
+        Registries.registerTileDataSerializers();
+        Registries.registerUniqueObjectSerializers();
 
         Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(Reference.MODID, "construction_paste"), Serializer.INSTANCE);
 

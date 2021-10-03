@@ -58,16 +58,16 @@ public final class Registries {
 
     public static void registerTileDataSerializers() {
         BuildingGadgets.LOG.trace("Registering TemplateItem Serializers");
-        MappedRegistry<ITileDataSerializer> template_serializer = FabricRegistryBuilder.createSimple(ITileDataSerializer.class, BuildingGadgets.id("template_serializer")).attribute(RegistryAttribute.MODDED).buildAndRegister();
-        Registry.register(template_serializer, BuildingGadgets.id("dummy_data_serializer"), SerialisationSupport.dummyDataSerializer());
-        Registry.register(template_serializer, BuildingGadgets.id("nbt_tile_data_serializer"), SerialisationSupport.nbtTileDataSerializer());
+        MappedRegistry<ITileDataSerializer> template_serializer = FabricRegistryBuilder.createSimple(ITileDataSerializer.class, Reference.TileDataSerializerReference.REGISTRY_ID_TILE_DATA_SERIALIZER).attribute(RegistryAttribute.MODDED).buildAndRegister();
+        Registry.register(template_serializer, Reference.TileDataSerializerReference.DUMMY_SERIALIZER_RL, SerialisationSupport.dummyDataSerializer());
+        Registry.register(template_serializer, Reference.TileDataSerializerReference.NBT_TILE_ENTITY_DATA_SERIALIZER_RL, SerialisationSupport.nbtTileDataSerializer());
         BuildingGadgets.LOG.trace("Finished Registering TemplateItem Serializers");
     }
 
     public static void registerUniqueObjectSerializers() {
         BuildingGadgets.LOG.trace("Registering UniqueObject Serializers");
-        MappedRegistry<IUniqueObjectSerializer> uniqueObjectSerializer = FabricRegistryBuilder.createSimple(IUniqueObjectSerializer.class, BuildingGadgets.id("unique_object_serializer")).attribute(RegistryAttribute.MODDED).buildAndRegister();
-        Registry.register(uniqueObjectSerializer, BuildingGadgets.id("item_serializer"), SerialisationSupport.uniqueItemSerializer());
+        MappedRegistry<IUniqueObjectSerializer> uniqueObjectSerializer = FabricRegistryBuilder.createSimple(IUniqueObjectSerializer.class, Reference.UniqueObjectSerializerReference.REGISTRY_ID_UNIQUE_OBJECT_SERIALIZER).attribute(RegistryAttribute.MODDED).buildAndRegister();
+        Registry.register(uniqueObjectSerializer, Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL, SerialisationSupport.uniqueItemSerializer());
         BuildingGadgets.LOG.trace("Finished Registering UniqueObject Serializers");
     }
 
@@ -79,28 +79,6 @@ public final class Registries {
         handleProviders = handleProviderBuilder.build();
         handleProviderBuilder = null;
         BuildingGadgets.LOG.trace("Finished Creating Ordered Registries");
-    }
-
-    public static boolean handleIMC(InterModComms.IMCMessage message) {
-        BuildingGadgets.LOG.debug("Received IMC message using Method {} from {}.", message.getMethod(), message.getSenderModId());
-        if (message.getMethod().equals(Reference.TileDataFactoryReference.IMC_METHOD_TILEDATA_FACTORY)) {
-            BuildingGadgets.LOG.debug("Recognized ITileDataFactory registration message. Registering.");
-            Preconditions.checkState(tileDataFactoryBuilder != null,
-                    "Attempted to register ITileDataFactory, after the Registry has been built!");
-            TopologicalRegistryBuilder<ITileDataFactory> builder = message.<Supplier<TopologicalRegistryBuilder<ITileDataFactory>>>getMessageSupplier().get().get();
-            tileDataFactoryBuilder.merge(builder);
-            BuildingGadgets.LOG.trace("Registered {} from {} to the ITileDataFactory registry.", builder, message.getSenderModId());
-            return true;
-        } else if (message.getMethod().equals(Reference.HandleProviderReference.IMC_METHOD_HANDLE_PROVIDER)) {
-            BuildingGadgets.LOG.debug("Recognized IHandleProvider registration message. Registering.");
-            Preconditions.checkState(handleProviderBuilder != null,
-                    "Attempted to register IHandleProvider, after the Registry has been built!");
-            TopologicalRegistryBuilder<IHandleProvider> builder = message.<Supplier<TopologicalRegistryBuilder<IHandleProvider>>>getMessageSupplier().get().get();
-            handleProviderBuilder.merge(builder);
-            BuildingGadgets.LOG.trace("Registered {} from {} to the IHandleProvider registry.", builder, message.getSenderModId());
-            return true;
-        }
-        return false;
     }
 
     private static void addDefaultOrdered() {
