@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.mixins.client;
 
-import com.direwolf20.buildinggadgets.client.events.EventTooltip;
+import com.direwolf20.buildinggadgets.client.EventUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +14,6 @@ public class ScreenRenderTooltip {
 
     @Inject(method = "renderTooltip(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/item/ItemStack;II)V", at=@At("TAIL"))
     protected void renderTooltip(PoseStack poseStack, ItemStack itemStack, int i, int j, CallbackInfo ci) {
-        EventTooltip.onDrawTooltip(poseStack, itemStack, i, j);
+        EventUtil.onDrawTooltip(poseStack, itemStack, i, j);
     }
 }

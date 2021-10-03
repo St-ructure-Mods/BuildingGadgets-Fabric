@@ -10,14 +10,10 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects
 import com.direwolf20.buildinggadgets.common.tainted.template.SerialisationSupport;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.base.Preconditions;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryBuilder;
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
 
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-@EventBusSubscriber(modid = Reference.MODID, bus = Bus.MOD)
 public final class Registries {
 
     private Registries() {}
@@ -61,18 +56,18 @@ public final class Registries {
         BuildingGadgets.LOG.trace("Finished Creating ForgeRegistries");
     }
 
-    @SubscribeEvent
-    public static void registerTileDataSerializers(RegistryEvent.Register<ITileDataSerializer> event) {
+    public static void registerTileDataSerializers() {
         BuildingGadgets.LOG.trace("Registering TemplateItem Serializers");
-        event.getRegistry().register(SerialisationSupport.dummyDataSerializer());
-        event.getRegistry().register(SerialisationSupport.nbtTileDataSerializer());
+        MappedRegistry<ITileDataSerializer> template_serializer = FabricRegistryBuilder.createSimple(ITileDataSerializer.class, BuildingGadgets.id("template_serializer")).attribute(RegistryAttribute.MODDED).buildAndRegister();
+        Registry.register(template_serializer, BuildingGadgets.id("dummy_data_serializer"), SerialisationSupport.dummyDataSerializer());
+        Registry.register(template_serializer, BuildingGadgets.id("nbt_tile_data_serializer"), SerialisationSupport.nbtTileDataSerializer());
         BuildingGadgets.LOG.trace("Finished Registering TemplateItem Serializers");
     }
 
-    @SubscribeEvent
-    public static void registerUniqueObjectSerializers(RegistryEvent.Register<IUniqueObjectSerializer> event) {
+    public static void registerUniqueObjectSerializers() {
         BuildingGadgets.LOG.trace("Registering UniqueObject Serializers");
-        event.getRegistry().register(SerialisationSupport.uniqueItemSerializer());
+        MappedRegistry<IUniqueObjectSerializer> uniqueObjectSerializer = FabricRegistryBuilder.createSimple(IUniqueObjectSerializer.class, BuildingGadgets.id("unique_object_serializer")).attribute(RegistryAttribute.MODDED).buildAndRegister();
+        Registry.register(uniqueObjectSerializer, BuildingGadgets.id("item_serializer"), SerialisationSupport.uniqueItemSerializer());
         BuildingGadgets.LOG.trace("Finished Registering UniqueObject Serializers");
     }
 

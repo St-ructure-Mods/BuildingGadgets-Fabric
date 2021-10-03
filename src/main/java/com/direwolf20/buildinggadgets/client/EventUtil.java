@@ -1,4 +1,4 @@
-package com.direwolf20.buildinggadgets.client.events;
+package com.direwolf20.buildinggadgets.client;
 
 import com.direwolf20.buildinggadgets.client.cache.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
@@ -9,12 +9,10 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateHeader;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
@@ -44,7 +42,7 @@ import java.util.List;
  * Thanks Vazkii!!
  */
 @Environment(EnvType.CLIENT)
-public class EventTooltip {
+public class EventUtil {
     private static final String PLACE_HOLDER = "\u00a77\u00a7r\u00a7r\u00a7r\u00a7r\u00a7r";
     public static final Comparator<Multiset.Entry<UniqueItem>> ENTRY_COMPARATOR = Comparator
             .<Multiset.Entry<UniqueItem>, Integer>comparing(Entry::getCount)
@@ -55,7 +53,7 @@ public class EventTooltip {
     private static final RemoteInventoryCache cache = new RemoteInventoryCache(true);
 
     public static void setCache(Multiset<UniqueItem> cache) {
-        EventTooltip.cache.setCache(cache);
+        EventUtil.cache.setCache(cache);
     }
 
     public static void addTemplatePadding(ItemStack stack, List<Component> tooltip) {

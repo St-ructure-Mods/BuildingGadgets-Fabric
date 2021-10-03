@@ -31,7 +31,7 @@ public final class CacheTemplateProvider implements ITemplateProvider {
     private final Cache<UUID, Template> cache;
     private final Set<IUpdateListener> updateListeners;
 
-    public CacheTemplateProvider(Level world) {
+    public CacheTemplateProvider() {
         this.cache = CacheBuilder
                 .newBuilder()
                 .expireAfterAccess(1, TimeUnit.MINUTES)

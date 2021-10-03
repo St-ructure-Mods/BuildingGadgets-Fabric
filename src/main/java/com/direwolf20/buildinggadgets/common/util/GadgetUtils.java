@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.util;
 
-import com.direwolf20.buildinggadgets.client.events.EventTooltip;
+import com.direwolf20.buildinggadgets.client.EventUtil;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
@@ -11,8 +11,6 @@ import com.direwolf20.buildinggadgets.common.network.C2S.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
-import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
-import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateHeader;
 import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
@@ -79,7 +77,7 @@ public class GadgetUtils {
                     if (header.getAuthor() != null && ! header.getAuthor().isEmpty())
                         tooltip.add(TooltipTranslation.TEMPLATE_AUTHOR.componentTranslation(header.getAuthor()).setStyle(Styles.AQUA));
                 });
-                EventTooltip.addTemplatePadding(stack, tooltip);
+                EventUtil.addTemplatePadding(stack, tooltip);
         });
     }
 

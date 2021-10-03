@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.client;
 
 import com.direwolf20.buildinggadgets.client.cache.CacheTemplateProvider;
-import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.client.models.ConstructionBakedModel;
 import com.direwolf20.buildinggadgets.client.screen.TemplateManagerGUI;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlock;
@@ -53,7 +52,7 @@ public class ClientProxy {
 
         eventBus.addListener(ClientProxy::bakeModels);
         eventBus.addListener(ClientProxy::registerSprites);
-        MinecraftForge.EVENT_BUS.addListener(EventTooltip::onDrawTooltip);
+        MinecraftForge.EVENT_BUS.addListener(EventUtil::onDrawTooltip);
         MinecraftForge.EVENT_BUS.addListener(ClientProxy::onPlayerLoggedOut);
 
         MenuScreens.register(OurContainers.TEMPLATE_MANAGER_CONTAINER.get(), TemplateManagerGUI::new);

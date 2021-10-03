@@ -29,7 +29,7 @@ public final class SaveTemplateProvider implements ITemplateProvider {
         this.updateListeners = Collections.newSetFromMap(new WeakHashMap<>());
     }
 
-    public SaveTemplateProvider(Level world) {
+    public SaveTemplateProvider() {
         this(TemplateSave::new);
     }
 
