@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public final class Registries {
 
@@ -28,8 +27,8 @@ public final class Registries {
     private static TopologicalRegistryBuilder<ITileDataFactory> tileDataFactoryBuilder = TopologicalRegistryBuilder.create();
     private static TopologicalRegistryBuilder<IHandleProvider> handleProviderBuilder = TopologicalRegistryBuilder.create();
 
-    private static IForgeRegistry<ITileDataSerializer> tileDataSerializers = null;
-    private static IForgeRegistry<IUniqueObjectSerializer> uniqueObjectSerializers = null;
+    private static final MappedRegistry<ITileDataSerializer> tileDataSerializers = FabricRegistryBuilder.createSimple(ITileDataSerializer.class, Reference.TileDataSerializerReference.REGISTRY_ID_TILE_DATA_SERIALIZER).attribute(RegistryAttribute.MODDED).buildAndRegister();
+    private static final MappedRegistry<IUniqueObjectSerializer> uniqueObjectSerializers = FabricRegistryBuilder.createSimple(IUniqueObjectSerializer.class, Reference.UniqueObjectSerializerReference.REGISTRY_ID_UNIQUE_OBJECT_SERIALIZER).attribute(RegistryAttribute.MODDED).buildAndRegister();
     private static ImmutableOrderedRegistry<ITileDataFactory> tileDataFactories = null;
     private static ImmutableOrderedRegistry<IHandleProvider> handleProviders = null;
 
@@ -37,37 +36,20 @@ public final class Registries {
         addDefaultOrdered();
     }
 
-    public static IForgeRegistry<IUniqueObjectSerializer> getUniqueObjectSerializers() {
-        Preconditions
-                .checkState(uniqueObjectSerializers != null, "Attempted to retrieve UniqueObjectSerializerRegistry before registries were created!");
+    public static MappedRegistry<IUniqueObjectSerializer> getUniqueObjectSerializers() {
         return uniqueObjectSerializers;
-    }
-
-    public static void onCreateRegistries() {
-        BuildingGadgets.LOG.trace("Creating ForgeRegistries");
-        tileDataSerializers = new RegistryBuilder<ITileDataSerializer>()
-                .setType(ITileDataSerializer.class)
-                .setName(Reference.TileDataSerializerReference.REGISTRY_ID_TILE_DATA_SERIALIZER)
-                .create();
-        uniqueObjectSerializers = new RegistryBuilder<IUniqueObjectSerializer>()
-                .setType(IUniqueObjectSerializer.class)
-                .setName(Reference.UniqueObjectSerializerReference.REGISTRY_ID_UNIQUE_OBJECT_SERIALIZER)
-                .create();
-        BuildingGadgets.LOG.trace("Finished Creating ForgeRegistries");
     }
 
     public static void registerTileDataSerializers() {
         BuildingGadgets.LOG.trace("Registering TemplateItem Serializers");
-        MappedRegistry<ITileDataSerializer> template_serializer = FabricRegistryBuilder.createSimple(ITileDataSerializer.class, Reference.TileDataSerializerReference.REGISTRY_ID_TILE_DATA_SERIALIZER).attribute(RegistryAttribute.MODDED).buildAndRegister();
-        Registry.register(template_serializer, Reference.TileDataSerializerReference.DUMMY_SERIALIZER_RL, SerialisationSupport.dummyDataSerializer());
-        Registry.register(template_serializer, Reference.TileDataSerializerReference.NBT_TILE_ENTITY_DATA_SERIALIZER_RL, SerialisationSupport.nbtTileDataSerializer());
+        Registry.register(tileDataSerializers, Reference.TileDataSerializerReference.DUMMY_SERIALIZER_RL, SerialisationSupport.dummyDataSerializer());
+        Registry.register(tileDataSerializers, Reference.TileDataSerializerReference.NBT_TILE_ENTITY_DATA_SERIALIZER_RL, SerialisationSupport.nbtTileDataSerializer());
         BuildingGadgets.LOG.trace("Finished Registering TemplateItem Serializers");
     }
 
     public static void registerUniqueObjectSerializers() {
         BuildingGadgets.LOG.trace("Registering UniqueObject Serializers");
-        MappedRegistry<IUniqueObjectSerializer> uniqueObjectSerializer = FabricRegistryBuilder.createSimple(IUniqueObjectSerializer.class, Reference.UniqueObjectSerializerReference.REGISTRY_ID_UNIQUE_OBJECT_SERIALIZER).attribute(RegistryAttribute.MODDED).buildAndRegister();
-        Registry.register(uniqueObjectSerializer, Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL, SerialisationSupport.uniqueItemSerializer());
+        Registry.register(uniqueObjectSerializers, Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL, SerialisationSupport.uniqueItemSerializer());
         BuildingGadgets.LOG.trace("Finished Registering UniqueObject Serializers");
     }
 
@@ -103,9 +85,7 @@ public final class Registries {
             return tileDataFactories;
         }
 
-        public static IForgeRegistry<ITileDataSerializer> getTileDataSerializers() {
-            Preconditions
-                    .checkState(tileDataSerializers != null, "Attempted to retrieve TileDataSerializerRegistry before registries were created!");
+        public static MappedRegistry<ITileDataSerializer> getTileDataSerializers() {
             return tileDataSerializers;
         }
     }

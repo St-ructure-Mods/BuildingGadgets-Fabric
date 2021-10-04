@@ -50,7 +50,7 @@ public final class Undo {
                 (ListTag) nbt.get(NBTKeys.WORLD_SAVE_UNDO_DATA_SERIALIZER_LIST),
                 inbt -> {
                     String s = inbt.getAsString();
-                    ITileDataSerializer serializer = RegistryUtils.getFromString(Registries.TileEntityData.getTileDataSerializers(), s);
+                    ITileDataSerializer serializer = Registries.TileEntityData.getTileDataSerializers().get(new ResourceLocation(s));
                     if (serializer == null) {
                         BuildingGadgets.LOG.warn("Found unknown serializer {}. Replacing with dummy!", s);
                         serializer = TileSupport.dummyTileEntityData().getSerializer();
@@ -69,7 +69,7 @@ public final class Undo {
                 (ListTag) nbt.get(NBTKeys.WORLD_SAVE_UNDO_ITEMS_SERIALIZER_LIST),
                 inbt -> {
                     String s = inbt.getAsString();
-                    IUniqueObjectSerializer serializer = RegistryUtils.getFromString(Registries.getUniqueObjectSerializers(), s);
+                    IUniqueObjectSerializer serializer = Registries.getUniqueObjectSerializers().get(new ResourceLocation(s));
                     if (serializer == null)
                         return SerialisationSupport.uniqueItemSerializer();
                     return serializer;
@@ -132,10 +132,10 @@ public final class Undo {
         ListTag infoList = NBTHelper.serializeMap(dataMap, NbtUtils::writeBlockPos, i -> i.serialize(dataObjectIncrementer, itemObjectIncrementer));
         ListTag dataList = dataObjectIncrementer.write(d -> d.serialize(serializerObjectIncrementer, true));
         ListTag itemSetList = itemObjectIncrementer.write(ms -> NBTHelper.writeIterable(ms.entrySet(), entry -> writeEntry(entry, itemSerializerIncrementer)));
-        ListTag dataSerializerList = serializerObjectIncrementer.write(ts -> StringTag.valueOf(ts.getRegistryName().toString()));
-        ListTag itemSerializerList = itemSerializerIncrementer.write(s -> StringTag.valueOf(s.getRegistryName().toString()));
+        ListTag dataSerializerList = serializerObjectIncrementer.write(ts -> StringTag.valueOf(Registries.TileEntityData.getTileDataSerializers().getKey(ts).toString()));
+        ListTag itemSerializerList = itemSerializerIncrementer.write(s -> StringTag.valueOf(Registries.getUniqueObjectSerializers().getKey(s).toString()));
 
-        res.putString(NBTKeys.WORLD_SAVE_DIM, dim.getRegistryName().toString());
+        res.putString(NBTKeys.WORLD_SAVE_DIM, dim.location().toString());
         res.put(NBTKeys.WORLD_SAVE_UNDO_BLOCK_LIST, infoList);
         res.put(NBTKeys.WORLD_SAVE_UNDO_DATA_LIST, dataList);
         res.put(NBTKeys.WORLD_SAVE_UNDO_DATA_SERIALIZER_LIST, dataSerializerList);
