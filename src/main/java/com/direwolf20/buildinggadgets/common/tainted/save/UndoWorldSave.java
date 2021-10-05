@@ -3,21 +3,19 @@ package com.direwolf20.buildinggadgets.common.tainted.save;
 import com.direwolf20.buildinggadgets.common.tainted.save.UndoWorldSave.UndoValue;
 import net.minecraft.nbt.CompoundTag;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.IntSupplier;
 
 public class UndoWorldSave extends TimedDataSave<UndoValue> {
-    private final IntSupplier undoMaxLength;
+    private final int undoMaxLength;
 
-    public UndoWorldSave(IntSupplier undoMaxLength) {
+    public UndoWorldSave(int undoMaxLength) {
         super();
-        this.undoMaxLength = Objects.requireNonNull(undoMaxLength);
+        this.undoMaxLength = undoMaxLength;
     }
 
     public static UndoWorldSave loads(CompoundTag tag) {
-        UndoWorldSave undoWorldSave = new UndoWorldSave(() -> tag.getInt("maxUndo"));
+        UndoWorldSave undoWorldSave = new UndoWorldSave(tag.getInt("maxUndo"));
         undoWorldSave.load(tag);
         return undoWorldSave;
     }
@@ -25,7 +23,7 @@ public class UndoWorldSave extends TimedDataSave<UndoValue> {
     @Override
     public CompoundTag save(CompoundTag compound) {
         CompoundTag save = super.save(compound);
-        save.putInt("maxUndo", this.undoMaxLength.getAsInt());
+        save.putInt("maxUndo", this.undoMaxLength);
         return save;
     }
 
@@ -65,13 +63,13 @@ public class UndoWorldSave extends TimedDataSave<UndoValue> {
     static final class UndoValue extends TimedDataSave.TimedValue { //for reasons I don't understand it doesn't compile if you leave the TimedDataSave out!
         private final UndoHistory history;
 
-        private UndoValue(CompoundTag nbt, IntSupplier supplier) {
+        private UndoValue(CompoundTag nbt, int length) {
             super(nbt);
-            this.history = new UndoHistory(supplier);
+            this.history = new UndoHistory(length);
             history.read(nbt);
         }
 
-        private UndoValue(IntSupplier maxLength) {
+        private UndoValue(int maxLength) {
             super();
             this.history = new UndoHistory(maxLength);
         }

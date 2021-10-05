@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 public enum SaveManager {
@@ -54,8 +53,8 @@ public enum SaveManager {
         BuildingGadgets.LOG.debug("Finished clearing save caches");
     }
 
-    public static UndoWorldSave getUndoSave(ServerLevel world, long maxLengthSupplier, String name) {
-        return world.getDataStorage().computeIfAbsent(UndoWorldSave::loads, () -> new UndoWorldSave(maxLengthSupplier), name);
+    public static UndoWorldSave getUndoSave(ServerLevel world, int maxLength, String name) {
+        return world.getDataStorage().computeIfAbsent(UndoWorldSave::loads, () -> new UndoWorldSave(maxLength), name);
     }
 
     private static TemplateSave getTemplateSave(ServerLevel world, String name) {

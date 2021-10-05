@@ -54,13 +54,13 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     private final Tag.Named<Block> blackList;
     private final Supplier<UndoWorldSave> saveSupplier;
 
-    public AbstractGadget(Properties builder, long undoLengthSupplier, String undoName, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
+    public AbstractGadget(Properties builder, int undoLength, String undoName, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
         super(builder.defaultDurability(0));
 
         renderer = createRenderFactory().get();
         this.whiteList = TagFactory.BLOCK.create(whiteListTag);
         this.blackList = TagFactory.BLOCK.create(blackListTag);
-        saveSupplier = SaveManager.INSTANCE.registerUndoSave(w -> SaveManager.getUndoSave(w, undoLengthSupplier, undoName));
+        saveSupplier = SaveManager.INSTANCE.registerUndoSave(w -> SaveManager.getUndoSave(w, undoLength, undoName));
     }
 
     public abstract long getEnergyCapacity();
