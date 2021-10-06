@@ -1,18 +1,19 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObjectSerializer;
-import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
 import com.direwolf20.buildinggadgets.common.util.ref.JsonKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.*;
 import com.google.common.collect.Multiset.Entry;
 import com.google.gson.*;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.JsonOps;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.util.NbtType;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Comparator;
@@ -47,23 +48,17 @@ class SimpleMaterialListEntry implements MaterialListEntry<SimpleMaterialListEnt
 
     private static class Serializer implements MaterialListEntry.Serializer<SimpleMaterialListEntry> {
         private static final Comparator<Entry<ItemVariant>> COMPARATOR = Comparator
-                .<Entry<ItemVariant>, ResourceLocation>comparing(e -> e.getElement().getObjectRegistryName())
+                .<Entry<ItemVariant>, ResourceLocation>comparing(e -> Registry.ITEM.getKey(e.getElement().getItem()))
                 .thenComparingInt(Entry::getCount);
+
         @Override
         public SimpleMaterialListEntry readFromNBT(CompoundTag nbt, boolean persisted) {
             ListTag nbtList = nbt.getList(NBTKeys.KEY_DATA, NbtType.COMPOUND);
             ImmutableMultiset.Builder<ItemVariant> builder = ImmutableMultiset.builder();
             for (Tag nbtEntry : nbtList) {
                 CompoundTag compoundEntry = (CompoundTag) nbtEntry;
-                IUniqueObjectSerializer serializer = persisted ?
-                        Registries.getUniqueObjectSerializers().get(new ResourceLocation(compoundEntry.getString(NBTKeys.KEY_SERIALIZER))) :
-                        Registries.getUniqueObjectSerializers().byId(compoundEntry.getInt(NBTKeys.KEY_SERIALIZER));
-                if (serializer == null) {
-                    BuildingGadgets.LOG.error("Found unknown ItemVariant serializer {}. Skipping!", compoundEntry.getString(NBTKeys.KEY_SERIALIZER));
-                    continue;
-                }
                 builder.addCopies(
-                        serializer.deserialize((compoundEntry.getCompound(NBTKeys.KEY_DATA))),
+                        ItemVariant.fromNbt((compoundEntry.getCompound(NBTKeys.KEY_DATA))),
                         compoundEntry.getInt(NBTKeys.KEY_COUNT));
             }
             return new SimpleMaterialListEntry(builder.build());
@@ -75,11 +70,7 @@ class SimpleMaterialListEntry implements MaterialListEntry<SimpleMaterialListEnt
             ListTag nbtList = new ListTag();
             for (Entry<ItemVariant> entry : listEntry.getItems().entrySet()) {
                 CompoundTag nbtEntry = new CompoundTag();
-                if (persisted)
-                    nbtEntry.putString(NBTKeys.KEY_SERIALIZER, Registries.getUniqueObjectSerializers().getKey(entry.getElement().getSerializer()).toString());
-                else
-                    nbtEntry.putInt(NBTKeys.KEY_SERIALIZER, Registries.getUniqueObjectSerializers().getId(entry.getElement().getSerializer()));
-                nbtEntry.put(NBTKeys.KEY_DATA, entry.getElement().getSerializer().serialize(entry.getElement(), persisted));
+                nbtEntry.put(NBTKeys.KEY_DATA, entry.getElement().toNbt());
                 nbtEntry.putInt(NBTKeys.KEY_COUNT, entry.getCount());
                 nbtList.add(nbtEntry);
             }
@@ -93,12 +84,8 @@ class SimpleMaterialListEntry implements MaterialListEntry<SimpleMaterialListEnt
                 Multiset<ItemVariant> set = src.getItems();
                 JsonArray jsonArray = new JsonArray();
                 for (Entry<ItemVariant> entry : ImmutableList.sortedCopyOf(COMPARATOR, set.entrySet())) {
-                    JsonElement element = entry.getElement()
-                            .getSerializer()
-                            .asJsonSerializer(printName, extended)
-                            .serialize(entry.getElement(), entry.getElement().getClass(), context);
+                    JsonElement element = Dynamic.convert(NbtOps.INSTANCE, JsonOps.INSTANCE, entry.getElement().toNbt());
                     JsonObject obj = new JsonObject();
-                    obj.add(JsonKeys.MATERIAL_LIST_ITEM_TYPE, context.serialize(Registries.getUniqueObjectSerializers().getKey(entry.getElement().getSerializer())));
                     obj.addProperty(JsonKeys.MATERIAL_LIST_ITEM_COUNT, entry.getCount());
                     obj.add(JsonKeys.MATERIAL_LIST_ITEM, element);
                     jsonArray.add(obj);
@@ -114,12 +101,8 @@ class SimpleMaterialListEntry implements MaterialListEntry<SimpleMaterialListEnt
                 ImmutableMultiset.Builder<ItemVariant> items = ImmutableMultiset.builder();
                 for (JsonElement element : array) {
                     JsonObject object = element.getAsJsonObject();
-                    ResourceLocation id = context.deserialize(object.get(JsonKeys.MATERIAL_LIST_ITEM_TYPE), ResourceLocation.class);
-                    IUniqueObjectSerializer serializer = Registries.getUniqueObjectSerializers().get(id);
-                    if (serializer == null)
-                        continue;
                     int count = object.getAsJsonPrimitive(JsonKeys.MATERIAL_LIST_ITEM_COUNT).getAsInt();
-                    ItemVariant item = serializer.asJsonDeserializer().deserialize(object.get(JsonKeys.MATERIAL_LIST_ITEM), ItemVariant.class, context);
+                    ItemVariant item = ItemVariant.fromNbt((CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, object.get(JsonKeys.MATERIAL_LIST_ITEM)));
                     items.addCopies(item, count);
                 }
                 return new SimpleMaterialListEntry(items.build());

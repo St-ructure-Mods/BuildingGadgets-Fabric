@@ -4,7 +4,6 @@ import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.ITileDataFactory;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.ITileDataSerializer;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObjectSerializer;
 import com.direwolf20.buildinggadgets.common.tainted.template.SerialisationSupport;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.base.Preconditions;
@@ -15,20 +14,16 @@ import net.minecraft.core.Registry;
 
 public final class Registries {
 
-    private Registries() {}
+    private Registries() {
+    }
 
     private static TopologicalRegistryBuilder<ITileDataFactory> tileDataFactoryBuilder = TopologicalRegistryBuilder.create();
 
     private static final MappedRegistry<ITileDataSerializer> tileDataSerializers = FabricRegistryBuilder.createSimple(ITileDataSerializer.class, Reference.TileDataSerializerReference.REGISTRY_ID_TILE_DATA_SERIALIZER).attribute(RegistryAttribute.MODDED).buildAndRegister();
-    private static final MappedRegistry<IUniqueObjectSerializer> uniqueObjectSerializers = FabricRegistryBuilder.createSimple(IUniqueObjectSerializer.class, Reference.UniqueObjectSerializerReference.REGISTRY_ID_UNIQUE_OBJECT_SERIALIZER).attribute(RegistryAttribute.MODDED).buildAndRegister();
     private static ImmutableOrderedRegistry<ITileDataFactory> tileDataFactories = null;
 
     static {
         addDefaultOrdered();
-    }
-
-    public static MappedRegistry<IUniqueObjectSerializer> getUniqueObjectSerializers() {
-        return uniqueObjectSerializers;
     }
 
     public static void registerTileDataSerializers() {
@@ -40,7 +35,6 @@ public final class Registries {
 
     public static void registerUniqueObjectSerializers() {
         BuildingGadgets.LOG.trace("Registering UniqueObject Serializers");
-        Registry.register(uniqueObjectSerializers, Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL, SerialisationSupport.uniqueItemSerializer());
         BuildingGadgets.LOG.trace("Finished Registering UniqueObject Serializers");
     }
 
@@ -62,7 +56,8 @@ public final class Registries {
     }
 
     public static final class TileEntityData {
-        private TileEntityData() {}
+        private TileEntityData() {
+        }
 
         public static ImmutableOrderedRegistry<ITileDataFactory> getTileDataFactories() {
             Preconditions
