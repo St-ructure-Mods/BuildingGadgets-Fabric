@@ -64,20 +64,6 @@ public class InventoryHelper {
         return new PlayerItemIndex(tool, player);
     }
 
-    static List<IInsertProvider> indexInsertProviders(ItemStack tool, Player player) {
-        ImmutableList.Builder<IInsertProvider> builder = ImmutableList.builder();
-
-        for (Storage<ItemVariant> storage : getHandlers(tool, player)) {
-            builder.add((stack, count, simulate) -> {
-                try (Transaction transaction = Transaction.openOuter()) {
-                    return (int) storage.insert(ItemVariant.of(stack), count, transaction);
-                }
-            });
-        }
-
-        return builder.build();
-    }
-
     static List<IObjectHandle> indexMap(ItemStack tool, Player player) {
         List<IObjectHandle> list = new ArrayList<>();
 

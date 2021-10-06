@@ -8,6 +8,7 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -24,7 +25,7 @@ import java.util.List;
 public final class PlayerItemIndex implements IItemIndex {
     //use a class map first, to allow for non-Item IUniqueObjects...
     private List<IObjectHandle> handles;
-    private List<IInsertProvider> insertProviders;
+    private List<Storage<ItemVariant>> insertProviders;
     private final ItemStack stack;
     private final Player player;
 
@@ -65,8 +66,8 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     private int insertIntoProviders(ItemStack stack, int remainingCount, TransactionContext transaction) {
-        for (IInsertProvider insertProvider : insertProviders) {
-            remainingCount -= insertProvider.insert(stack, remainingCount, transaction);
+        for (Storage<ItemVariant> insertProvider : insertProviders) {
+            remainingCount -= insertProvider.insert(ItemVariant.of(stack), remainingCount, transaction);
             if (remainingCount <= 0)
                 return 0;
         }
@@ -111,25 +112,10 @@ public final class PlayerItemIndex implements IItemIndex {
         }
     }
 
-    private int performComplexInsert(ItemVariant obj, int count, TransactionContext transaction) {
-        int remainingCount = count;
-        for (Iterator<IObjectHandle> it = handles.iterator(); it.hasNext() && remainingCount >= 0; ) {
-            IObjectHandle handle = it.next();
-            int match = handle.insert(obj, remainingCount, transaction);
-            if (match > 0)
-                remainingCount -= match;
-            if (handle.shouldCleanup())
-                it.remove();
-            if (remainingCount <= 0)
-                return 0;
-        }
-        return remainingCount;
-    }
-
     @Override
     public void reIndex() {
         this.handles = InventoryHelper.indexMap(stack, player);
-        this.insertProviders = InventoryHelper.indexInsertProviders(stack, player);
+        this.insertProviders = InventoryHelper.getHandlers(stack, player);
     }
 
     @Override
