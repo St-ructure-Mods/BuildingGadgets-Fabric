@@ -10,6 +10,7 @@ import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.CompoundTag;
@@ -43,7 +44,7 @@ public final class BlockData {
      */
     @Nullable
     public static BlockData tryDeserialize(@Nullable CompoundTag tag, boolean persisted) {
-        return tryDeserialize(tag, persisted ? null : i -> RegistryUtils.getById(Registries.TileEntityData.getTileDataSerializers(), i), persisted);
+        return tryDeserialize(tag, persisted ? null : i -> Registries.TileEntityData.getTileDataSerializers().byId(i), persisted);
     }
 
     @Nullable
@@ -54,8 +55,7 @@ public final class BlockData {
         ITileDataSerializer serializer;
         try {
             if (serializerProvider == null)
-                serializer = RegistryUtils
-                        .getFromString(Registries.TileEntityData.getTileDataSerializers(), tag.getString(NBTKeys.KEY_SERIALIZER));
+                serializer = Registries.TileEntityData.getTileDataSerializers().get(new ResourceLocation(tag.getString(NBTKeys.KEY_SERIALIZER)));
             else
                 serializer = serializerProvider.apply(tag.getInt(NBTKeys.KEY_SERIALIZER));
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public final class BlockData {
      * @throws NullPointerException if the tag was null.
      */
     public static BlockData deserialize(CompoundTag tag, boolean persisted) {
-        return deserialize(tag, persisted ? null : i -> RegistryUtils.getById(Registries.TileEntityData.getTileDataSerializers(), i), persisted);
+        return deserialize(tag, persisted ? null : i -> Registries.TileEntityData.getTileDataSerializers().byId(i), persisted);
     }
 
     public static BlockData deserialize(CompoundTag tag, @Nullable IntFunction<ITileDataSerializer> serializerProvider, boolean readDataPersisted) {
@@ -87,8 +87,7 @@ public final class BlockData {
         ITileDataSerializer serializer;
         try {
             if (serializerProvider == null)
-                serializer = RegistryUtils
-                        .getFromString(Registries.TileEntityData.getTileDataSerializers(), tag.getString(NBTKeys.KEY_SERIALIZER));
+                serializer = Registries.TileEntityData.getTileDataSerializers().get(new ResourceLocation(tag.getString(NBTKeys.KEY_SERIALIZER)));
             else
                 serializer = serializerProvider.apply(tag.getInt(NBTKeys.KEY_SERIALIZER));
         } catch (Exception e) {
@@ -143,7 +142,7 @@ public final class BlockData {
      * @return The serialized form of this {@code BlockData}.
      */
     public CompoundTag serialize(boolean persisted) {
-        return serialize(persisted ? null : ser -> RegistryUtils.getId(Registries.TileEntityData.getTileDataSerializers(), ser), persisted);
+        return serialize(persisted ? null : ser -> Registries.TileEntityData.getTileDataSerializers().getId(ser), persisted);
     }
 
     public CompoundTag serialize(@Nullable ToIntFunction<ITileDataSerializer> idGetter, boolean writeDataPersisted) {
