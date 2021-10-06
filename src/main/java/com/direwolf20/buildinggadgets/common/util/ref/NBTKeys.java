@@ -77,8 +77,6 @@ public final class NBTKeys {
     public static final String TEMPLATE_NAME = "template_name";
     public static final String TEMPLATE_KEY_ID = "template_id";
 
-    public static final String PASTE_COUNT = "amount";
-
     public static final String WORD_SAVE_DATA_MAP = "data_map";
     public static final String WORLD_SAVE_TIME = "time";
     public static final String WORLD_SAVE_UNDO_HISTORY = "undo_history";
@@ -110,5 +108,4 @@ public final class NBTKeys {
     public static final String ENTITY_TICKS_EXISTED = "ticks_existed";
     public static final String ENTITY_SET_POS = "set_pos";
 
-    public static final String ENTITY_CONSTRUCTION_MAKING_PASTE = "makingPaste";
 }

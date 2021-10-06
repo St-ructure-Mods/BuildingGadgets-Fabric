@@ -237,8 +237,6 @@ public class GadgetBuilding extends AbstractGadget {
         if (heldItem.isEmpty())
             return;
 
-        boolean useConstructionPaste = false;
-
         BuildContext buildContext = new BuildContext(world, player, heldItem);
         MaterialList requiredItems = setBlock.getRequiredItems(buildContext, null, pos);
 

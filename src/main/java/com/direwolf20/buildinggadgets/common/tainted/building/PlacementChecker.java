@@ -42,7 +42,7 @@ public final class PlacementChecker {
      */
     public CheckResult checkPositionWithResult(BuildContext context, PlacementTarget target, boolean giveBackItems) {
         if (target.getPos().getY() > context.getWorld().getMaxBuildHeight() || target.getPos().getY() < 0 || !placeCheck.test(context, target))
-            return new CheckResult(MatchResult.failure(), ImmutableMultiset.of(), false, false);
+            return new CheckResult(MatchResult.failure(), ImmutableMultiset.of(), false);
         long energy = energyFun.applyAsLong(target);
         Multiset<ItemVariant> insertedItems = ImmutableMultiset.of();
         boolean isCreative = context.getPlayer() != null && context.getPlayer().isCreative();
@@ -52,7 +52,7 @@ public final class PlacementChecker {
             transaction.abort();
 
             if (!isCreative && check) {
-                return new CheckResult(MatchResult.failure(), insertedItems, false, false);
+                return new CheckResult(MatchResult.failure(), insertedItems, false);
             }
         }
 
@@ -63,13 +63,6 @@ public final class PlacementChecker {
         }
         MaterialList materials = target.getRequiredMaterials(context, targetRayTrace);
         MatchResult match = index.tryMatch(materials);
-        boolean usePaste = false;
-        if (!match.isSuccess()) {
-            match = index.tryMatch(InventoryHelper.PASTE_LIST);
-            if (!match.isSuccess())
-                return new CheckResult(match, insertedItems, false, false);
-            usePaste = true;
-        }
 
         ServerLevel world = context.getServerWorld();
         BlockState state = world.getBlockState(target.getPos());
@@ -82,7 +75,7 @@ public final class PlacementChecker {
 
         if (!isAir) {
             if (!world.mayInteract(context.getPlayer(), target.getPos())) {
-                return new CheckResult(match, insertedItems, false, usePaste);
+                return new CheckResult(match, insertedItems, false);
             }
 
             if (giveBackItems) {
@@ -98,25 +91,23 @@ public final class PlacementChecker {
                     transaction.commit();
                 } else {
                     transaction.abort();
-                    return new CheckResult(match, insertedItems, false, usePaste);
+                    return new CheckResult(match, insertedItems, false);
                 }
             }
         }
 
-        return new CheckResult(match, insertedItems, index.applyMatch(match), usePaste);
+        return new CheckResult(match, insertedItems, index.applyMatch(match));
     }
 
     public static final class CheckResult {
         private final MatchResult match;
         private final Multiset<ItemVariant> insertedItems;
         private final boolean success;
-        private final boolean usingPaste;
 
-        private CheckResult(MatchResult match, Multiset<ItemVariant> insertedItems, boolean success, boolean usingPaste) {
+        private CheckResult(MatchResult match, Multiset<ItemVariant> insertedItems, boolean success) {
             this.match = match;
             this.insertedItems = insertedItems;
             this.success = success;
-            this.usingPaste = usingPaste;
         }
 
         public Multiset<ItemVariant> getInsertedItems() {
@@ -129,10 +120,6 @@ public final class PlacementChecker {
 
         public boolean isSuccess() {
             return success;
-        }
-
-        public boolean isUsingPaste() {
-            return usingPaste;
         }
     }
 }

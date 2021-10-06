@@ -49,9 +49,6 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
 
         BlockState renderBlockState = renderData.getState();
 
-        if (tile.isUsingPaste() && toolMode == EffectBlock.Mode.PLACE)
-            renderBlockState = OurBlocks.CONSTRUCTION_DENSE_BLOCK.defaultBlockState();
-
         OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
         try {
             dispatcher.renderSingleBlock(

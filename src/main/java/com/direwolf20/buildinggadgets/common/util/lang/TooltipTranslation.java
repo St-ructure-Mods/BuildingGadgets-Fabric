@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
 public enum TooltipTranslation implements ITranslationProvider {
-    CONSTRUCTIONBLOCKPOWDER_HELPTEXT("constructionblockpowder.helptext", 0),
     GADGET_BLOCK("gadget.block", 1),
     GADGET_DESTROYSHOWOVERLAY("gadget.destroyshowoverlay", 1),
     GADGET_DESTROYWARNING("gadget.destroywarning", 0),
@@ -22,8 +21,6 @@ public enum TooltipTranslation implements ITranslationProvider {
     GADGET_UNDO("gadget.undo", 0),
     GADGET_ROTATE("gadget.rotate", 0),
     GADGET_PALETTE_OVERFLOW("gadget.paletteOverflow", 0),
-    PASTECONTAINER_AMOUNT("pasteContainer.amount", 2),
-    PASTECONTAINER_CREATIVE_AMOUNT("pasteContainer.creative.amountMsg", 0),
     DONOTUSE_TEXT("donotuse", 0),
     TEMPLATE_NAME("template.name", 1),
     TEMPLATE_AUTHOR("template.author", 1),
