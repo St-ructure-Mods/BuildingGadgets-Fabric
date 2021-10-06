@@ -283,7 +283,7 @@ public class GadgetExchanger extends AbstractGadget {
                 producedItems = it.hasNext() ? it.next() : ImmutableMultiset.of();
             } else {
                 List<ItemStack> drops = Block.getDrops(currentBlock, (ServerLevel) buildContext.getWorld(), pos, buildContext.getWorld().getBlockEntity(pos));
-                producedItems.addAll(drops.stream().map(ItemVariant::ofStack).collect(Collectors.toList()));
+                producedItems.addAll(drops.stream().map(ItemVariant::of).collect(Collectors.toList()));
             }
 
             index.insert(producedItems);

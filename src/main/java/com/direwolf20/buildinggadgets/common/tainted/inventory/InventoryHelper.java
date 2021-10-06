@@ -1,11 +1,10 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
-import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
-import com.direwolf20.buildinggadgets.common.items.*;
+import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
+import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.IObjectHandle;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.ItemHandlerProvider;
 import com.direwolf20.buildinggadgets.common.util.CommonUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -27,7 +26,6 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -84,7 +82,7 @@ public class InventoryHelper {
         Map<Class<?>, Map<Object, List<IObjectHandle>>> map = new HashMap<>();
 
         for (Storage<ItemVariant> handler : getHandlers(tool, player)) {
-            ItemHandlerProvider.index(handler, map);
+            // TODO: Index
         }
 
         return map;

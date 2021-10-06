@@ -5,6 +5,7 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.Materia
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.*;
 import com.google.common.collect.Multiset.Entry;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -31,11 +32,11 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     @Override
-    public Multiset<ItemVariant> insert(Multiset<ItemVariant> items, boolean simulate) {
+    public Multiset<ItemVariant> insert(Multiset<ItemVariant> items, TransactionContext transaction) {
         Multiset<ItemVariant> copy = HashMultiset.create(items);
         Multiset<ItemVariant> toRemove = HashMultiset.create();
         for (Multiset.Entry<ItemVariant> entry : copy.entrySet()) {
-            int remainingCount = insertObject(entry.getElement(), entry.getCount(), simulate);
+            int remainingCount = insertObject(entry.getElement(), entry.getCount(), transaction);
             if (remainingCount < entry.getCount())
                 toRemove.add(entry.getElement(), entry.getCount() - remainingCount);
         }
@@ -44,21 +45,22 @@ public final class PlayerItemIndex implements IItemIndex {
         return copy;
     }
 
-    private int insertObject(ItemVariant obj, int count, boolean simulate) {
+    private int insertObject(ItemVariant obj, int count, TransactionContext transaction) {
         return obj.tryCreateInsertStack(Collections.unmodifiableMap(handleMap), count)
-                .map(itemStack -> performSimpleInsert(itemStack, count, simulate))
-                .orElseGet(() -> performComplexInsert(obj, count, simulate));
+                .map(itemStack -> performSimpleInsert(itemStack, count, transaction))
+                .orElseGet(() -> performComplexInsert(obj, count, transaction));
     }
 
-    private int performSimpleInsert(ItemStack stack, int count, boolean simulate) {
-        int remainingCount = insertIntoProviders(stack, count, simulate);
+    private int performSimpleInsert(ItemStack stack, int count, TransactionContext transaction) {
+        int remainingCount = insertIntoProviders(stack, count, transaction);
         if (remainingCount == 0)
             return 0;
 
 // this is extremely buggy and poorly planned out code.
-//        insertIntoEmptyHandles(stack, remainingCount, simulate);
+//        insertIntoEmptyHandles(stack, remainingCount, transaction);
 //        if (remainingCount == 0)
 //            return 0;
+
 
         if (!simulate)
             spawnRemainder(stack, remainingCount);
@@ -66,9 +68,9 @@ public final class PlayerItemIndex implements IItemIndex {
         return 0;
     }
 
-    private int insertIntoProviders(ItemStack stack, int remainingCount, boolean simulate) {
+    private int insertIntoProviders(ItemStack stack, int remainingCount, TransactionContext transaction) {
         for (IInsertProvider insertProvider : insertProviders) {
-            remainingCount -= insertProvider.insert(stack, remainingCount, simulate);
+            remainingCount -= insertProvider.insert(stack, remainingCount, transaction);
             if (remainingCount <= 0)
                 return 0;
         }
@@ -78,16 +80,16 @@ public final class PlayerItemIndex implements IItemIndex {
     // todo: fix or rewrite. has many root issues:
     //       uses methods not intended for forge, has the ability to replace stacks, indexes players inventory even though we already handle the players inventory,
     //       doesn't check for a valid slot, ignores the IItemHandler contract. Maybe more
-    private int insertIntoEmptyHandles(ItemStack stack, int remainingCount, boolean simulate) {
+    private int insertIntoEmptyHandles(ItemStack stack, int remainingCount, TransactionContext transaction) {
 //        List<IObjectHandle<?>> emptyHandles = handleMap
 //                .computeIfAbsent(Item.class, c -> new HashMap<>())
 //                .getOrDefault(Items.AIR, ImmutableList.of());
 //
 //        for (Iterator<IObjectHandle<?>> it = emptyHandles.iterator(); it.hasNext() && remainingCount >= 0; ) {
 //            IObjectHandle<?> handle = it.next();
-//            ItemVariant item = ItemVariant.ofStack(stack);
+//            ItemVariant item = ItemVariant.of(stack);
 //
-//            int match = handle.insert(item, remainingCount, simulate);
+//            int match = handle.insert(item, remainingCount, transaction);
 //            if (match > 0)
 //                remainingCount -= match;
 //
@@ -113,7 +115,7 @@ public final class PlayerItemIndex implements IItemIndex {
         }
     }
 
-    private int performComplexInsert(ItemVariant obj, int count, boolean simulate) {
+    private int performComplexInsert(ItemVariant obj, int count, TransactionContext transaction) {
         int remainingCount = count;
         List<IObjectHandle> handles = handleMap
                 .getOrDefault(obj.getIndexClass(), ImmutableMap.of())
@@ -121,7 +123,7 @@ public final class PlayerItemIndex implements IItemIndex {
 
         for (Iterator<IObjectHandle> it = handles.iterator(); it.hasNext() && remainingCount >= 0; ) {
             IObjectHandle handle = it.next();
-            int match = handle.insert(obj, remainingCount, simulate);
+            int match = handle.insert(obj, remainingCount, transaction);
             if (match > 0)
                 remainingCount -= match;
             if (handle.shouldCleanup())
@@ -164,7 +166,7 @@ public final class PlayerItemIndex implements IItemIndex {
         return it.hasNext() ? MatchResult.failure(list, result.getFoundItems(), it.next()) : result;
     }
 
-    private MatchResult match(MaterialList list, Multiset<ItemVariant> multiset, boolean simulate) {
+    private MatchResult match(MaterialList list, Multiset<ItemVariant> multiset, TransactionContext transaction) {
         ImmutableMultiset.Builder<ItemVariant> availableBuilder = ImmutableMultiset.builder();
         boolean failure = false;
         for (Entry<ItemVariant> entry : multiset.entrySet()) {
@@ -175,7 +177,7 @@ public final class PlayerItemIndex implements IItemIndex {
                     .getOrDefault(entry.getElement().getIndexObject(), ImmutableList.of());
             for (Iterator<IObjectHandle> it = entries.iterator(); it.hasNext() && remainingCount >= 0; ) {
                 IObjectHandle handle = it.next();
-                int match = handle.match(entry.getElement(), remainingCount, simulate);
+                int match = handle.match(entry.getElement(), remainingCount, transaction);
                 if (match > 0)
                     remainingCount -= match;
                 if (handle.shouldCleanup()) {

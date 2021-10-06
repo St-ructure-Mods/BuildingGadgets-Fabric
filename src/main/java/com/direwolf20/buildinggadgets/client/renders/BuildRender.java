@@ -136,8 +136,6 @@ public class BuildRender extends BaseRenderer {
 
                 builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
                 MatchResult match = index.tryMatch(materials);
-                if (!match.isSuccess())
-                    match = index.tryMatch(InventoryHelper.PASTE_LIST);
                 if (!match.isSuccess() || hasEnergy < 0) {
                     if (hasLinkedInventory && remainingCached > 0) {
                         renderFree = true;

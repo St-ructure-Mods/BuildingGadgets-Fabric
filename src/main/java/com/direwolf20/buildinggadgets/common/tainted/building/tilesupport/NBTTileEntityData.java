@@ -54,7 +54,7 @@ public class NBTTileEntityData implements ITileEntityData {
         BlockEntity be = context.getWorld().getBlockEntity(position);
         if (be != null) {
             try {
-                be.deserializeNBT(getNBTModifiable());
+                be.load(getNBTModifiable());
             } catch (Exception e) {
                 BuildingGadgets.LOG.debug("Failed to apply Tile NBT Data to {} at {} in Context {}", state, position, context, e);
             }

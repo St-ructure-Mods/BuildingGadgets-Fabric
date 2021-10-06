@@ -150,7 +150,7 @@ public final class BlockData {
         CompoundTag tag = new CompoundTag();
         tag.put(NBTKeys.KEY_STATE, NbtUtils.writeBlockState(state));
         if (idGetter == null)
-            tag.putString(NBTKeys.KEY_SERIALIZER, tileData.getSerializer().getRegistryName().toString());
+            tag.putString(NBTKeys.KEY_SERIALIZER, Registries.TileEntityData.getTileDataSerializers().getKey(tileData.getSerializer()).toString());
         else
             tag.putInt(NBTKeys.KEY_SERIALIZER, idGetter.applyAsInt(tileData.getSerializer()));
         tag.put(NBTKeys.KEY_DATA, tileData.getSerializer().serialize(tileData, writeDataPersisted));

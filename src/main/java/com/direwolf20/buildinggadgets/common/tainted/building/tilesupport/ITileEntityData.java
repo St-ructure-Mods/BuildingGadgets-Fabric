@@ -3,13 +3,12 @@ package com.direwolf20.buildinggadgets.common.tainted.building.tilesupport;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.Multiset;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.ItemStack;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -31,25 +30,26 @@ public interface ITileEntityData {
      * Attempts to place this {@link ITileEntityData} in the given {@link BuildContext}. If this is called but {@link #allowPlacement(BuildContext, BlockState, BlockPos)}
      * would have returned false, placement should still be attempted and counted as a "forced placement".<br>
      * This Method should also set any data on the {@link net.minecraft.tileentity.TileEntity} represented by this {@code ITileEntityData}.
-     * @param context The {@link BuildContext} to place in.
-     * @param state The {@link BlockState} to place.
+     *
+     * @param context  The {@link BuildContext} to place in.
+     * @param state    The {@link BlockState} to place.
      * @param position The {@link BlockPos} at which to place
      * @return Whether or not placement was performed by this {@link ITileEntityData}. This should only return false if some really hard requirements would not be met,
-     *         like for example a required block not being present next to the given position.
+     * like for example a required block not being present next to the given position.
      */
     boolean placeIn(BuildContext context, BlockState state, BlockPos position);
 
     /**
      * @param context The context in which to query required items.
-     * @param state The {@link BlockState} to retrieve items for
-     * @param target {@link RayTraceResult} the target at which a click is simulated
-     * @param pos The {@link BlockPos} where a block is simulated for this Method
+     * @param state   The {@link BlockState} to retrieve items for
+     * @param target  {@link RayTraceResult} the target at which a click is simulated
+     * @param pos     The {@link BlockPos} where a block is simulated for this Method
      * @return A {@link Multiset} of required Items.
      */
     default MaterialList getRequiredItems(BuildContext context, BlockState state, @Nullable HitResult target, @Nullable BlockPos pos) {
         ItemStack stack = null;
         try {
-            stack = state.getBlock().getPickBlock(state, target, context.getWorld(), pos, context.getPlayer());
+            stack = state.getBlock().getCloneItemStack(context.getWorld(), pos, state);
         } catch (Exception e) {
             BuildingGadgets.LOG.trace("Failed to retrieve pickBlock for {}.", state, e);
         }
@@ -60,6 +60,6 @@ public interface ITileEntityData {
         if (stack.isEmpty())
             return MaterialList.empty();
 
-        return MaterialList.of(ItemVariant.ofStack(stack));
+        return MaterialList.of(ItemVariant.of(stack));
     }
 }

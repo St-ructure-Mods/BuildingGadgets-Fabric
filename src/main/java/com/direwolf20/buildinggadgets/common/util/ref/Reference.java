@@ -54,14 +54,6 @@ public final class Reference {
         private BlockReference() {}
     }
 
-    public static final class EntityReference {
-        public static final String CONSTRUCTION_BLOCK_ENTITY = Reference.MODID + ":construction_block_entity";
-
-        public static final ResourceLocation CONSTRUCTION_BLOCK_ENTITY_RL = new ResourceLocation(CONSTRUCTION_BLOCK_ENTITY);
-
-        private EntityReference() {}
-    }
-
     public static final class TileDataSerializerReference {
         public static final ResourceLocation REGISTRY_ID_TILE_DATA_SERIALIZER = new ResourceLocation(MODID, "tile_data/serializer");
 
@@ -89,14 +81,5 @@ public final class Reference {
 
         public static final String DATA_PROVIDER_FACTORY = MODID + ":data_provider_factory";
         public static final ResourceLocation DATA_PROVIDER_FACTORY_RL = new ResourceLocation(DATA_PROVIDER_FACTORY);
-    }
-
-    public static final class HandleProviderReference {
-        public static final String IMC_METHOD_HANDLE_PROVIDER = "imc_handle_provider";
-
-        private HandleProviderReference() {}
-
-        public static final String STACK_HANDLER_ITEM_HANDLE = MODID + ":stack_handler_provider";
-        public static final ResourceLocation STACK_HANDLER_ITEM_HANDLE_RL = new ResourceLocation(STACK_HANDLER_ITEM_HANDLE);
     }
 }

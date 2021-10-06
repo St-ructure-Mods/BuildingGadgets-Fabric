@@ -148,14 +148,14 @@ public class GadgetUtils {
             data = BlockData.AIR;
 
         CompoundTag stateTag = data.serialize(true);
-        tagCompound.put(NBTKeys.TE_CONSTRUCTION_STATE, stateTag);
+        tagCompound.put(NBTKeys.MAP_STATE, stateTag);
         stack.setTag(tagCompound);
     }
 
     @NotNull
     public static BlockData getToolBlock(ItemStack stack) {
         CompoundTag tagCompound = stack.getOrCreateTag();
-        BlockData res = BlockData.tryDeserialize(tagCompound.getCompound(NBTKeys.TE_CONSTRUCTION_STATE), true);
+        BlockData res = BlockData.tryDeserialize(tagCompound.getCompound(NBTKeys.MAP_STATE), true);
         if (res == null) {
             setToolBlock(stack, BlockData.AIR);
             return BlockData.AIR;

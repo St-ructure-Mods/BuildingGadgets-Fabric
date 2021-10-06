@@ -6,6 +6,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 
 /**
  * An {@link IItemIndex} which instead of inserting or extracting Items from the backing {@link IItemIndex} keeps record of
@@ -24,8 +25,8 @@ public final class RecordingItemIndex implements IItemIndex {
     }
 
     @Override
-    public Multiset<ItemVariant> insert(Multiset<ItemVariant> items, boolean simulate) {
-        Multiset<ItemVariant> res = other.insert(items, simulate);
+    public Multiset<ItemVariant> insert(Multiset<ItemVariant> items, TransactionContext transaction) {
+        Multiset<ItemVariant> res = other.insert(items, transaction);
         if (! simulate)
             insertedItems.addAll(items);
         return res;

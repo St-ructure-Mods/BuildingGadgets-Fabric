@@ -27,6 +27,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
@@ -47,7 +48,7 @@ public class EventUtil {
     public static final Comparator<Multiset.Entry<ItemVariant>> ENTRY_COMPARATOR = Comparator
             .<Multiset.Entry<ItemVariant>, Integer>comparing(Entry::getCount)
             .reversed()
-            .thenComparing(e -> e.getElement().getObjectRegistryName());
+            .thenComparing(e -> Registry.ITEM.getKey(e.getElement().getItem()));
 
     private static final int STACKS_PER_LINE = 8;
     private static final RemoteInventoryCache cache = new RemoteInventoryCache(true);
