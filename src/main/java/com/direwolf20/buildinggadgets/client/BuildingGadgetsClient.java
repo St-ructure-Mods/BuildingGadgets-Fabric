@@ -39,8 +39,6 @@ public class BuildingGadgetsClient implements ClientModInitializer {
         });
         CACHE_TEMPLATE_PROVIDER.registerUpdateListener(((GadgetCopyPaste) OurItems.COPY_PASTE_GADGET_ITEM).getRender());
 
-        BlockRenderLayerMap.INSTANCE.putBlock(OurBlocks.CONSTRUCTION_BLOCK, RenderType.solid());
-        ((ConstructionBlock) OurBlocks.CONSTRUCTION_BLOCK).initColorHandler(Minecraft.getInstance().getBlockColors());
     }
 
     public static void playSound(SoundEvent sound, float pitch) {
