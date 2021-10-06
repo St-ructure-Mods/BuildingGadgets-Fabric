@@ -77,7 +77,7 @@ public class Config implements ConfigData {
 
             @Comment("The Gadget's Max Undo size (Note, the exchanger does not support undo)")
             @ConfigEntry.BoundedDiscrete(min = 0, max = 128)
-            public final long undoSize;
+            public final int undoSize;
             //Max Undo History Size
 
             public GadgetConfig(String name, int maxEnergy, int energyCost, int getMaxUndo) {

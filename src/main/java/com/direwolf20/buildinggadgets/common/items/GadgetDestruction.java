@@ -46,7 +46,7 @@ public class GadgetDestruction extends AbstractGadget {
 
     public GadgetDestruction() {
         super(OurItems.nonStackableItemProperties(),
-                (int) BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.undoSize,
+                BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.undoSize,
                 Reference.SaveReference.UNDO_DESTRUCTION,
                 TagReference.WHITELIST_DESTRUCTION,
                 TagReference.BLACKLIST_DESTRUCTION);
