@@ -81,8 +81,6 @@ public final class BuildingGadgets implements ModInitializer {
         Registries.registerTileDataSerializers();
         Registries.registerUniqueObjectSerializers();
 
-        Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(Reference.MODID, "construction_paste"), Serializer.INSTANCE);
-
         PlayerBlockBreakEvents.AFTER.register(new BreakEventHandler());
 
         BlockPlaceCallback.ON_PLACE.register((serverPlayer, level, itemStack, interactionHand, blockHitResult) -> {

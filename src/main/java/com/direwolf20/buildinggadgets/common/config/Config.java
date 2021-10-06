@@ -13,10 +13,6 @@ public class Config implements ConfigData {
     @Comment("Configure the Gadgets")
     public final CategoryGadgets GADGETS = new CategoryGadgets();
 
-    @ConfigEntry.Category("Paste Containers")
-    @Comment("Configure the Paste Containers")
-    public final CategoryPasteContainers PASTE_CONTAINERS = new CategoryPasteContainers();
-
     public static final class CategoryGeneral {
         @Comment("Defines how far away you can build")
         @ConfigEntry.BoundedDiscrete(min = 1, max = 48)
@@ -139,21 +135,4 @@ public class Config implements ConfigData {
         }
     }
 
-    public static final class CategoryPasteContainers {
-
-        @Comment("The maximum capacity of a tier 1 (iron) Construction Paste Container")
-        @ConfigEntry.BoundedDiscrete(min = 1, max = Integer.MAX_VALUE)
-        public final int capacityT1 = (int) (512 * Math.pow(4, 0));
-        //T1 Container Capacity
-
-        @Comment("The maximum capacity of a tier 2 Construction Paste Container")
-        @ConfigEntry.BoundedDiscrete(min = 1, max = Integer.MAX_VALUE)
-        public final int capacityT2 = (int) (512 * Math.pow(4, 2 - 1));
-        //T2 Container Capacity
-
-        @Comment("The maximum capacity of a tier 3 Construction Paste Container")
-        @ConfigEntry.BoundedDiscrete(min = 1, max = Integer.MAX_VALUE)
-        public final int capacityT3 = (int) (512 * Math.pow(4, 3 - 1));
-        //T3 Container Capacity
-    }
 }

@@ -82,7 +82,6 @@ public abstract class AbstractMode {
                 || worldBlockState == context.getSetState() )
             return false;
 
-        // No tiles unless construction block
         if (be.getBlockState() == context.getSetState())
             return false;
 
