@@ -58,7 +58,7 @@ public class GadgetBuilding extends AbstractGadget {
 
     public GadgetBuilding() {
         super(OurItems.nonStackableItemProperties(),
-                (int) BuildingGadgets.config.GADGETS.GADGET_BUILDING.undoSize,
+                BuildingGadgets.config.GADGETS.GADGET_BUILDING.undoSize,
                 Reference.SaveReference.UNDO_BUILDING,
                 TagReference.WHITELIST_BUILDING,
                 TagReference.BLACKLIST_BUILDING);
