@@ -78,14 +78,14 @@ public class InventoryHelper {
         return builder.build();
     }
 
-    static Map<Class<?>, Map<Object, List<IObjectHandle>>> indexMap(ItemStack tool, Player player) {
-        Map<Class<?>, Map<Object, List<IObjectHandle>>> map = new HashMap<>();
+    static List<IObjectHandle> indexMap(ItemStack tool, Player player) {
+        List<IObjectHandle> list = new ArrayList<>();
 
         for (Storage<ItemVariant> handler : getHandlers(tool, player)) {
             // TODO: Index
         }
 
-        return map;
+        return list;
     }
 
     static List<Storage<ItemVariant>> getHandlers(ItemStack stack, Player player) {

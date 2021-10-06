@@ -12,6 +12,7 @@ import com.direwolf20.buildinggadgets.common.tainted.building.view.IBuildView;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo.Builder;
 import com.google.common.base.Preconditions;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -46,8 +47,10 @@ public final class PlacementScheduler extends SteppedScheduler {
         this.view = view;
         this.spliterator = view.spliterator();
         this.undoBuilder = Undo.builder();
-        this.finisher = p -> {};
+        this.finisher = p -> {
+        };
     }
+
     @Override
     protected void onFinish() {
         finisher.accept(this);
@@ -55,7 +58,7 @@ public final class PlacementScheduler extends SteppedScheduler {
 
     @Override
     protected StepResult advance() {
-        if (! spliterator.tryAdvance(this::checkTarget))
+        if (!spliterator.tryAdvance(this::checkTarget))
             return StepResult.END;
         return lastWasSuccess ? StepResult.SUCCESS : StepResult.FAILURE;
     }
@@ -70,16 +73,22 @@ public final class PlacementScheduler extends SteppedScheduler {
     }
 
     private void checkTarget(PlacementTarget target) {
-        CheckResult res = checker.checkPositionWithResult(view.getContext(), target, false);
-        lastWasSuccess = res.isSuccess();
-        if (lastWasSuccess) {
-            undoBuilder.record(view.getContext().getWorld(), target.getPos(), target.getData(), res.getMatch().getChosenOption(), res.getInsertedItems());
-            EffectBlock.spawnEffectBlock(view.getContext(), target, Mode.PLACE);
+        try (Transaction transaction = Transaction.openOuter()) {
+            CheckResult res = checker.checkPositionWithResult(view.getContext(), target, false, transaction);
+            lastWasSuccess = res.isSuccess();
 
-            BuildContext context = view.getContext();
-            BlockData targetBlock = target.getData();
-            if (target.getData().getState().getBlock() instanceof DoorBlock && targetBlock.getState().getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER && context.getWorld().isEmptyBlock(target.getPos().above())) {
-                EffectBlock.spawnEffectBlock(context.getWorld(), target.getPos().above(), new BlockData(targetBlock.getState().setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER), TileSupport.dummyTileEntityData()), Mode.PLACE);
+            if (lastWasSuccess) {
+                undoBuilder.record(view.getContext().getWorld(), target.getPos(), target.getData(), res.getMatch().getChosenOption(), res.getInsertedItems());
+                EffectBlock.spawnEffectBlock(view.getContext(), target, Mode.PLACE);
+
+                BuildContext context = view.getContext();
+                BlockData targetBlock = target.getData();
+
+                if (target.getData().getState().getBlock() instanceof DoorBlock && targetBlock.getState().getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER && context.getWorld().isEmptyBlock(target.getPos().above())) {
+                    EffectBlock.spawnEffectBlock(context.getWorld(), target.getPos().above(), new BlockData(targetBlock.getState().setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER), TileSupport.dummyTileEntityData()), Mode.PLACE);
+                }
+
+                transaction.commit();
             }
         }
     }

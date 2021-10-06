@@ -11,6 +11,7 @@ import com.direwolf20.buildinggadgets.common.util.CommonUtils;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,18 +41,16 @@ public final class PlacementChecker {
     /**
      * @implNote This code is so god damn messy. Good luck understanding it.
      */
-    public CheckResult checkPositionWithResult(BuildContext context, PlacementTarget target, boolean giveBackItems) {
+    public CheckResult checkPositionWithResult(BuildContext context, PlacementTarget target, boolean giveBackItems, TransactionContext transaction) {
         if (target.getPos().getY() > context.getWorld().getMaxBuildHeight() || target.getPos().getY() < 0 || !placeCheck.test(context, target))
             return new CheckResult(MatchResult.failure(), ImmutableMultiset.of(), false);
         long energy = energyFun.applyAsLong(target);
         Multiset<ItemVariant> insertedItems = ImmutableMultiset.of();
         boolean isCreative = context.getPlayer() != null && context.getPlayer().isCreative();
 
-        try (Transaction transaction = Transaction.openOuter()) {
-            boolean check = energyStorage.extract(energy, transaction) != energy;
-            transaction.abort();
-
-            if (!isCreative && check) {
+        // Fail-fast energy check; repeated below
+        try (Transaction test = Transaction.openNested(transaction)) {
+            if (!isCreative && energyStorage.extract(energy, test) != energy) {
                 return new CheckResult(MatchResult.failure(), insertedItems, false);
             }
         }
@@ -81,16 +80,15 @@ public final class PlacementChecker {
             if (giveBackItems) {
                 insertedItems = TileSupport.createTileData(context.getWorld().getBlockEntity(target.getPos()))
                         .getRequiredItems(context, state, null, target.getPos()).iterator().next();
-                index.insert(insertedItems);
+                index.insert(insertedItems, transaction);
             }
         }
 
         if (!isCreative) {
-            try (Transaction transaction = Transaction.openOuter()) {
+            try (Transaction extract = Transaction.openNested(transaction)) {
                 if (energyStorage.extract(energy, transaction) == energy) {
-                    transaction.commit();
+                    extract.commit();
                 } else {
-                    transaction.abort();
                     return new CheckResult(match, insertedItems, false);
                 }
             }

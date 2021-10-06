@@ -2,17 +2,20 @@ package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
 import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.IObjectHandle;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
+import com.google.common.collect.Multisets;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Item Index representation all Items accessible for the Player by BuildingGadgets.
@@ -20,7 +23,7 @@ import java.util.*;
  */
 public final class PlayerItemIndex implements IItemIndex {
     //use a class map first, to allow for non-Item IUniqueObjects...
-    private Map<Class<?>, Map<Object, List<IObjectHandle>>> handleMap;
+    private List<IObjectHandle> handles;
     private List<IInsertProvider> insertProviders;
     private final ItemStack stack;
     private final Player player;
@@ -110,10 +113,6 @@ public final class PlayerItemIndex implements IItemIndex {
 
     private int performComplexInsert(ItemVariant obj, int count, TransactionContext transaction) {
         int remainingCount = count;
-        List<IObjectHandle> handles = handleMap
-                .getOrDefault(obj.getIndexClass(), ImmutableMap.of())
-                .getOrDefault(obj.getIndexObject(), ImmutableList.of());
-
         for (Iterator<IObjectHandle> it = handles.iterator(); it.hasNext() && remainingCount >= 0; ) {
             IObjectHandle handle = it.next();
             int match = handle.insert(obj, remainingCount, transaction);
@@ -129,22 +128,26 @@ public final class PlayerItemIndex implements IItemIndex {
 
     @Override
     public void reIndex() {
-        this.handleMap = InventoryHelper.indexMap(stack, player);
+        this.handles = InventoryHelper.indexMap(stack, player);
         this.insertProviders = InventoryHelper.indexInsertProviders(stack, player);
     }
 
     @Override
     public MatchResult tryMatch(MaterialList list) {
-        MatchResult result = null;
-        for (ImmutableMultiset<ItemVariant> multiset : list) {
-            result = match(list, multiset, true);
-            if (result.isSuccess())
-                return MatchResult.success(list, result.getFoundItems(), multiset);
+        try (Transaction transaction = Transaction.openOuter()) {
+            MatchResult result = null;
+
+            for (ImmutableMultiset<ItemVariant> multiset : list) {
+                result = match(list, multiset, transaction);
+                if (result.isSuccess())
+                    return MatchResult.success(list, result.getFoundItems(), multiset);
+            }
+
+            return result == null ? MatchResult.success(list, ImmutableMultiset.of(), ImmutableMultiset.of()) : evaluateFailingOptionFoundItems(list, transaction);
         }
-        return result == null ? MatchResult.success(list, ImmutableMultiset.of(), ImmutableMultiset.of()) : evaluateFailingOptionFoundItems(list);
     }
 
-    private MatchResult evaluateFailingOptionFoundItems(MaterialList list) {
+    private MatchResult evaluateFailingOptionFoundItems(MaterialList list, TransactionContext transaction) {
         Multiset<ItemVariant> multiset = HashMultiset.create();
         for (ImmutableMultiset<ItemVariant> option : list.getItemOptions()) {
             for (Entry<ItemVariant> entry : option.entrySet()) {
@@ -152,7 +155,7 @@ public final class PlayerItemIndex implements IItemIndex {
             }
         }
         multiset.addAll(list.getRequiredItems());
-        MatchResult result = match(list, multiset, true);
+        MatchResult result = match(list, multiset, transaction);
         if (result.isSuccess())
             throw new RuntimeException("This should not be possible! The the content changed between matches?!?");
         Iterator<ImmutableMultiset<ItemVariant>> it = list.iterator();
@@ -164,21 +167,13 @@ public final class PlayerItemIndex implements IItemIndex {
         boolean failure = false;
         for (Entry<ItemVariant> entry : multiset.entrySet()) {
             int remainingCount = entry.getCount();
-            Class<?> indexClass = entry.getElement().getIndexClass();
-            List<IObjectHandle> entries = handleMap
-                    .getOrDefault(indexClass, ImmutableMap.of())
-                    .getOrDefault(entry.getElement().getIndexObject(), ImmutableList.of());
-            for (Iterator<IObjectHandle> it = entries.iterator(); it.hasNext() && remainingCount >= 0; ) {
+            for (Iterator<IObjectHandle> it = handles.iterator(); it.hasNext() && remainingCount >= 0; ) {
                 IObjectHandle handle = it.next();
                 int match = handle.match(entry.getElement(), remainingCount, transaction);
                 if (match > 0)
                     remainingCount -= match;
                 if (handle.shouldCleanup()) {
                     it.remove();
-                    if (indexClass == Item.class)  //make it ready for insertion if this is an Item handle
-                        handleMap.computeIfAbsent(Item.class, c -> new HashMap<>())
-                                .computeIfAbsent(Items.AIR, i -> new ArrayList<>())
-                                .add(handle);
                 }
             }
             remainingCount = Math.max(0, remainingCount);
@@ -193,9 +188,12 @@ public final class PlayerItemIndex implements IItemIndex {
 
     @Override
     public boolean applyMatch(MatchResult result) {
-        if (!result.isSuccess())
+        if (!result.isSuccess()) {
             return false;
-        return match(result.getMatchedList(), result.getChosenOption(), false).isSuccess();
-    }
+        }
 
+        try (Transaction transaction = Transaction.openOuter()) {
+            return match(result.getMatchedList(), result.getChosenOption(), transaction).isSuccess();
+        }
+    }
 }

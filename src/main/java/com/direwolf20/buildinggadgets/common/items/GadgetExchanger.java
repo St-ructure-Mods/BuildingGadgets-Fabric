@@ -268,10 +268,15 @@ public class GadgetExchanger extends AbstractGadget {
         if (!player.mayBuild() || !world.mayInteract(player, pos))
             return;
 
-        BlockSnapshot blockSnapshot = BlockSnapshot.create(world.dimension(), world, pos);
-        BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, pos, currentBlock, player);
-        if (ForgeEventFactory.onBlockPlace(player, blockSnapshot, Direction.UP) || MinecraftForge.EVENT_BUS.post(e))
+        if (!world.mayInteract(player, pos)) {
             return;
+        }
+
+        // Should be equivalent to the above check?
+        // BlockSnapshot blockSnapshot = BlockSnapshot.create(world.dimension(), world, pos);
+        // BlockEvent.BreakEvent e = new BlockEvent.BreakEvent(world, pos, currentBlock, player);
+        // if (ForgeEventFactory.onBlockPlace(player, blockSnapshot, Direction.UP) || MinecraftForge.EVENT_BUS.post(e))
+        //     return;
 
         this.applyDamage(tool, player);
 
