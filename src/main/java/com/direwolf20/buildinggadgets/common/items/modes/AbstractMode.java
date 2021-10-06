@@ -81,7 +81,7 @@ public abstract class AbstractMode {
                 || worldBlockState == context.getSetState() )
             return false;
 
-        if (be == null || be.getBlockState() == context.getSetState())
+        if (be != null && be.getBlockState() == context.getSetState())
             return false;
 
         // Don't exchange bedrock
