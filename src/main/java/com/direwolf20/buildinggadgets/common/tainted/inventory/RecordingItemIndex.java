@@ -44,7 +44,7 @@ public final class RecordingItemIndex implements IItemIndex {
     }
 
     @Override
-    public boolean applyMatch(MatchResult result) {
+    public boolean applyMatch(MatchResult result, TransactionContext transaction) {
         if (result.isSuccess()) {
             extractedItems.addAll(Multisets.difference(result.getChosenOption(), extractedItems));
             return true;

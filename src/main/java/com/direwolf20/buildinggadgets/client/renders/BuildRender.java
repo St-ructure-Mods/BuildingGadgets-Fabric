@@ -144,7 +144,8 @@ public class BuildRender extends BaseRenderer {
                         renderMissingBlock(matrix.last().pose(), builder, coordinate);
                     }
                 } else {
-                    index.applyMatch(match); //notify the recording index that this counts
+                    // TODO: What?
+                    // index.applyMatch(match, ); // notify the recording index that this counts
                     renderBoxSolid(matrix.last().pose(), builder, coordinate, .97f, 1f, .99f, .1f);
                 }
 

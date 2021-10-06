@@ -279,7 +279,7 @@ public class GadgetExchanger extends AbstractGadget {
 
         this.applyDamage(tool, player);
 
-        if (index.applyMatch(match)) {
+        if (index.applyMatch(match, transaction)) {
             MaterialList materials = data.getRequiredItems(
                     buildContext,
                     currentBlock,

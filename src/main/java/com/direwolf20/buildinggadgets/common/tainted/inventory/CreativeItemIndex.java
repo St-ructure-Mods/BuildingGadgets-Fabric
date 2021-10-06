@@ -24,7 +24,7 @@ public final class CreativeItemIndex implements IItemIndex {
     }
 
     @Override
-    public boolean applyMatch(MatchResult result) {
+    public boolean applyMatch(MatchResult result, TransactionContext transaction) {
         return result.isSuccess();
     }
 }

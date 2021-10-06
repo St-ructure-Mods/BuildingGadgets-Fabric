@@ -105,13 +105,11 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     @Override
-    public boolean applyMatch(MatchResult result) {
+    public boolean applyMatch(MatchResult result, TransactionContext transaction) {
         if (!result.isSuccess()) {
             return false;
         }
 
-        try (Transaction transaction = Transaction.openOuter()) {
-            return match(result.getMatchedList(), result.getChosenOption(), transaction).isSuccess();
-        }
+        return match(result.getMatchedList(), result.getChosenOption(), transaction).isSuccess();
     }
 }

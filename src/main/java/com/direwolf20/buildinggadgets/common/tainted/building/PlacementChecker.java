@@ -3,7 +3,6 @@ package com.direwolf20.buildinggadgets.common.tainted.building;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -94,7 +93,7 @@ public final class PlacementChecker {
             }
         }
 
-        return new CheckResult(match, insertedItems, index.applyMatch(match));
+        return new CheckResult(match, insertedItems, index.applyMatch(match, transaction));
     }
 
     public static final class CheckResult {

@@ -27,6 +27,7 @@ import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference.BlockReference.TagReference;
 import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
 import com.google.common.collect.ImmutableMultiset;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.gui.screens.Screen;
@@ -253,10 +254,13 @@ public class GadgetBuilding extends AbstractGadget {
 
         this.applyDamage(heldItem, player);
 
-        if (index.applyMatch(match)) {
-            ImmutableMultiset<ItemVariant> usedItems = match.getChosenOption();
-            builder.record(world, pos, setBlock, usedItems, ImmutableMultiset.of());
-            EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.PLACE);
+        try (Transaction transaction = Transaction.openOuter()) {
+            if (index.applyMatch(match, transaction)) {
+                ImmutableMultiset<ItemVariant> usedItems = match.getChosenOption();
+                builder.record(world, pos, setBlock, usedItems, ImmutableMultiset.of());
+                EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.PLACE);
+                transaction.commit();
+            }
         }
     }
 

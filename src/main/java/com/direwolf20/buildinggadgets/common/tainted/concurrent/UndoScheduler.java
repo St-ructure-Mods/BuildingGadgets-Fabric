@@ -75,7 +75,7 @@ public final class UndoScheduler extends SteppedScheduler {
 
         if (lastWasSuccess) {
             try (Transaction transaction = Transaction.openOuter()) {
-                index.applyMatch(matchResult);
+                index.applyMatch(matchResult, transaction);
                 index.insert(entry.getValue().getUsedItems(), transaction);
 
                 EffectBlock.spawnUndoBlock(context, new PlacementTarget(entry.getKey(), entry.getValue().getRecordedData()));
