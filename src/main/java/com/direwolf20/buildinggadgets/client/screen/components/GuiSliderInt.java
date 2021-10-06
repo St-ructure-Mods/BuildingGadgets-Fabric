@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.client.screen.components;
 
+import com.direwolf20.buildinggadgets.client.BuildingGadgetsClient;
 import com.direwolf20.buildinggadgets.client.ClientProxy;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketChangeRange;
@@ -76,7 +77,7 @@ public class GuiSliderInt extends AbstractSliderButton {
     }
 
     private void playSound() {
-        ClientProxy.playSound(SoundEvents.DISPENSER_FAIL, 2F);
+        BuildingGadgetsClient.playSound(SoundEvents.DISPENSER_FAIL, 2F);
     }
 
     @Override

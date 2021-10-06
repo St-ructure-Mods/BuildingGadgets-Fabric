@@ -8,10 +8,9 @@ import com.google.common.graph.EndpointPair;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.loading.toposort.TopologicalSort;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 
 public final class TopologicalRegistryBuilder<T> {
@@ -98,7 +97,7 @@ public final class TopologicalRegistryBuilder<T> {
         validateUnbuild();
         build = true;
         values.clear();
-        List<ValueObject<T>> sorted = TopologicalSort.topologicalSort(theGraph, Comparator.naturalOrder());
+        List<ValueObject<T>> sorted = null;// TopologicalSort.topologicalSort(theGraph, Comparator.naturalOrder());
         final ImmutableList.Builder<T> objs = ImmutableList.builder();
         final ImmutableBiMap.Builder<ResourceLocation, T> map = ImmutableBiMap.builder();
         sorted.stream().filter(val -> val.getValue() != null).forEach(obj -> {

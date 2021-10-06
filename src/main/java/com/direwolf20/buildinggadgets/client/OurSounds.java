@@ -26,6 +26,6 @@ public enum OurSounds {
     }
 
     public void playSound(float pitch) {
-        ClientProxy.playSound(sound, pitch);
+        BuildingGadgetsClient.playSound(sound, pitch);
     }
 }

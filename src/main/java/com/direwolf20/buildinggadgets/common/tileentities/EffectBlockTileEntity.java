@@ -103,16 +103,6 @@ public class EffectBlockTileEntity extends BlockEntity {
         return save(new CompoundTag());
     }
 
-    @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        deserializeNBT(tag);
-    }
-
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        deserializeNBT(pkt.getTag());
-    }
-
     @NotNull
     @Override
     public CompoundTag save(@NotNull CompoundTag compound) {
