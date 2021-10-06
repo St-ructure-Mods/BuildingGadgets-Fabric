@@ -1,20 +1,20 @@
 package com.direwolf20.buildinggadgets.common.tainted.concurrent;
 
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
+import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
-import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo.BlockInfo;
 import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.google.common.base.Preconditions;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Map;
 import java.util.Objects;
@@ -43,7 +43,7 @@ public final class UndoScheduler extends SteppedScheduler {
     private UndoScheduler(Undo undo, IItemIndex index, BuildContext context, int steps) {
         super(steps);
         assert context.getPlayer() != null;
-        assert ! context.getStack().isEmpty();
+        assert !context.getStack().isEmpty();
 
         this.spliterator = undo.getUndoData().entrySet().spliterator();
         this.index = index;
@@ -52,7 +52,7 @@ public final class UndoScheduler extends SteppedScheduler {
 
     @Override
     protected StepResult advance() {
-        if (! spliterator.tryAdvance(this::undoBlock))
+        if (!spliterator.tryAdvance(this::undoBlock))
             return StepResult.END;
         return lastWasSuccess ? StepResult.SUCCESS : StepResult.FAILURE;
     }
@@ -70,12 +70,9 @@ public final class UndoScheduler extends SteppedScheduler {
             lastWasSuccess = false;
             return;
         }
-        if (! state.isAir()) {
-            BreakEvent event = new BreakEvent(context.getServerWorld(), entry.getKey(), state, context.getPlayer());
-            if (MinecraftForge.EVENT_BUS.post(event)) {
-                lastWasSuccess = false;
-                return;
-            }
+        if (!state.isAir() && !context.getServerWorld().mayInteract(context.getPlayer(), entry.getKey())) {
+            lastWasSuccess = false;
+            return;
         }
         MatchResult matchResult = index.tryMatch(entry.getValue().getProducedItems());
         lastWasSuccess = matchResult.isSuccess();

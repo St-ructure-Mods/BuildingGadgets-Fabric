@@ -90,10 +90,10 @@ public class TemplateManagerContainer extends BaseContainer {
             this.backgroundLoc = backgroundLoc;
         }
 
-        //@Override
-        //public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
-         //   return super.setBackground(atlas, new ResourceLocation(Reference.MODID, this.backgroundLoc));
-        //}
+        // @Override
+        // public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
+        //    return super.setBackground(atlas, new ResourceLocation(Reference.MODID, this.backgroundLoc));
+        // }
 
         @Override
         public int getMaxStackSize() {
