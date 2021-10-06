@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
+import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -71,12 +72,12 @@ public class InventoryLinker {
     }
 
     public static Optional<Storage<ItemVariant>> getLinkedInventory(Level world, ItemStack stack) {
-        Pair<BlockPos, ResourceKey<Level>> dataFromStack = getDataFromStack(stack);
+        Location dataFromStack = getDataFromStack(stack);
         if (dataFromStack == null) {
             return Optional.empty();
         }
 
-        return getLinkedInventory(world, dataFromStack.getKey(), dataFromStack.getValue(), stack);
+        return getLinkedInventory(world, dataFromStack.blockPos(), dataFromStack.level(), stack);
     }
 
     /**
@@ -86,12 +87,12 @@ public class InventoryLinker {
      */
     private static boolean removeIfSame(ItemStack stack, BlockPos pos) {
         // This isn't ideal that we have to do this twice
-        Pair<BlockPos, ResourceKey<Level>> dataFromStack = getDataFromStack(stack);
+        Location dataFromStack = getDataFromStack(stack);
         if (dataFromStack == null) {
             return false;
         }
 
-        if (dataFromStack.getKey().equals(pos)) {
+        if (dataFromStack.blockPos().equals(pos)) {
             removeDataFromStack(stack);
             return true;
         }
@@ -112,16 +113,16 @@ public class InventoryLinker {
      * Retrieves the link data from the ItemStack
      */
     @Nullable
-    public static Pair<BlockPos, ResourceKey<Level>> getDataFromStack(ItemStack stack) {
+    public static Location getDataFromStack(ItemStack stack) {
         CompoundTag compound = stack.getOrCreateTag();
         if (!compound.contains(NBTKeys.REMOTE_INVENTORY_POS) || !compound.contains(NBTKeys.REMOTE_INVENTORY_DIM)) {
             return null;
         }
 
         ResourceKey<Level> dimKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(compound.getString(NBTKeys.REMOTE_INVENTORY_DIM)));
-        return Pair.of(
-                NbtUtils.readBlockPos(compound.getCompound(NBTKeys.REMOTE_INVENTORY_POS)),
-                dimKey
+        return new Location(
+                dimKey,
+                NbtUtils.readBlockPos(compound.getCompound(NBTKeys.REMOTE_INVENTORY_POS))
         );
     }
 

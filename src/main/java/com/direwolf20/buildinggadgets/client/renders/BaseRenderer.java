@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.client.renders;
 
 import com.direwolf20.buildinggadgets.client.cache.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
+import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -52,17 +53,17 @@ public abstract class BaseRenderer {
         getMc().getTextureManager().bindForSetup(InventoryMenu.BLOCK_ATLAS);
     }
 
-    private static void renderLinkedInventoryOutline(WorldRenderContext evt, ItemStack item, Player player) {
-        Pair<BlockPos, ResourceKey<Level>> dataFromStack = InventoryLinker.getDataFromStack(item);
+    private static void renderLinkedInventoryOutline(WorldRenderContext evt, ItemStack gadget, Player player) {
+        Location dataFromStack = InventoryLinker.getDataFromStack(gadget);
         if (dataFromStack == null) {
             return;
         }
 
-        if (!player.level.dimension().equals(dataFromStack.getValue())) {
+        if (!player.level.dimension().equals(dataFromStack.level())) {
             return;
         }
 
-        BlockPos pos = dataFromStack.getKey();
+        BlockPos pos = dataFromStack.blockPos();
         Vec3 renderPos = getMc().gameRenderer.getMainCamera().getPosition()
                 .subtract(pos.getX(), pos.getY(), pos.getZ())
                 .add(.005f, .005f, .005f);

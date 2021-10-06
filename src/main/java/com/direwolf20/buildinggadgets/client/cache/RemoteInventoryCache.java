@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.client.cache;
 
+import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketSetRemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class RemoteInventoryCache {
     private final boolean isCopyPaste;
     private boolean forceUpdate;
-    private Pair<BlockPos, ResourceKey<Level>> locCached;
+    private Location locCached;
     private Multiset<ItemVariant> cache;
     private Stopwatch timer;
 
@@ -34,8 +35,8 @@ public class RemoteInventoryCache {
         forceUpdate = true;
     }
 
-    public boolean maintainCache(ItemStack tool) {
-        Pair<BlockPos, ResourceKey<Level>> loc = InventoryLinker.getDataFromStack(tool);
+    public boolean maintainCache(ItemStack gadget) {
+        Location loc = InventoryLinker.getDataFromStack(gadget);
         if (isCacheOld(loc))
             updateCache(loc);
 
@@ -46,16 +47,16 @@ public class RemoteInventoryCache {
         return cache;
     }
 
-    private void updateCache(Pair<BlockPos, ResourceKey<Level>> loc) {
+    private void updateCache(Location loc) {
         locCached = loc;
         if (loc == null)
             cache = null;
         else {
-            PacketSetRemoteInventoryCache.send(isCopyPaste, loc.getValue(), loc.getKey());
+            PacketSetRemoteInventoryCache.send(isCopyPaste, loc.level(), loc.blockPos());
         }
     }
 
-    private boolean isCacheOld(@Nullable Pair<BlockPos, ResourceKey<Level>> loc) {
+    private boolean isCacheOld(@Nullable Location loc) {
         if (!Objects.equals(locCached, loc)) {
             timer = loc == null ? null : Stopwatch.createStarted();
             return true;

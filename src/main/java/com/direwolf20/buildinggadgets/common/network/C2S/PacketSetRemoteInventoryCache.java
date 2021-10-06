@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.common.network.C2S;
 
 import com.direwolf20.buildinggadgets.client.EventUtil;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
+import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -57,7 +58,7 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
         server.execute(() -> data.either.ifRight(location -> {
             Multiset<ItemVariant> items = HashMultiset.create();
 
-            InventoryLinker.getLinkedInventory(player.level, location.blockPos, location.level, null).ifPresent(inventory -> {
+            InventoryLinker.getLinkedInventory(player.level, location.blockPos(), location.level(), null).ifPresent(inventory -> {
                 try (Transaction transaction = Transaction.openOuter()) {
                     Object2IntMap<Item> counts = new Object2IntOpenHashMap<>();
 
@@ -140,8 +141,5 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
     }
 
     private record Cache(Multiset<ItemVariant> cache) {
-    }
-
-    private record Location(ResourceKey<Level> level, BlockPos blockPos) {
     }
 }

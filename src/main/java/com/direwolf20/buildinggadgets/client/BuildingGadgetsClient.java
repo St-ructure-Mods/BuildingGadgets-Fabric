@@ -30,7 +30,7 @@ public class BuildingGadgetsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         KeyBindings.init();
-        WorldRenderEvents.LAST.register(EventRenderWorldLast::renderWorldLastEvent);
+        WorldRenderEvents.AFTER_SETUP.register(EventRenderWorldLast::renderWorldLastEvent);
         ScreenRegistry.register(OurContainers.TEMPLATE_MANAGER_CONTAINER_TYPE, TemplateManagerGUI::new);
         ClientTickEvents.END_CLIENT_TICK.register(EventKeyInput::handleEventInput);
         BlockEntityRendererRegistry.register(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY, EffectBlockTER::new);
