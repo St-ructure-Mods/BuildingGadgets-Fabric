@@ -10,7 +10,6 @@ import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo;
-import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.Styles;
@@ -240,7 +239,7 @@ public class GadgetDestruction extends AbstractGadget {
                 ! world.mayInteract(player, voidPos)) return false;
 
         BlockEntity be = world.getBlockEntity(voidPos);
-        return (be == null) || be instanceof ConstructionBlockTileEntity;
+        return (be == null);
     }
 
     public void clearArea(Level world, BlockPos pos, Direction side, ServerPlayer player, ItemStack stack) {
@@ -252,7 +251,7 @@ public class GadgetDestruction extends AbstractGadget {
             BlockEntity be = world.getBlockEntity(clearPos);
             if (!isAllowedBlock(state.getBlock()))
                 continue;
-            if (be == null || state.getBlock() == OurBlocks.CONSTRUCTION_BLOCK && be instanceof ConstructionBlockTileEntity) {
+            if (be == null) {
                 destroyBlock(world, clearPos, player, builder);
             }
         }
