@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.NBTTil
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObjectSerializer;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.base.Preconditions;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -73,9 +73,9 @@ public final class SerialisationSupport {
     }
 
     // TODO: Register as Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL
-    private static final IUniqueObjectSerializer UNIQUE_ITEM_SERIALIZER = new UniqueItem.Serializer();
+    private static final IUniqueObjectSerializer UNIQUE_ITEM_SERIALIZER = new ItemVariant.Serializer();
 
-    public static IUniqueObjectSerializer uniqueItemSerializer() {
+    public static IUniqueObjectSerializer ItemVariantSerializer() {
         return UNIQUE_ITEM_SERIALIZER;
     }
 

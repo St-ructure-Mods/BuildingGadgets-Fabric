@@ -16,7 +16,7 @@ import com.direwolf20.buildinggadgets.common.tainted.building.view.IBuildView;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.tainted.template.*;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider.IUpdateListener;
 import com.direwolf20.buildinggadgets.common.tileentities.TemplateManagerTileEntity;
@@ -264,15 +264,15 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
         // The things you have to do to get anything from this system is just stupid.
         MatchResult list = InventoryHelper.CREATIVE_INDEX.tryMatch(requirements);
-        ImmutableMultiset<UniqueItem> foundItems = list.getFoundItems();
+        ImmutableMultiset<ItemVariant> foundItems = list.getFoundItems();
 
         // Reverse sorted list of items required.
-        List<Multiset.Entry<UniqueItem>> sortedEntries = ImmutableList.sortedCopyOf(Comparator
-                .<Multiset.Entry<UniqueItem>, Integer>comparing(Multiset.Entry::getCount)
+        List<Multiset.Entry<ItemVariant>> sortedEntries = ImmutableList.sortedCopyOf(Comparator
+                .<Multiset.Entry<ItemVariant>, Integer>comparing(Multiset.Entry::getCount)
                 .reversed(), list.getChosenOption().entrySet());
 
         int index = 0, column = 0;
-        for(Multiset.Entry<UniqueItem> e: sortedEntries) {
+        for(Multiset.Entry<ItemVariant> e: sortedEntries) {
             ItemStack stack = e.getElement().createStack();
             int x = (-20 - (column * 25)), y = (20 + (index * 25));
 

@@ -17,7 +17,7 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.LangUtil;
@@ -276,14 +276,14 @@ public class GadgetExchanger extends AbstractGadget {
                     world.clip(new ClipContext(player.position(), Vec3.atLowerCornerOf(pos), ClipContext.Block.COLLIDER, Fluid.NONE, player)),
                     pos);
 
-            Iterator<ImmutableMultiset<UniqueItem>> it = materials.iterator();
-            Multiset<UniqueItem> producedItems = LinkedHashMultiset.create();
+            Iterator<ImmutableMultiset<ItemVariant>> it = materials.iterator();
+            Multiset<ItemVariant> producedItems = LinkedHashMultiset.create();
 
             if (buildContext.getStack().isEnchanted() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, buildContext.getStack()) > 0) {
                 producedItems = it.hasNext() ? it.next() : ImmutableMultiset.of();
             } else {
                 List<ItemStack> drops = Block.getDrops(currentBlock, (ServerLevel) buildContext.getWorld(), pos, buildContext.getWorld().getBlockEntity(pos));
-                producedItems.addAll(drops.stream().map(UniqueItem::ofStack).collect(Collectors.toList()));
+                producedItems.addAll(drops.stream().map(ItemVariant::ofStack).collect(Collectors.toList()));
             }
 
             index.insert(producedItems);

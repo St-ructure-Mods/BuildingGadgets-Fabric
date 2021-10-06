@@ -2,14 +2,15 @@ package com.direwolf20.buildinggadgets.common.tainted.inventory.materials.object
 
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.nbt.CompoundTag;
 
 public interface IUniqueObjectSerializer {
-    CompoundTag serialize(UniqueItem item, boolean persisted);
+    CompoundTag serialize(ItemVariant item, boolean persisted);
 
-    UniqueItem deserialize(CompoundTag res);
+    ItemVariant deserialize(CompoundTag res);
 
-    JsonSerializer<UniqueItem> asJsonSerializer(boolean printName, boolean extended);
+    JsonSerializer<ItemVariant> asJsonSerializer(boolean printName, boolean extended);
 
-    JsonDeserializer<UniqueItem> asJsonDeserializer();
+    JsonDeserializer<ItemVariant> asJsonDeserializer();
 }

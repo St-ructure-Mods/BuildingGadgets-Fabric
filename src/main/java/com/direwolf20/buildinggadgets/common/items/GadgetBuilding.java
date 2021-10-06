@@ -10,7 +10,7 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
@@ -255,7 +255,7 @@ public class GadgetBuilding extends AbstractGadget {
         this.applyDamage(heldItem, player);
 
         if (index.applyMatch(match)) {
-            ImmutableMultiset<UniqueItem> usedItems = match.getChosenOption();
+            ImmutableMultiset<ItemVariant> usedItems = match.getChosenOption();
             builder.record(world, pos, setBlock, usedItems, ImmutableMultiset.of());
             EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.PLACE);
         }

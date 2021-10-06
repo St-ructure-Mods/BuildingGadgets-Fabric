@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.CommonUtils;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
@@ -44,7 +44,7 @@ public final class PlacementChecker {
         if (target.getPos().getY() > context.getWorld().getMaxBuildHeight() || target.getPos().getY() < 0 || !placeCheck.test(context, target))
             return new CheckResult(MatchResult.failure(), ImmutableMultiset.of(), false, false);
         long energy = energyFun.applyAsLong(target);
-        Multiset<UniqueItem> insertedItems = ImmutableMultiset.of();
+        Multiset<ItemVariant> insertedItems = ImmutableMultiset.of();
         boolean isCreative = context.getPlayer() != null && context.getPlayer().isCreative();
 
         try (Transaction transaction = Transaction.openOuter()) {
@@ -108,18 +108,18 @@ public final class PlacementChecker {
 
     public static final class CheckResult {
         private final MatchResult match;
-        private final Multiset<UniqueItem> insertedItems;
+        private final Multiset<ItemVariant> insertedItems;
         private final boolean success;
         private final boolean usingPaste;
 
-        private CheckResult(MatchResult match, Multiset<UniqueItem> insertedItems, boolean success, boolean usingPaste) {
+        private CheckResult(MatchResult match, Multiset<ItemVariant> insertedItems, boolean success, boolean usingPaste) {
             this.match = match;
             this.insertedItems = insertedItems;
             this.success = success;
             this.usingPaste = usingPaste;
         }
 
-        public Multiset<UniqueItem> getInsertedItems() {
+        public Multiset<ItemVariant> getInsertedItems() {
             return insertedItems;
         }
 

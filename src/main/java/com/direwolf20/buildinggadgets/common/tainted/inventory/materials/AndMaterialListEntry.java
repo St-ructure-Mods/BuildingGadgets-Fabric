@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials;
 
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.*;
 
@@ -35,20 +35,20 @@ class AndMaterialListEntry extends SubMaterialListEntry {
      * the contained entries.
      */
     @Override
-    public PeekingIterator<ImmutableMultiset<UniqueItem>> iterator() {
+    public PeekingIterator<ImmutableMultiset<ItemVariant>> iterator() {
         if (! getAllSubEntries().findFirst().isPresent())
             return Iterators.peekingIterator(Iterators.singletonIterator(ImmutableMultiset.of()));
         LinkedList<MaterialEntryWrapper> list = getAllSubEntries()
                 .map(MaterialEntryWrapper::new)
                 .collect(Collectors.toCollection(LinkedList::new));
-        return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<UniqueItem>>() {
+        return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<ItemVariant>>() {
             private final Deque<MaterialEntryWrapper> dequeue = list;
 
             @Override
-            protected ImmutableMultiset<UniqueItem> computeNext() {
+            protected ImmutableMultiset<ItemVariant> computeNext() {
                 if (dequeue.isEmpty())
                     return endOfData();
-                ImmutableMultiset.Builder<UniqueItem> builder = ImmutableMultiset.builder();
+                ImmutableMultiset.Builder<ItemVariant> builder = ImmutableMultiset.builder();
                 for (MaterialEntryWrapper wrapper : dequeue) {
                     if (wrapper.hasNext())
                         builder.addAll(wrapper.peek());
@@ -106,7 +106,7 @@ class AndMaterialListEntry extends SubMaterialListEntry {
     }
 
     private static final class MaterialEntryWrapper {
-        private PeekingIterator<ImmutableMultiset<UniqueItem>> curIterator;
+        private PeekingIterator<ImmutableMultiset<ItemVariant>> curIterator;
         private final MaterialListEntry<?> entry;
 
         private MaterialEntryWrapper(MaterialListEntry<?> entry) {
@@ -114,7 +114,7 @@ class AndMaterialListEntry extends SubMaterialListEntry {
             this.curIterator = entry.iterator();
         }
 
-        private ImmutableMultiset<UniqueItem> peek() {
+        private ImmutableMultiset<ItemVariant> peek() {
             return curIterator.peek();
         }
 

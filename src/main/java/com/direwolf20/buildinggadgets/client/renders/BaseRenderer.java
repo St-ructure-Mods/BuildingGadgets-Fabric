@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.client.cache.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
 import com.direwolf20.buildinggadgets.common.world.MockTileEntityRenderWorld;
 import com.google.common.collect.Multiset;
@@ -172,7 +172,7 @@ public abstract class BaseRenderer {
         return cacheInventory;
     }
 
-    public static void setInventoryCache(Multiset<UniqueItem> cache) {
+    public static void setInventoryCache(Multiset<ItemVariant> cache) {
         BaseRenderer.cacheInventory.setCache(cache);
     }
 

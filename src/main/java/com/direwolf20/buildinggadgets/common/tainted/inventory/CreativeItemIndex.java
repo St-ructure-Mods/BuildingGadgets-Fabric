@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 
@@ -12,7 +12,7 @@ import java.util.Iterator;
  */
 public final class CreativeItemIndex implements IItemIndex {
     @Override
-    public Multiset<UniqueItem> insert(Multiset<UniqueItem> items, boolean simulate) {
+    public Multiset<ItemVariant> insert(Multiset<ItemVariant> items, boolean simulate) {
         return items;
     }
 
@@ -23,8 +23,8 @@ public final class CreativeItemIndex implements IItemIndex {
 
     @Override
     public MatchResult tryMatch(MaterialList list) {
-        Iterator<ImmutableMultiset<UniqueItem>> it = list.iterator();
-        ImmutableMultiset<UniqueItem> chosen = it.hasNext() ? it.next() : ImmutableMultiset.of();
+        Iterator<ImmutableMultiset<ItemVariant>> it = list.iterator();
+        ImmutableMultiset<ItemVariant> chosen = it.hasNext() ? it.next() : ImmutableMultiset.of();
         return MatchResult.success(list, chosen, chosen);
     }
 

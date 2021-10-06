@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials;
 
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.*;
 
@@ -35,15 +35,15 @@ class OrMaterialListEntry extends SubMaterialListEntry {
      * Applies an "or" by iterating over all contained entries in the order in which they appear, and then in-turn iterating over the items.
      */
     @Override
-    public PeekingIterator<ImmutableMultiset<UniqueItem>> iterator() {
+    public PeekingIterator<ImmutableMultiset<ItemVariant>> iterator() {
         if (! getAllSubEntries().findFirst().isPresent())
             return Iterators.peekingIterator(Iterators.singletonIterator(ImmutableMultiset.of()));
         Iterator<MaterialListEntry<?>> entryIterator = getAllSubEntries().iterator();
-        return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<UniqueItem>>() {
-            private Iterator<ImmutableMultiset<UniqueItem>> itemIterator;
+        return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<ItemVariant>>() {
+            private Iterator<ImmutableMultiset<ItemVariant>> itemIterator;
 
             @Override
-            protected ImmutableMultiset<UniqueItem> computeNext() {
+            protected ImmutableMultiset<ItemVariant> computeNext() {
                 if (itemIterator == null) {
                     if (entryIterator.hasNext())
                         itemIterator = entryIterator.next().iterator();

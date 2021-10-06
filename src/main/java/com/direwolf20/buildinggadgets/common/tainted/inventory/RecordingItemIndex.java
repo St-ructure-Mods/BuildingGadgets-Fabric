@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
@@ -14,8 +14,8 @@ import com.google.common.collect.Multisets;
  */
 public final class RecordingItemIndex implements IItemIndex {
     private final IItemIndex other;
-    private final Multiset<UniqueItem> extractedItems;
-    private final Multiset<UniqueItem> insertedItems;
+    private final Multiset<ItemVariant> extractedItems;
+    private final Multiset<ItemVariant> insertedItems;
 
     public RecordingItemIndex(IItemIndex other) {
         this.other = other;
@@ -24,8 +24,8 @@ public final class RecordingItemIndex implements IItemIndex {
     }
 
     @Override
-    public Multiset<UniqueItem> insert(Multiset<UniqueItem> items, boolean simulate) {
-        Multiset<UniqueItem> res = other.insert(items, simulate);
+    public Multiset<ItemVariant> insert(Multiset<ItemVariant> items, boolean simulate) {
+        Multiset<ItemVariant> res = other.insert(items, simulate);
         if (! simulate)
             insertedItems.addAll(items);
         return res;
@@ -44,8 +44,8 @@ public final class RecordingItemIndex implements IItemIndex {
     }
 
     @Override
-    public MatchResult tryMatch(Multiset<UniqueItem> items) {
-        return other.tryMatch(ImmutableMultiset.<UniqueItem>builder()
+    public MatchResult tryMatch(Multiset<ItemVariant> items) {
+        return other.tryMatch(ImmutableMultiset.<ItemVariant>builder()
                 .addAll(items)
                 .addAll(extractedItems)
                 .build());

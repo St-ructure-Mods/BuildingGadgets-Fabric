@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.client.cache;
 
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketSetRemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Multiset;
 import net.minecraft.core.BlockPos;
@@ -19,14 +19,14 @@ public class RemoteInventoryCache {
     private final boolean isCopyPaste;
     private boolean forceUpdate;
     private Pair<BlockPos, ResourceKey<Level>> locCached;
-    private Multiset<UniqueItem> cache;
+    private Multiset<ItemVariant> cache;
     private Stopwatch timer;
 
     public RemoteInventoryCache(boolean isCopyPaste) {
         this.isCopyPaste = isCopyPaste;
     }
 
-    public void setCache(Multiset<UniqueItem> cache) {
+    public void setCache(Multiset<ItemVariant> cache) {
         this.cache = cache;
     }
 
@@ -42,7 +42,7 @@ public class RemoteInventoryCache {
         return loc != null;
     }
 
-    public Multiset<UniqueItem> getCache() {
+    public Multiset<ItemVariant> getCache() {
         return cache;
     }
 

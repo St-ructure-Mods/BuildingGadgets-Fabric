@@ -7,7 +7,7 @@ import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.ITileD
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.ITileEntityData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.NBTTileEntityData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.IUniqueObjectSerializer;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
 import com.direwolf20.buildinggadgets.common.tainted.template.SerialisationSupport;
@@ -71,14 +71,14 @@ public final class Undo {
                     String s = inbt.getAsString();
                     IUniqueObjectSerializer serializer = Registries.getUniqueObjectSerializers().get(new ResourceLocation(s));
                     if (serializer == null)
-                        return SerialisationSupport.uniqueItemSerializer();
+                        return SerialisationSupport.ItemVariantSerializer();
                     return serializer;
                 },
                 value -> {
                     BuildingGadgets.LOG.warn("Attempted to query unknown item-serializer {}. Replacing with default!", value);
-                    return SerialisationSupport.uniqueItemSerializer();
+                    return SerialisationSupport.ItemVariantSerializer();
                 });
-        DataDecompressor<Multiset<UniqueItem>> itemSetReverseObjectIncrementer = new DataDecompressor<>(
+        DataDecompressor<Multiset<ItemVariant>> itemSetReverseObjectIncrementer = new DataDecompressor<>(
                 (ListTag) nbt.get(NBTKeys.WORLD_SAVE_UNDO_ITEMS_LIST),
                 inbt -> NBTHelper.deserializeMultisetEntries((ListTag) inbt, HashMultiset.create(), entry -> readEntry(entry, itemSerializerIncrementer)),
                 value -> HashMultiset.create());
@@ -92,11 +92,11 @@ public final class Undo {
         return new Undo(dim, map, bounds);
     }
 
-    private static Tuple<UniqueItem, Integer> readEntry(Tag inbt, IntFunction<IUniqueObjectSerializer> serializerIntFunction) {
+    private static Tuple<ItemVariant, Integer> readEntry(Tag inbt, IntFunction<IUniqueObjectSerializer> serializerIntFunction) {
         CompoundTag nbt = (CompoundTag) inbt;
         IUniqueObjectSerializer serializer = serializerIntFunction.apply(nbt.getInt(NBTKeys.UNIQUE_ITEM_SERIALIZER));
         int count = nbt.getInt(NBTKeys.UNIQUE_ITEM_COUNT);
-        UniqueItem item = serializer.deserialize(nbt.getCompound(NBTKeys.UNIQUE_ITEM_ITEM));
+        ItemVariant item = serializer.deserialize(nbt.getCompound(NBTKeys.UNIQUE_ITEM_ITEM));
         return new Tuple<>(item, count);
     }
 
@@ -125,7 +125,7 @@ public final class Undo {
     CompoundTag serialize() {
         DataCompressor<BlockData> dataObjectIncrementer = new DataCompressor<>();
         DataCompressor<IUniqueObjectSerializer> itemSerializerIncrementer = new DataCompressor<>();
-        DataCompressor<Multiset<UniqueItem>> itemObjectIncrementer = new DataCompressor<>();
+        DataCompressor<Multiset<ItemVariant>> itemObjectIncrementer = new DataCompressor<>();
         DataCompressor<ITileDataSerializer> serializerObjectIncrementer = new DataCompressor<>();
         CompoundTag res = new CompoundTag();
 
@@ -146,7 +146,7 @@ public final class Undo {
         return res;
     }
 
-    private CompoundTag writeEntry(Entry<UniqueItem> entry, ToIntFunction<IUniqueObjectSerializer> serializerObjectIncrementer) {
+    private CompoundTag writeEntry(Entry<ItemVariant> entry, ToIntFunction<IUniqueObjectSerializer> serializerObjectIncrementer) {
         CompoundTag res = new CompoundTag();
         res.putInt(NBTKeys.UNIQUE_ITEM_SERIALIZER, serializerObjectIncrementer.applyAsInt(entry.getElement().getSerializer()));
         res.put(NBTKeys.UNIQUE_ITEM_ITEM, entry.getElement().getSerializer().serialize(entry.getElement(), true));
@@ -155,27 +155,27 @@ public final class Undo {
     }
 
     public static final class BlockInfo {
-        private static BlockInfo deserialize(CompoundTag nbt, IntFunction<BlockData> dataSupplier, IntFunction<Multiset<UniqueItem>> itemSetSupplier) {
+        private static BlockInfo deserialize(CompoundTag nbt, IntFunction<BlockData> dataSupplier, IntFunction<Multiset<ItemVariant>> itemSetSupplier) {
             BlockData data = dataSupplier.apply(nbt.getInt(NBTKeys.WORLD_SAVE_UNDO_RECORDED_DATA));
             BlockData placedData = dataSupplier.apply(nbt.getInt(NBTKeys.WORLD_SAVE_UNDO_PLACED_DATA));
-            Multiset<UniqueItem> usedItems = itemSetSupplier.apply(nbt.getInt(NBTKeys.WORLD_SAVE_UNDO_ITEMS_USED));
-            Multiset<UniqueItem> producedItems = itemSetSupplier.apply(nbt.getInt(NBTKeys.WORLD_SAVE_UNDO_ITEMS_PRODUCED));
+            Multiset<ItemVariant> usedItems = itemSetSupplier.apply(nbt.getInt(NBTKeys.WORLD_SAVE_UNDO_ITEMS_USED));
+            Multiset<ItemVariant> producedItems = itemSetSupplier.apply(nbt.getInt(NBTKeys.WORLD_SAVE_UNDO_ITEMS_PRODUCED));
             return new BlockInfo(data, placedData, usedItems, producedItems);
         }
 
         private final BlockData recordedData;
         private final BlockData placedData;
-        private final Multiset<UniqueItem> usedItems;
-        private final Multiset<UniqueItem> producedItems;
+        private final Multiset<ItemVariant> usedItems;
+        private final Multiset<ItemVariant> producedItems;
 
-        private BlockInfo(BlockData recordedData, BlockData placedData, Multiset<UniqueItem> usedItems, Multiset<UniqueItem> producedItems) {
+        private BlockInfo(BlockData recordedData, BlockData placedData, Multiset<ItemVariant> usedItems, Multiset<ItemVariant> producedItems) {
             this.recordedData = recordedData;
             this.placedData = placedData;
             this.usedItems = usedItems;
             this.producedItems = producedItems;
         }
 
-        private CompoundTag serialize(ToIntFunction<BlockData> dataIdSupplier, ToIntFunction<Multiset<UniqueItem>> itemIdSupplier) {
+        private CompoundTag serialize(ToIntFunction<BlockData> dataIdSupplier, ToIntFunction<Multiset<ItemVariant>> itemIdSupplier) {
             CompoundTag res = new CompoundTag();
             res.putInt(NBTKeys.WORLD_SAVE_UNDO_RECORDED_DATA, dataIdSupplier.applyAsInt(recordedData));
             res.putInt(NBTKeys.WORLD_SAVE_UNDO_PLACED_DATA, dataIdSupplier.applyAsInt(placedData));
@@ -192,11 +192,11 @@ public final class Undo {
             return placedData;
         }
 
-        public Multiset<UniqueItem> getUsedItems() {
+        public Multiset<ItemVariant> getUsedItems() {
             return Multisets.unmodifiableMultiset(usedItems);
         }
 
-        public Multiset<UniqueItem> getProducedItems() {
+        public Multiset<ItemVariant> getProducedItems() {
             return Multisets.unmodifiableMultiset(producedItems);
         }
     }
@@ -210,14 +210,14 @@ public final class Undo {
             regionBuilder = null;
         }
 
-        public Builder record(BlockGetter reader, BlockPos pos, BlockData placeData, Multiset<UniqueItem> requiredItems, Multiset<UniqueItem> producedItems) {
+        public Builder record(BlockGetter reader, BlockPos pos, BlockData placeData, Multiset<ItemVariant> requiredItems, Multiset<ItemVariant> producedItems) {
             BlockState state = reader.getBlockState(pos);
             BlockEntity be = reader.getBlockEntity(pos);
             ITileEntityData data = be != null ? NBTTileEntityData.ofTile(be) : TileSupport.dummyTileEntityData();
             return record(pos, new BlockData(state, data), placeData, requiredItems, producedItems);
         }
 
-        private Builder record(BlockPos pos, BlockData recordedData, BlockData placedData, Multiset<UniqueItem> requiredItems, Multiset<UniqueItem> producedItems) {
+        private Builder record(BlockPos pos, BlockData recordedData, BlockData placedData, Multiset<ItemVariant> requiredItems, Multiset<ItemVariant> producedItems) {
             mapBuilder.put(pos, new BlockInfo(recordedData, placedData, requiredItems, producedItems));
             if (regionBuilder == null)
                 regionBuilder = Region.enclosingBuilder();

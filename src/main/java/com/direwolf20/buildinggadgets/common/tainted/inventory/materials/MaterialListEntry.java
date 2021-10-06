@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials;
 
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.PeekingIterator;
 import com.google.gson.JsonDeserializer;
@@ -11,9 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 /* This is currently hidden, to avoid having yet another Registry
  - if it turns out someone needs something else then the default implementations, we can still add that and make it public
  */
-interface MaterialListEntry<T extends MaterialListEntry<T>> extends Iterable<ImmutableMultiset<UniqueItem>> {
+interface MaterialListEntry<T extends MaterialListEntry<T>> extends Iterable<ImmutableMultiset<ItemVariant>> {
     @Override
-    PeekingIterator<ImmutableMultiset<UniqueItem>> iterator();
+    PeekingIterator<ImmutableMultiset<ItemVariant>> iterator();
 
     Serializer<T> getSerializer();
 

@@ -5,7 +5,7 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.lang.ITranslationProvider;
 import com.direwolf20.buildinggadgets.common.util.lang.MaterialListTranslation;
 import com.google.common.collect.ImmutableMultiset;
@@ -45,7 +45,7 @@ class ScrollingMaterialList extends EntryList<Entry> {
 
     private SortingModes sortingMode;
     private long lastUpdate;
-    private Iterator<ImmutableMultiset<UniqueItem>> multisetIterator;
+    private Iterator<ImmutableMultiset<ItemVariant>> multisetIterator;
 
     public ScrollingMaterialList(MaterialListGUI gui) {
         super(gui.getWindowLeftX(), gui.getWindowTopY() + TOP, gui.getWindowWidth(), gui.getWindowHeight() - TOP - BOTTOM, ENTRY_HEIGHT);
@@ -74,8 +74,8 @@ class ScrollingMaterialList extends EntryList<Entry> {
         IItemIndex index = InventoryHelper.index(gui.getTemplateItem(), player);
         MatchResult result = index.tryMatch(multisetIterator.next());
 
-        for (Multiset.Entry<UniqueItem> entry : result.getChosenOption().entrySet()) {
-            UniqueItem item = entry.getElement();
+        for (Multiset.Entry<ItemVariant> entry : result.getChosenOption().entrySet()) {
+            ItemVariant item = entry.getElement();
             addEntry(new Entry(this, item, entry.getCount(), result.getFoundItems().count(entry.getElement())));
         }
 
@@ -124,7 +124,7 @@ class ScrollingMaterialList extends EntryList<Entry> {
         private final int widthItemName;
         private final int widthAmount;
 
-        public Entry(ScrollingMaterialList parent, UniqueItem item, int required, int available) {
+        public Entry(ScrollingMaterialList parent, ItemVariant item, int required, int available) {
             this.parent = parent;
             this.required = required;
             this.available = Mth.clamp(available, 0, required);

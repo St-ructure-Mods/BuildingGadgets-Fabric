@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.tainted.building.tilesupport;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.Multiset;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
@@ -60,6 +60,6 @@ public interface ITileEntityData {
         if (stack.isEmpty())
             return MaterialList.empty();
 
-        return MaterialList.of(UniqueItem.ofStack(stack));
+        return MaterialList.of(ItemVariant.ofStack(stack));
     }
 }

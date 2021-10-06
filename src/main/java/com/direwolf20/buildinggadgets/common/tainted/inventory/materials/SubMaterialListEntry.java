@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials;
 
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.ref.JsonKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableList;
@@ -80,7 +80,7 @@ abstract class SubMaterialListEntry implements MaterialListEntry<SubMaterialList
     private SimpleMaterialListEntry combine(List<SimpleMaterialListEntry> simpleEntries) {
         if (simpleEntries.size() == 1)
             return simpleEntries.get(0);
-        ImmutableMultiset.Builder<UniqueItem> builder = ImmutableMultiset.builder();
+        ImmutableMultiset.Builder<ItemVariant> builder = ImmutableMultiset.builder();
         for (SimpleMaterialListEntry entry:simpleEntries) {
             builder.addAll(entry.getItems());
         }
@@ -89,7 +89,7 @@ abstract class SubMaterialListEntry implements MaterialListEntry<SubMaterialList
 
     protected abstract SubMaterialListEntry createFrom(ImmutableList<MaterialListEntry<?>> subEntries, ImmutableList<SimpleMaterialListEntry> constantEntry, boolean simplified);
 
-    protected Iterable<ImmutableMultiset<UniqueItem>> viewOnlySubEntries() {
+    protected Iterable<ImmutableMultiset<ItemVariant>> viewOnlySubEntries() {
         return createFrom(getSubEntries(), ImmutableList.of(), simplified);
     }
 

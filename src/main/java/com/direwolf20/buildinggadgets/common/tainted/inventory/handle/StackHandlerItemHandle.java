@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.handle;
 
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -20,7 +20,7 @@ public final class StackHandlerItemHandle implements IObjectHandle {
     }
 
     @Override
-    public int match(UniqueItem item, int count, boolean simulate) {
+    public int match(ItemVariant item, int count, boolean simulate) {
         ItemStack stack = getStack();
         if (item.matches(stack)) {
             ItemStack resultStack = handler.extractItem(slot, count, simulate);
@@ -30,7 +30,7 @@ public final class StackHandlerItemHandle implements IObjectHandle {
     }
 
     @Override
-    public int insert(UniqueItem item, int count, boolean simulate) {
+    public int insert(ItemVariant item, int count, boolean simulate) {
         if (handler instanceof IItemHandlerModifiable) {
             IItemHandlerModifiable modifiable = (IItemHandlerModifiable) handler;
             ItemStack stack = getStack();

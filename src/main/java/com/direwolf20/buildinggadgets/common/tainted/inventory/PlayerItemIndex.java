@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
 import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.IObjectHandle;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.*;
 import com.google.common.collect.Multiset.Entry;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -31,10 +31,10 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     @Override
-    public Multiset<UniqueItem> insert(Multiset<UniqueItem> items, boolean simulate) {
-        Multiset<UniqueItem> copy = HashMultiset.create(items);
-        Multiset<UniqueItem> toRemove = HashMultiset.create();
-        for (Multiset.Entry<UniqueItem> entry : copy.entrySet()) {
+    public Multiset<ItemVariant> insert(Multiset<ItemVariant> items, boolean simulate) {
+        Multiset<ItemVariant> copy = HashMultiset.create(items);
+        Multiset<ItemVariant> toRemove = HashMultiset.create();
+        for (Multiset.Entry<ItemVariant> entry : copy.entrySet()) {
             int remainingCount = insertObject(entry.getElement(), entry.getCount(), simulate);
             if (remainingCount < entry.getCount())
                 toRemove.add(entry.getElement(), entry.getCount() - remainingCount);
@@ -44,7 +44,7 @@ public final class PlayerItemIndex implements IItemIndex {
         return copy;
     }
 
-    private int insertObject(UniqueItem obj, int count, boolean simulate) {
+    private int insertObject(ItemVariant obj, int count, boolean simulate) {
         return obj.tryCreateInsertStack(Collections.unmodifiableMap(handleMap), count)
                 .map(itemStack -> performSimpleInsert(itemStack, count, simulate))
                 .orElseGet(() -> performComplexInsert(obj, count, simulate));
@@ -85,7 +85,7 @@ public final class PlayerItemIndex implements IItemIndex {
 //
 //        for (Iterator<IObjectHandle<?>> it = emptyHandles.iterator(); it.hasNext() && remainingCount >= 0; ) {
 //            IObjectHandle<?> handle = it.next();
-//            UniqueItem item = UniqueItem.ofStack(stack);
+//            ItemVariant item = ItemVariant.ofStack(stack);
 //
 //            int match = handle.insert(item, remainingCount, simulate);
 //            if (match > 0)
@@ -113,7 +113,7 @@ public final class PlayerItemIndex implements IItemIndex {
         }
     }
 
-    private int performComplexInsert(UniqueItem obj, int count, boolean simulate) {
+    private int performComplexInsert(ItemVariant obj, int count, boolean simulate) {
         int remainingCount = count;
         List<IObjectHandle> handles = handleMap
                 .getOrDefault(obj.getIndexClass(), ImmutableMap.of())
@@ -141,7 +141,7 @@ public final class PlayerItemIndex implements IItemIndex {
     @Override
     public MatchResult tryMatch(MaterialList list) {
         MatchResult result = null;
-        for (ImmutableMultiset<UniqueItem> multiset : list) {
+        for (ImmutableMultiset<ItemVariant> multiset : list) {
             result = match(list, multiset, true);
             if (result.isSuccess())
                 return MatchResult.success(list, result.getFoundItems(), multiset);
@@ -150,9 +150,9 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     private MatchResult evaluateFailingOptionFoundItems(MaterialList list) {
-        Multiset<UniqueItem> multiset = HashMultiset.create();
-        for (ImmutableMultiset<UniqueItem> option : list.getItemOptions()) {
-            for (Entry<UniqueItem> entry : option.entrySet()) {
+        Multiset<ItemVariant> multiset = HashMultiset.create();
+        for (ImmutableMultiset<ItemVariant> option : list.getItemOptions()) {
+            for (Entry<ItemVariant> entry : option.entrySet()) {
                 multiset.setCount(entry.getElement(), Math.max(multiset.count(entry.getElement()), entry.getCount()));
             }
         }
@@ -160,14 +160,14 @@ public final class PlayerItemIndex implements IItemIndex {
         MatchResult result = match(list, multiset, true);
         if (result.isSuccess())
             throw new RuntimeException("This should not be possible! The the content changed between matches?!?");
-        Iterator<ImmutableMultiset<UniqueItem>> it = list.iterator();
+        Iterator<ImmutableMultiset<ItemVariant>> it = list.iterator();
         return it.hasNext() ? MatchResult.failure(list, result.getFoundItems(), it.next()) : result;
     }
 
-    private MatchResult match(MaterialList list, Multiset<UniqueItem> multiset, boolean simulate) {
-        ImmutableMultiset.Builder<UniqueItem> availableBuilder = ImmutableMultiset.builder();
+    private MatchResult match(MaterialList list, Multiset<ItemVariant> multiset, boolean simulate) {
+        ImmutableMultiset.Builder<ItemVariant> availableBuilder = ImmutableMultiset.builder();
         boolean failure = false;
-        for (Entry<UniqueItem> entry : multiset.entrySet()) {
+        for (Entry<ItemVariant> entry : multiset.entrySet()) {
             int remainingCount = entry.getCount();
             Class<?> indexClass = entry.getElement().getIndexClass();
             List<IObjectHandle> entries = handleMap

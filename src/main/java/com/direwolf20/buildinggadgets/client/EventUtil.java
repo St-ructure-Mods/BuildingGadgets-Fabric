@@ -8,7 +8,7 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
@@ -44,15 +44,15 @@ import java.util.List;
 @Environment(EnvType.CLIENT)
 public class EventUtil {
     private static final String PLACE_HOLDER = "\u00a77\u00a7r\u00a7r\u00a7r\u00a7r\u00a7r";
-    public static final Comparator<Multiset.Entry<UniqueItem>> ENTRY_COMPARATOR = Comparator
-            .<Multiset.Entry<UniqueItem>, Integer>comparing(Entry::getCount)
+    public static final Comparator<Multiset.Entry<ItemVariant>> ENTRY_COMPARATOR = Comparator
+            .<Multiset.Entry<ItemVariant>, Integer>comparing(Entry::getCount)
             .reversed()
             .thenComparing(e -> e.getElement().getObjectRegistryName());
 
     private static final int STACKS_PER_LINE = 8;
     private static final RemoteInventoryCache cache = new RemoteInventoryCache(true);
 
-    public static void setCache(Multiset<UniqueItem> cache) {
+    public static void setCache(Multiset<ItemVariant> cache) {
         EventUtil.cache.setCache(cache);
     }
 
@@ -117,8 +117,8 @@ public class EventUtil {
                     list = MaterialList.empty();
 
                 MatchResult match = index.tryMatch(list);
-                Multiset<UniqueItem> existing = match.getFoundItems();
-                List<Multiset.Entry<UniqueItem>> sortedEntries = ImmutableList.sortedCopyOf(ENTRY_COMPARATOR, match.getChosenOption().entrySet());
+                Multiset<ItemVariant> existing = match.getFoundItems();
+                List<Multiset.Entry<ItemVariant>> sortedEntries = ImmutableList.sortedCopyOf(ENTRY_COMPARATOR, match.getChosenOption().entrySet());
 
                 int by = yin;
                 int j = 0;
@@ -135,7 +135,7 @@ public class EventUtil {
                 by += 8;
                 RenderSystem.enableBlend();
                 RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                for (Multiset.Entry<UniqueItem> entry : sortedEntries) {
+                for (Multiset.Entry<ItemVariant> entry : sortedEntries) {
                     int x = xin + (j % STACKS_PER_LINE) * 18;
                     int y = by + (j / STACKS_PER_LINE) * 20;
                     totalMissing += renderRequiredBlocks(poseStack, entry.getElement().createStack(), x, y, existing.count(entry.getElement()), entry.getCount());

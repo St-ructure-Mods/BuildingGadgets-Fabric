@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.client.EventUtil;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
@@ -55,7 +55,7 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
         Data data = Data.read(buf);
 
         server.execute(() -> data.either.ifRight(location -> {
-            Multiset<UniqueItem> items = HashMultiset.create();
+            Multiset<ItemVariant> items = HashMultiset.create();
 
             InventoryLinker.getLinkedInventory(player.level, location.blockPos, location.level, null).ifPresent(inventory -> {
                 try (Transaction transaction = Transaction.openOuter()) {
@@ -71,10 +71,10 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
                     for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
                         if (!view.isResourceBlank()) {
                             Item item = view.getResource().getItem();
-                            UniqueItem uniqueItem = new UniqueItem(item);
+                            ItemVariant ItemVariant = new ItemVariant(item);
 
-                            if (!items.contains(uniqueItem)) {
-                                items.add(uniqueItem, counts.getInt(item));
+                            if (!items.contains(ItemVariant)) {
+                                items.add(ItemVariant, counts.getInt(item));
                             }
                         }
                     }
@@ -106,10 +106,10 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
 
             if (buf.readBoolean()) {
                 int len = buf.readInt();
-                ImmutableMultiset.Builder<UniqueItem> builder = ImmutableMultiset.builder();
+                ImmutableMultiset.Builder<ItemVariant> builder = ImmutableMultiset.builder();
 
                 for (int i = 0; i < len; i++) {
-                    builder.addCopies(new UniqueItem(Item.byId(buf.readInt())), buf.readInt());
+                    builder.addCopies(new ItemVariant(Item.byId(buf.readInt())), buf.readInt());
                 }
 
                 return new Data(isCopyPaste, Either.left(new Cache(builder.build())));
@@ -125,10 +125,10 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
                 buf.writeBoolean(true);
                 buf.writeInt(cache.cache().size());
 
-                for (Multiset.Entry<UniqueItem> entry : cache.cache().entrySet()) {
-                    UniqueItem uniqueItem = entry.getElement();
+                for (Multiset.Entry<ItemVariant> entry : cache.cache().entrySet()) {
+                    ItemVariant ItemVariant = entry.getElement();
 
-                    buf.writeInt(Item.getId(uniqueItem.createStack().getItem()));
+                    buf.writeInt(Item.getId(ItemVariant.createStack().getItem()));
                     buf.writeInt(entry.getCount());
                 }
                 return null;
@@ -139,7 +139,7 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
         }
     }
 
-    private record Cache(Multiset<UniqueItem> cache) {
+    private record Cache(Multiset<ItemVariant> cache) {
     }
 
     private record Location(ResourceKey<Level> level, BlockPos blockPos) {
