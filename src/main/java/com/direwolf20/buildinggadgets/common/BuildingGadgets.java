@@ -6,7 +6,10 @@ import com.direwolf20.buildinggadgets.common.commands.OverrideBuildSizeCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.config.RecipeConstructionPaste.Serializer;
-import com.direwolf20.buildinggadgets.common.events.BlockPlaceEvent;
+import com.direwolf20.buildinggadgets.common.events.BlockPlaceCallback;
+import com.direwolf20.buildinggadgets.common.events.BreakEventHandler;
+import com.direwolf20.buildinggadgets.common.events.ItemPickupCallback;
+import com.direwolf20.buildinggadgets.common.events.ItemPickupHandler;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
 import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
@@ -17,6 +20,7 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -82,7 +86,10 @@ public final class BuildingGadgets implements ModInitializer {
 
         Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(Reference.MODID, "construction_paste"), Serializer.INSTANCE);
 
-        BlockPlaceEvent.ON_PLACE.register((serverPlayer, level, itemStack, interactionHand, blockHitResult) -> {
+        PlayerBlockBreakEvents.AFTER.register(new BreakEventHandler());
+        ItemPickupCallback.EVENT.register(new ItemPickupHandler());
+
+        BlockPlaceCallback.ON_PLACE.register((serverPlayer, level, itemStack, interactionHand, blockHitResult) -> {
 
         });
     }
