@@ -9,6 +9,7 @@ import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.containers.OurContainers;
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
+import com.direwolf20.buildinggadgets.common.network.ClientPacketHandler;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -38,7 +39,7 @@ public class BuildingGadgetsClient implements ClientModInitializer {
             CACHE_TEMPLATE_PROVIDER.clear();
         });
         CACHE_TEMPLATE_PROVIDER.registerUpdateListener(((GadgetCopyPaste) OurItems.COPY_PASTE_GADGET_ITEM).getRender());
-
+        ClientPacketHandler.registerMessages();
     }
 
     public static void playSound(SoundEvent sound, float pitch) {

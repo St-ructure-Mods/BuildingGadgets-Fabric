@@ -130,7 +130,8 @@ public class GadgetDestruction extends AbstractGadget {
             return tag.getBoolean(NBTKeys.GADGET_OVERLAY);
 
         tag.putBoolean(NBTKeys.GADGET_OVERLAY, true);
-        tag.putBoolean(NBTKeys.GADGET_FUZZY, true); // We want a Destruction Gadget to start with fuzzy=true
+        tag.putBoolean(NBTKeys.GADGET_FUZZY, true);
+        stack.setTag(tag);// We want a Destruction Gadget to start with fuzzy=true
         return true;
     }
 

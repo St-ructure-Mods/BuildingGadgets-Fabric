@@ -8,6 +8,7 @@ import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.events.BlockPlaceCallback;
 import com.direwolf20.buildinggadgets.common.events.BreakEventHandler;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
+import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
 import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
@@ -73,7 +74,6 @@ public final class BuildingGadgets implements ModInitializer {
         AutoConfig.register(Config.class, GsonConfigSerializer::new);
         config = AutoConfig.getConfigHolder(Config.class).getConfig();
         OurBlocks.registerBlocks();
-        OurItems.registerItems();
         serverLoad();
         serverLoaded();
         serverStopped();
@@ -86,5 +86,7 @@ public final class BuildingGadgets implements ModInitializer {
         BlockPlaceCallback.ON_PLACE.register((serverPlayer, level, itemStack, interactionHand, blockHitResult) -> {
 
         });
+
+        PacketHandler.registerMessages();
     }
 }

@@ -29,12 +29,13 @@ public class PacketCopyCoords implements ServerPlayNetworking.PlayChannelHandler
 
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
+        BlockPos startPos = buf.readBlockPos();
+        BlockPos endPos = buf.readBlockPos();
+
         server.execute(() -> {
             ItemStack heldItem = GadgetCopyPaste.getGadget(player);
             if (heldItem.isEmpty()) return;
 
-            BlockPos startPos = buf.readBlockPos();
-            BlockPos endPos = buf.readBlockPos();
             if (startPos.equals(BlockPos.ZERO) && endPos.equals(BlockPos.ZERO)) {
                 GadgetCopyPaste.setSelectedRegion(heldItem, null);
                 player.displayClientMessage(MessageTranslation.AREA_RESET.componentTranslation().setStyle(Styles.AQUA), true);

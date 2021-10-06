@@ -16,6 +16,7 @@ import com.direwolf20.buildinggadgets.common.tainted.building.view.IBuildView;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.tainted.template.*;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider.IUpdateListener;
@@ -133,7 +134,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
     protected void renderBg(PoseStack matrices, float partialTicks, int mouseX, int mouseY) {
         renderBackground(matrices);
 
-        getMinecraft().getTextureManager().bindForSetup(background);
+        RenderSystem.setShaderTexture(0, background);
         blit(matrices, leftPos - 20, topPos - 12, 0, 0, imageWidth, imageHeight + 25);
         blit(matrices, (leftPos - 20) + imageWidth, topPos + 8, imageWidth + 3, 30, 71, imageHeight);
 

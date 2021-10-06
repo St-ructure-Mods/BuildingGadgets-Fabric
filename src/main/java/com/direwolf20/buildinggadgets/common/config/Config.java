@@ -4,6 +4,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
+@me.shedaniel.autoconfig.annotation.Config(name = "Building Gadgets")
 public class Config implements ConfigData {
 
     @ConfigEntry.Category("General")

@@ -118,6 +118,7 @@ public class GadgetExchanger extends AbstractGadget {
         //Store the tool's mode in NBT as a string
         CompoundTag tagCompound = tool.getOrCreateTag();
         tagCompound.putString("mode", mode.toString());
+        tool.setTag(tagCompound);
     }
 
     public static ExchangingModes getToolMode(ItemStack tool) {

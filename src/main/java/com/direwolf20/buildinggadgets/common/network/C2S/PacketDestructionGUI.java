@@ -27,14 +27,20 @@ public class PacketDestructionGUI implements ServerPlayNetworking.PlayChannelHan
 
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
+        int left = buf.readInt();
+        int right = buf.readInt();
+        int up = buf.readInt();
+        int down = buf.readInt();
+        int depth = buf.readInt();
+
         server.execute(() -> {
             ItemStack heldItem = GadgetDestruction.getGadget(player);
             if(!heldItem.isEmpty()) {
-                GadgetDestruction.setToolValue(heldItem, buf.readInt(), NBTKeys.GADGET_VALUE_LEFT);
-                GadgetDestruction.setToolValue(heldItem, buf.readInt(), NBTKeys.GADGET_VALUE_RIGHT);
-                GadgetDestruction.setToolValue(heldItem, buf.readInt(), NBTKeys.GADGET_VALUE_UP);
-                GadgetDestruction.setToolValue(heldItem, buf.readInt(), NBTKeys.GADGET_VALUE_DOWN);
-                GadgetDestruction.setToolValue(heldItem, buf.readInt(), NBTKeys.GADGET_VALUE_DEPTH);
+                GadgetDestruction.setToolValue(heldItem, left, NBTKeys.GADGET_VALUE_LEFT);
+                GadgetDestruction.setToolValue(heldItem, right, NBTKeys.GADGET_VALUE_RIGHT);
+                GadgetDestruction.setToolValue(heldItem, up, NBTKeys.GADGET_VALUE_UP);
+                GadgetDestruction.setToolValue(heldItem, down, NBTKeys.GADGET_VALUE_DOWN);
+                GadgetDestruction.setToolValue(heldItem, depth, NBTKeys.GADGET_VALUE_DEPTH);
             }
         });
     }

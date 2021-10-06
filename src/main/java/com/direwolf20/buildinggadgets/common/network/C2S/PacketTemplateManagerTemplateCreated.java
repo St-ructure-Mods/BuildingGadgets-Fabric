@@ -35,10 +35,10 @@ public class PacketTemplateManagerTemplateCreated implements ServerPlayNetworkin
 
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
+        UUID uuid = buf.readUUID();
+        BlockPos pos = buf.readBlockPos();
         server.execute(() -> {
             Level level = player.level;
-            UUID uuid = buf.readUUID();
-            BlockPos pos = buf.readBlockPos();
             if (level.hasChunkAt(pos)) {
                 BlockEntity blockEntity = level.getBlockEntity(pos);
                 if (blockEntity instanceof TemplateManagerTileEntity) {

@@ -21,6 +21,7 @@ public class BGComponent implements ItemComponentInitializer, WorldComponentInit
     @Override
     public void registerItemComponentFactories(ItemComponentFactoryRegistry registry) {
         registry.register(OurItems.TEMPLATE_ITEM, TEMPLATE_KEY_COMPONENT, ItemTemplateKey::new);
+        registry.register(OurItems.COPY_PASTE_GADGET_ITEM, TEMPLATE_KEY_COMPONENT, ItemTemplateKey::new);
     }
 
     @Override

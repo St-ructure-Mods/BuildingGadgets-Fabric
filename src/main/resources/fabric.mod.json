@@ -3,19 +3,20 @@
   "id": "buildinggadgets",
   "version": "${version}",
   "custom": {
-  "cardinal-components": [
-    "buildinggadgets:template_provider",
-    "buildinggadgets:template_key"
-  ]
+    "cardinal-components": [
+      "buildinggadgets:template_provider",
+      "buildinggadgets:template_key"
+    ]
   },
   "name": "Building Gadgets: Refabricated",
   "description": "Fabric port of Building Gadgets.",
   "authors": [
     "ProjectET",
+    "ramidzkh",
     "Direwolf20"
   ],
   "contact": {
-    "sources": "https://github.com/ProjectET/BuildingGadgets.git"
+    "sources": "https://github.com/ProjectET/BuildingGadgets-Fabric.git"
   },
   "license": "MIT",
   "icon": "assets/buildinggadgets/buildinggadgets_logo.png",

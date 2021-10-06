@@ -25,9 +25,13 @@ public class PacketPasteGUI implements ServerPlayNetworking.PlayChannelHandler{
 
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
+        int x = buf.readInt();
+        int y = buf.readInt();
+        int z = buf.readInt();
+
         server.execute(() -> {
             ItemStack heldItem = GadgetCopyPaste.getGadget(player);
-            if(!heldItem.isEmpty()) GadgetCopyPaste.setRelativeVector(heldItem, new BlockPos(buf.readInt(), buf.readInt(), buf.readInt()));
+            if(!heldItem.isEmpty()) GadgetCopyPaste.setRelativeVector(heldItem, new BlockPos(x, y, z));
         });
     }
 }

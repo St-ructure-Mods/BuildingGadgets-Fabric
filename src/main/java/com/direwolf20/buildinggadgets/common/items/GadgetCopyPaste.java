@@ -250,6 +250,7 @@ public class GadgetCopyPaste extends AbstractGadget {
     private static void setToolMode(ItemStack stack, ToolMode mode) {
         CompoundTag tagCompound = stack.getOrCreateTag();
         tagCompound.putByte(NBTKeys.GADGET_MODE, mode.getId());
+        stack.setTag(tagCompound);
     }
 
     public static ToolMode getToolMode(ItemStack stack) {

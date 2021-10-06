@@ -25,8 +25,8 @@ public class PacketToggleMode implements ServerPlayNetworking.PlayChannelHandler
 
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
+        int mode = buf.readInt();
         server.execute(() -> {
-            int mode = buf.readInt();
 
             ItemStack heldItem = AbstractGadget.getGadget(player);
             if (heldItem.isEmpty())

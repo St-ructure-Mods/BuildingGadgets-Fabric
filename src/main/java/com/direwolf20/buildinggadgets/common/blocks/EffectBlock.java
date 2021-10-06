@@ -154,7 +154,7 @@ public class EffectBlock extends BaseEntityBlock {
     @SuppressWarnings("deprecation")
     public RenderShape getRenderShape(BlockState state) {
         // We still make effect blocks invisible because all effects (scaling block, transparent box) are dynamic so they has to be in the TER
-        return RenderShape.INVISIBLE;
+        return RenderShape.MODEL;
     }
 
     @Override
