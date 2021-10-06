@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.handle;
 
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import java.util.List;
 import java.util.Map;

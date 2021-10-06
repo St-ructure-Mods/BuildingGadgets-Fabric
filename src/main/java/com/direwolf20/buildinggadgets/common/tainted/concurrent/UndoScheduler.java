@@ -15,8 +15,6 @@ import com.google.common.base.Preconditions;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 import java.util.Map;
 import java.util.Objects;
