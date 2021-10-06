@@ -49,7 +49,7 @@ public final class Registries {
 
     public static void registerUniqueObjectSerializers() {
         BuildingGadgets.LOG.trace("Registering UniqueObject Serializers");
-        Registry.register(uniqueObjectSerializers, Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL, SerialisationSupport.ItemVariantSerializer());
+        Registry.register(uniqueObjectSerializers, Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL, SerialisationSupport.uniqueItemSerializer());
         BuildingGadgets.LOG.trace("Finished Registering UniqueObject Serializers");
     }
 

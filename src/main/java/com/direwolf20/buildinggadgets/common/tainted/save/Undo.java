@@ -71,12 +71,12 @@ public final class Undo {
                     String s = inbt.getAsString();
                     IUniqueObjectSerializer serializer = Registries.getUniqueObjectSerializers().get(new ResourceLocation(s));
                     if (serializer == null)
-                        return SerialisationSupport.ItemVariantSerializer();
+                        return SerialisationSupport.uniqueItemSerializer();
                     return serializer;
                 },
                 value -> {
                     BuildingGadgets.LOG.warn("Attempted to query unknown item-serializer {}. Replacing with default!", value);
-                    return SerialisationSupport.ItemVariantSerializer();
+                    return SerialisationSupport.uniqueItemSerializer();
                 });
         DataDecompressor<Multiset<ItemVariant>> itemSetReverseObjectIncrementer = new DataDecompressor<>(
                 (ListTag) nbt.get(NBTKeys.WORLD_SAVE_UNDO_ITEMS_LIST),

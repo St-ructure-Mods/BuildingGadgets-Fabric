@@ -129,7 +129,7 @@ class ScrollingMaterialList extends EntryList<Entry> {
             this.required = required;
             this.available = Mth.clamp(available, 0, required);
 
-            this.stack = item.createStack();
+            this.stack = item.toStack();
             this.itemName = stack.getHoverName().getString();
 
             // Use this.available since the parameter is not clamped

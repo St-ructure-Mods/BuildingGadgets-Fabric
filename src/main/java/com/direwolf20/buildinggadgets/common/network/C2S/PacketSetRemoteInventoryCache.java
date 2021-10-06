@@ -71,10 +71,10 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
                     for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
                         if (!view.isResourceBlank()) {
                             Item item = view.getResource().getItem();
-                            ItemVariant ItemVariant = new ItemVariant(item);
+                            ItemVariant uniqueItem = ItemVariant.of(item);
 
-                            if (!items.contains(ItemVariant)) {
-                                items.add(ItemVariant, counts.getInt(item));
+                            if (!items.contains(uniqueItem)) {
+                                items.add(uniqueItem, counts.getInt(item));
                             }
                         }
                     }
@@ -109,7 +109,7 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
                 ImmutableMultiset.Builder<ItemVariant> builder = ImmutableMultiset.builder();
 
                 for (int i = 0; i < len; i++) {
-                    builder.addCopies(new ItemVariant(Item.byId(buf.readInt())), buf.readInt());
+                    builder.addCopies(ItemVariant.of(Item.byId(buf.readInt())), buf.readInt());
                 }
 
                 return new Data(isCopyPaste, Either.left(new Cache(builder.build())));
@@ -126,9 +126,9 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
                 buf.writeInt(cache.cache().size());
 
                 for (Multiset.Entry<ItemVariant> entry : cache.cache().entrySet()) {
-                    ItemVariant ItemVariant = entry.getElement();
+                    ItemVariant uniqueItem = entry.getElement();
 
-                    buf.writeInt(Item.getId(ItemVariant.createStack().getItem()));
+                    buf.writeInt(Item.getId(uniqueItem.toStack().getItem()));
                     buf.writeInt(entry.getCount());
                 }
                 return null;

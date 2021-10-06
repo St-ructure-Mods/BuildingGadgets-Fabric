@@ -138,7 +138,7 @@ public class EventUtil {
                 for (Multiset.Entry<ItemVariant> entry : sortedEntries) {
                     int x = xin + (j % STACKS_PER_LINE) * 18;
                     int y = by + (j / STACKS_PER_LINE) * 20;
-                    totalMissing += renderRequiredBlocks(poseStack, entry.getElement().createStack(), x, y, existing.count(entry.getElement()), entry.getCount());
+                    totalMissing += renderRequiredBlocks(poseStack, entry.getElement().toStack(), x, y, existing.count(entry.getElement()), entry.getCount());
                     j++;
                 }
             });

@@ -75,7 +75,7 @@ public final class SerialisationSupport {
     // TODO: Register as Reference.UniqueObjectSerializerReference.SIMPLE_UNIQUE_ITEM_ID_RL
     private static final IUniqueObjectSerializer UNIQUE_ITEM_SERIALIZER = new ItemVariant.Serializer();
 
-    public static IUniqueObjectSerializer ItemVariantSerializer() {
+    public static IUniqueObjectSerializer uniqueItemSerializer() {
         return UNIQUE_ITEM_SERIALIZER;
     }
 

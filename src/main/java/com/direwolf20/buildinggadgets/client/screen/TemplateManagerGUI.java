@@ -273,7 +273,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
         int index = 0, column = 0;
         for(Multiset.Entry<ItemVariant> e: sortedEntries) {
-            ItemStack stack = e.getElement().createStack();
+            ItemStack stack = e.getElement().toStack();
             int x = (-20 - (column * 25)), y = (20 + (index * 25));
 
             itemRenderer.renderAndDecorateItem(stack, x + 4, y + 4);

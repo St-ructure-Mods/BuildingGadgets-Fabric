@@ -121,7 +121,7 @@ public class BuildRender extends BaseRenderer {
             VertexConsumer builder;
 
             boolean hasLinkedInventory = getCacheInventory().maintainCache(heldItem);
-            int remainingCached = getCacheInventory().getCache() == null ? -1 : getCacheInventory().getCache().count(new ItemVariant(data.getState().getBlock().asItem()));
+            int remainingCached = getCacheInventory().getCache() == null ? -1 : getCacheInventory().getCache().count(ItemVariant.of(data.getState().getBlock().asItem()));
 
             // Figure out how many of the block we're rendering we have in the inventory of the player.
             IItemIndex index = new RecordingItemIndex(InventoryHelper.index(heldItem, player));
