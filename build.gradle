@@ -32,6 +32,12 @@ repositories {
         name = "ParchmentMC"
         url = "https://maven.parchmentmc.org/"
     }
+    maven {
+        url = "https://maven.terraformersmc.com/releases/"
+        content {
+            includeGroup "com.terraformersmc"
+        }
+    }
 }
 
 sourceCompatibility = JavaVersion.VERSION_16
@@ -64,6 +70,10 @@ dependencies {
     modApi("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
 
     include modApi("teamreborn:energy:${project.energy_version}")
+
+    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
+        exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+    }
 
     modImplementation "io.github.onyxstudios:Cardinal-Components-API:${project.cca_version}"
     include "io.github.onyxstudios:Cardinal-Components-API:${project.cca_version}"
