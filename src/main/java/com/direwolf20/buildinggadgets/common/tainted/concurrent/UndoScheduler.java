@@ -10,6 +10,7 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo.BlockInfo;
 import com.google.common.base.Preconditions;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -73,7 +74,8 @@ public final class UndoScheduler extends SteppedScheduler {
         lastWasSuccess = matchResult.isSuccess();
         if (lastWasSuccess) {
             index.applyMatch(matchResult);
-            index.insert(entry.getValue().getUsedItems());
+            index.insert(entry.getValue().getUsedItems(), transaction);
+
             EffectBlock.spawnUndoBlock(context, new PlacementTarget(entry.getKey(), entry.getValue().getRecordedData()));
         }
     }

@@ -46,12 +46,6 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     private int insertObject(ItemVariant obj, int count, TransactionContext transaction) {
-        return obj.tryCreateInsertStack(Collections.unmodifiableMap(handleMap), count)
-                .map(itemStack -> performSimpleInsert(itemStack, count, transaction))
-                .orElseGet(() -> performComplexInsert(obj, count, transaction));
-    }
-
-    private int performSimpleInsert(ItemStack stack, int count, TransactionContext transaction) {
         int remainingCount = insertIntoProviders(stack, count, transaction);
         if (remainingCount == 0)
             return 0;
@@ -62,8 +56,7 @@ public final class PlayerItemIndex implements IItemIndex {
 //            return 0;
 
 
-        if (!simulate)
-            spawnRemainder(stack, remainingCount);
+        spawnRemainder(stack, remainingCount);
 
         return 0;
     }

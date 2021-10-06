@@ -27,8 +27,7 @@ public final class RecordingItemIndex implements IItemIndex {
     @Override
     public Multiset<ItemVariant> insert(Multiset<ItemVariant> items, TransactionContext transaction) {
         Multiset<ItemVariant> res = other.insert(items, transaction);
-        if (! simulate)
-            insertedItems.addAll(items);
+        insertedItems.addAll(items);
         return res;
     }
 

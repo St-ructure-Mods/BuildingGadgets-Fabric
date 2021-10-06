@@ -30,6 +30,8 @@ import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Multiset;
 import dev.architectury.event.events.common.BlockEvent;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -163,7 +165,10 @@ public class GadgetExchanger extends AbstractGadget {
                     return super.use(world, player, hand);
                 }
             } else if (player instanceof ServerPlayer) {
-                exchange((ServerPlayer) player, itemstack);
+                try(Transaction transaction = Transaction.openOuter()) {
+                    exchange((ServerPlayer) player, itemstack, transaction);
+                    transaction.commit();
+                }
             }
         } else {
             if (!player.isShiftKeyDown()) {
@@ -195,7 +200,7 @@ public class GadgetExchanger extends AbstractGadget {
         player.displayClientMessage(MessageTranslation.RANGE_SET.componentTranslation(range).setStyle(Styles.AQUA), true);
     }
 
-    private void exchange(ServerPlayer player, ItemStack stack) {
+    private void exchange(ServerPlayer player, ItemStack stack, TransactionContext transactionContext) {
         ServerLevel world = player.getLevel();
         ItemStack heldItem = getGadget(player);
         if (heldItem.isEmpty())
@@ -232,11 +237,12 @@ public class GadgetExchanger extends AbstractGadget {
         for (BlockPos coordinate : coords) {
             //Get the extended block state in the fake world Disabled to fix Chisel
             //state = state.getBlock().getExtendedState(state, fakeWorld, coordinate);
-            exchangeBlock(world, player, index, coordinate, blockData);
+
+            exchangeBlock(world, player, index, coordinate, blockData, transactionContext);
         }
     }
 
-    private void exchangeBlock(ServerLevel world, ServerPlayer player, IItemIndex index, BlockPos pos, BlockData setBlock) {
+    private void exchangeBlock(ServerLevel world, ServerPlayer player, IItemIndex index, BlockPos pos, BlockData setBlock, TransactionContext transaction) {
         BlockState currentBlock = world.getBlockState(pos);
         ITileEntityData data;
 
@@ -285,8 +291,7 @@ public class GadgetExchanger extends AbstractGadget {
                 List<ItemStack> drops = Block.getDrops(currentBlock, (ServerLevel) buildContext.getWorld(), pos, buildContext.getWorld().getBlockEntity(pos));
                 producedItems.addAll(drops.stream().map(ItemVariant::of).collect(Collectors.toList()));
             }
-
-            index.insert(producedItems);
+                index.insert(producedItems, transaction);
 
             EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.REPLACE);
         }
