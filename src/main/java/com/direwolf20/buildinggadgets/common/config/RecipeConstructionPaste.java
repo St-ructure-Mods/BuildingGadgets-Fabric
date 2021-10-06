@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.common.config;
 
-import com.direwolf20.buildinggadgets.common.items.ConstructionPasteContainer;
 import com.google.gson.JsonObject;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;

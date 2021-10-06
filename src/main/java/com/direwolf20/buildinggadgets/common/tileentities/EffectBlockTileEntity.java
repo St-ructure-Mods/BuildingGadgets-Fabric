@@ -29,7 +29,6 @@ public class EffectBlockTileEntity extends BlockEntity {
     private BlockData sourceBlock;
 
     private Mode mode = null;
-    private boolean usePaste;
 
     private int ticks;
 
@@ -37,7 +36,7 @@ public class EffectBlockTileEntity extends BlockEntity {
         super(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY, pos, state);
     }
 
-    public void initializeData(BlockState curState, @Nullable BlockEntity be, BlockData replacementBlock, Mode mode, boolean usePaste) {
+    public void initializeData(BlockState curState, @Nullable BlockEntity be, BlockData replacementBlock, Mode mode) {
         // Minecraft will reuse a tile entity object at a location where the block got removed, but the modification is still buffered, and the block got restored again
         // If we don't reset this here, the 2nd phase of REPLACE will simply finish immediately because the tile entity object is reused
         this.ticks = 0;
@@ -45,12 +44,11 @@ public class EffectBlockTileEntity extends BlockEntity {
         this.sourceBlock = replacementBlock;
 
         this.mode = mode;
-        this.usePaste = usePaste;
 
         if (mode == Mode.REPLACE)
-            this.renderedBlock = be instanceof ConstructionBlockTileEntity ? ((ConstructionBlockTileEntity) be).getConstructionBlockData() : TileSupport.createBlockData(curState, be);
+            this.renderedBlock = TileSupport.createBlockData(curState, be);
         else
-            this.renderedBlock = be instanceof ConstructionBlockTileEntity ? ((ConstructionBlockTileEntity) be).getConstructionBlockData() : replacementBlock;
+            this.renderedBlock = replacementBlock;
     }
 
     public static void tick(Level level, BlockPos blockPos, BlockState state, EffectBlockTileEntity blockEntity) {
@@ -77,10 +75,6 @@ public class EffectBlockTileEntity extends BlockEntity {
 
     public Mode getReplacementMode() {
         return mode;
-    }
-
-    public boolean isUsingPaste() {
-        return usePaste;
     }
 
     public int getTicksExisted() {
@@ -111,7 +105,6 @@ public class EffectBlockTileEntity extends BlockEntity {
             compound.putInt(NBTKeys.GADGET_MODE, mode.ordinal());
             compound.put(NBTKeys.GADGET_REPLACEMENT_BLOCK, renderedBlock.serialize(true));
             compound.put(NBTKeys.GADGET_SOURCE_BLOCK, sourceBlock.serialize(true));
-            compound.putBoolean(NBTKeys.GADGET_USE_PASTE, usePaste);
         }
         return super.save(compound);
     }
@@ -123,14 +116,12 @@ public class EffectBlockTileEntity extends BlockEntity {
         if (nbt.contains(NBTKeys.GADGET_TICKS, NbtType.INT) &&
                 nbt.contains(NBTKeys.GADGET_MODE, NbtType.INT) &&
                 nbt.contains(NBTKeys.GADGET_SOURCE_BLOCK, NbtType.COMPOUND) &&
-                nbt.contains(NBTKeys.GADGET_REPLACEMENT_BLOCK, NbtType.COMPOUND) &&
-                nbt.contains(NBTKeys.GADGET_USE_PASTE)) {
+                nbt.contains(NBTKeys.GADGET_REPLACEMENT_BLOCK, NbtType.COMPOUND)) {
 
             ticks = nbt.getInt(NBTKeys.GADGET_TICKS);
             mode = Mode.VALUES[nbt.getInt(NBTKeys.GADGET_MODE)];
             renderedBlock = BlockData.tryDeserialize(nbt.getCompound(NBTKeys.GADGET_REPLACEMENT_BLOCK), true);
             sourceBlock = BlockData.tryDeserialize(nbt.getCompound(NBTKeys.GADGET_SOURCE_BLOCK), true);
-            usePaste = nbt.getBoolean(NBTKeys.GADGET_USE_PASTE);
         }
     }
 }

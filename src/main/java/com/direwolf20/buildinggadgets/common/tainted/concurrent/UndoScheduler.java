@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tainted.concurrent;
 
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
-import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
@@ -10,7 +9,6 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo.BlockInfo;
-import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.google.common.base.Preconditions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -62,10 +60,7 @@ public final class UndoScheduler extends SteppedScheduler {
         BlockState state = context.getWorld().getBlockState(entry.getKey());
         BlockEntity be = context.getWorld().getBlockEntity(entry.getKey());
         BlockData data;
-        if (state.getBlock() == OurBlocks.CONSTRUCTION_BLOCK && be instanceof ConstructionBlockTileEntity) {
-            data = ((ConstructionBlockTileEntity) be).getConstructionBlockData();
-        } else
-            data = TileSupport.createBlockData(state, be);
+        data = TileSupport.createBlockData(state, be);
         if (data.getState().getBlock().defaultBlockState() != entry.getValue().getPlacedData().getState().getBlock().defaultBlockState()) {
             lastWasSuccess = false;
             return;

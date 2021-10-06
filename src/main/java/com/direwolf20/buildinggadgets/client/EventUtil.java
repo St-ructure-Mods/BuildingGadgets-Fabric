@@ -141,22 +141,6 @@ public class EventUtil {
                     totalMissing += renderRequiredBlocks(poseStack, entry.getElement().createStack(), x, y, existing.count(entry.getElement()), entry.getCount());
                     j++;
                 }
-                if (!match.isSuccess()) {
-                    UniqueItem pasteItem = new UniqueItem(OurItems.CONSTRUCTION_PASTE_ITEM);
-                    Multiset<UniqueItem> pasteSet = ImmutableMultiset.<UniqueItem>builder()
-                            .addCopies(pasteItem, totalMissing)
-                            .build();
-                    int hasAmt = index.tryMatch(pasteSet).getFoundItems().count(pasteItem);
-                    int x = xin + (j % STACKS_PER_LINE) * 18;
-                    int y = by + (j / STACKS_PER_LINE) * 20;
-
-                    int required = Integer.MAX_VALUE;
-                    try {
-                        required = Math.toIntExact(totalMissing);
-                    } catch (ArithmeticException ignored) {}
-
-                    renderRequiredBlocks(poseStack, pasteItem.createStack(), x, y, hasAmt, required);
-                }
             });
         });
     }

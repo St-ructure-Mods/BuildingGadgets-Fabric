@@ -58,7 +58,7 @@ public class GadgetBuilding extends AbstractGadget {
 
     public GadgetBuilding() {
         super(OurItems.nonStackableItemProperties(),
-                BuildingGadgets.config.GADGETS.GADGET_BUILDING.undoSize,
+                (int) BuildingGadgets.config.GADGETS.GADGET_BUILDING.undoSize,
                 Reference.SaveReference.UNDO_BUILDING,
                 TagReference.WHITELIST_BUILDING,
                 TagReference.BLACKLIST_BUILDING);
@@ -247,11 +247,6 @@ public class GadgetBuilding extends AbstractGadget {
         if (! match.isSuccess()) {
             if (setBlock.getState().hasBlockEntity())
                 return;
-            match = index.tryMatch(InventoryHelper.PASTE_LIST);
-            if (! match.isSuccess())
-                return;
-            else
-                useConstructionPaste = true;
         }
 
         if (!(world.mayInteract(player, pos) && this.canUse(heldItem, player) && setBlock.getState().canSurvive(world, pos)))
@@ -262,7 +257,7 @@ public class GadgetBuilding extends AbstractGadget {
         if (index.applyMatch(match)) {
             ImmutableMultiset<UniqueItem> usedItems = match.getChosenOption();
             builder.record(world, pos, setBlock, usedItems, ImmutableMultiset.of());
-            EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.PLACE, useConstructionPaste);
+            EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.PLACE);
         }
     }
 

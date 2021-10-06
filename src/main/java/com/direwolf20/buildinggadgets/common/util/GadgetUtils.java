@@ -13,7 +13,6 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateHeader;
-import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.direwolf20.buildinggadgets.common.util.lang.Styles;
@@ -207,11 +206,6 @@ public class GadgetUtils {
         BlockEntity be = world.getBlockEntity(pos);
         if (be == null)
             return InteractionResult.PASS;
-
-        if (setTool && be instanceof ConstructionBlockTileEntity) {
-            setToolBlock(stack, ((ConstructionBlockTileEntity) be).getConstructionBlockData());
-            return InteractionResult.SUCCESS;
-        }
 
 
         return InteractionResult.FAIL;

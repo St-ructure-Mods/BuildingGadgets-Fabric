@@ -18,7 +18,6 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
-import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.LangUtil;
@@ -242,11 +241,7 @@ public class GadgetExchanger extends AbstractGadget {
         ITileEntityData data;
 
         BlockEntity be = world.getBlockEntity(pos);
-        if (be instanceof ConstructionBlockTileEntity) {
-            data = ((ConstructionBlockTileEntity) be).getConstructionBlockData().getTileData();
-            currentBlock = ((ConstructionBlockTileEntity) be).getConstructionBlockData().getState();
-        } else
-            data = TileSupport.createTileData(world, pos);
+        data = TileSupport.createTileData(world, pos);
 
         ItemStack tool = getGadget(player);
         if (tool.isEmpty() || !this.canUse(tool, player))
@@ -259,15 +254,9 @@ public class GadgetExchanger extends AbstractGadget {
 
         MaterialList requiredItems = setBlock.getRequiredItems(buildContext, null, pos);
         MatchResult match = index.tryMatch(requiredItems);
-        boolean useConstructionPaste = false;
         if (!match.isSuccess()) {
             if (setBlock.getState().hasBlockEntity())
                 return;
-            match = index.tryMatch(InventoryHelper.PASTE_LIST);
-            if (!match.isSuccess())
-                return;
-            else
-                useConstructionPaste = true;
         }
 
         if (!player.mayBuild() || !world.mayInteract(player, pos))
@@ -281,7 +270,7 @@ public class GadgetExchanger extends AbstractGadget {
         this.applyDamage(tool, player);
 
         if (index.applyMatch(match)) {
-            MaterialList materials = be instanceof ConstructionBlockTileEntity ? InventoryHelper.PASTE_LIST : data.getRequiredItems(
+            MaterialList materials = data.getRequiredItems(
                     buildContext,
                     currentBlock,
                     world.clip(new ClipContext(player.position(), Vec3.atLowerCornerOf(pos), ClipContext.Block.COLLIDER, Fluid.NONE, player)),
@@ -299,7 +288,7 @@ public class GadgetExchanger extends AbstractGadget {
 
             index.insert(producedItems);
 
-            EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.REPLACE, useConstructionPaste);
+            EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.REPLACE);
         }
     }
 

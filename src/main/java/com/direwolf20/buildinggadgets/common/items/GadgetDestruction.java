@@ -6,7 +6,6 @@ import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
-import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
@@ -48,7 +47,7 @@ public class GadgetDestruction extends AbstractGadget {
 
     public GadgetDestruction() {
         super(OurItems.nonStackableItemProperties(),
-                BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.undoSize,
+                (int) BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.undoSize,
                 Reference.SaveReference.UNDO_DESTRUCTION,
                 TagReference.WHITELIST_DESTRUCTION,
                 TagReference.BLACKLIST_DESTRUCTION);
@@ -274,7 +273,7 @@ public class GadgetDestruction extends AbstractGadget {
 
         this.applyDamage(tool, player);
         builder.record(world, voidPos, BlockData.AIR, ImmutableMultiset.of(), ImmutableMultiset.of());
-        EffectBlock.spawnEffectBlock(world, voidPos, TileSupport.createBlockData(world, voidPos), EffectBlock.Mode.REMOVE, false);
+        EffectBlock.spawnEffectBlock(world, voidPos, TileSupport.createBlockData(world, voidPos), EffectBlock.Mode.REMOVE);
         return true;
     }
 

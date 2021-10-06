@@ -107,15 +107,6 @@ public class ConstructionBlock extends Block implements EntityBlock /*implements
         return (mimicBlock == null || mimicBlock == Blocks.AIR.defaultBlockState());
     }
 
-    @Nullable
-    private BlockState getActualMimicBlock(BlockGetter blockAccess, BlockPos pos) {
-        BlockEntity be = blockAccess.getBlockEntity(pos);
-        if (be instanceof ConstructionBlockTileEntity) {
-            return ((ConstructionBlockTileEntity) be).getConstructionBlockData().getState();
-        }
-        return null;
-    }
-
     @Override
     @Deprecated
     public RenderShape getRenderShape(BlockState state) {

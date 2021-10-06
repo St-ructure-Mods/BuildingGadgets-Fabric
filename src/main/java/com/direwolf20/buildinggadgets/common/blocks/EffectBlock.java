@@ -1,11 +1,9 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
-import com.direwolf20.buildinggadgets.common.entities.ConstructionBlockEntity;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
-import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.tileentities.EffectBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
 import net.fabricmc.api.EnvType;
@@ -46,14 +44,6 @@ public class EffectBlock extends BaseEntityBlock {
 
                 BlockPos targetPos = builder.getBlockPos();
                 BlockData targetBlock = builder.getRenderedBlock();
-                if (builder.isUsingPaste()) {
-                    world.setBlockAndUpdate(targetPos, OurBlocks.CONSTRUCTION_BLOCK.defaultBlockState());
-                    BlockEntity be = world.getBlockEntity(targetPos);
-                    if (be instanceof ConstructionBlockTileEntity) {
-                        ((ConstructionBlockTileEntity) be).setBlockState(targetBlock);
-                    }
-                    world.addFreshEntity(new ConstructionBlockEntity(world, targetPos, false));
-                } else {
                     if( targetBlock.getState().getBlock() instanceof LeavesBlock) {
                         targetBlock = new BlockData(targetBlock.getState().setValue(LeavesBlock.PERSISTENT, true), targetBlock.getTileData());
                     }
@@ -65,7 +55,6 @@ public class EffectBlock extends BaseEntityBlock {
 
                     BlockPos upPos = targetPos.above();
                     world.getBlockState(targetPos).neighborChanged(world, targetPos, world.getBlockState(upPos).getBlock(), upPos, false);
-                }
             }
         },
         REMOVE() {
@@ -77,7 +66,7 @@ public class EffectBlock extends BaseEntityBlock {
         REPLACE() {
             @Override
             public void onBuilderRemoved(EffectBlockTileEntity builder) {
-                spawnEffectBlock(builder.getLevel(), builder.getBlockPos(), builder.getSourceBlock(), PLACE, builder.isUsingPaste());
+                spawnEffectBlock(builder.getLevel(), builder.getBlockPos(), builder.getSourceBlock(), PLACE);
             }
         };
 
@@ -105,23 +94,23 @@ public class EffectBlock extends BaseEntityBlock {
         //can't use .isAir, because it's not build yet
         if (target.getData().getState() != Blocks.AIR.defaultBlockState()) {
             Mode mode = state.isAir() ? Mode.PLACE : Mode.REPLACE;
-            spawnEffectBlock(curTe, state, context.getWorld(), target.getPos(), target.getData(), mode, false);
+            spawnEffectBlock(curTe, state, context.getWorld(), target.getPos(), target.getData(), mode);
         } else if (! state.isAir()) {
-            spawnEffectBlock(curTe, state, context.getWorld(), target.getPos(), TileSupport.createBlockData(state, curTe), Mode.REMOVE, false);
+            spawnEffectBlock(curTe, state, context.getWorld(), target.getPos(), TileSupport.createBlockData(state, curTe), Mode.REMOVE);
         }
     }
 
-    public static void spawnEffectBlock(BuildContext context, PlacementTarget target, Mode mode, boolean usePaste) {//TODO pass the buildcontext through, aka invert the overloading
-        spawnEffectBlock(context.getWorld(), target.getPos(), target.getData(), mode, usePaste);
+    public static void spawnEffectBlock(BuildContext context, PlacementTarget target, Mode mode) {
+        spawnEffectBlock(context.getWorld(), target.getPos(), target.getData(), mode);
     }
 
-    public static void spawnEffectBlock(LevelAccessor world, BlockPos spawnPos, BlockData spawnBlock, Mode mode, boolean usePaste) {
+    public static void spawnEffectBlock(LevelAccessor world, BlockPos spawnPos, BlockData spawnBlock, Mode mode) {
         BlockState state = world.getBlockState(spawnPos);
         BlockEntity curTe = world.getBlockEntity(spawnPos);
-        spawnEffectBlock(curTe, state, world, spawnPos, spawnBlock, mode, usePaste);
+        spawnEffectBlock(curTe, state, world, spawnPos, spawnBlock, mode);
     }
 
-    private static void spawnEffectBlock(@Nullable BlockEntity curTe, BlockState curState, LevelAccessor world, BlockPos spawnPos, BlockData spawnBlock, Mode mode, boolean usePaste) {
+    private static void spawnEffectBlock(@Nullable BlockEntity curTe, BlockState curState, LevelAccessor world, BlockPos spawnPos, BlockData spawnBlock, Mode mode) {
         BlockState state = OurBlocks.EFFECT_BLOCK.defaultBlockState();
         world.setBlock(spawnPos, state, 3);
 
@@ -132,7 +121,7 @@ public class EffectBlock extends BaseEntityBlock {
             return;
         }
 
-        ((EffectBlockTileEntity) tile).initializeData(curState, curTe, spawnBlock, mode, usePaste);
+        ((EffectBlockTileEntity) tile).initializeData(curState, curTe, spawnBlock, mode);
         // Send data to client
         if (world instanceof Level)
             ((Level) world).sendBlockUpdated(spawnPos, state, state, 1);

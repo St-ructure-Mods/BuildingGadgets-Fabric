@@ -1,10 +1,8 @@
 package com.direwolf20.buildinggadgets.common.items.modes;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
-import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import net.minecraft.world.level.block.state.BlockState;
@@ -85,7 +83,7 @@ public abstract class AbstractMode {
             return false;
 
         // No tiles unless construction block
-        if (be != null && (!(be instanceof ConstructionBlockTileEntity) || be.getBlockState() == context.getSetState()))
+        if (be.getBlockState() == context.getSetState())
             return false;
 
         // Don't exchange bedrock

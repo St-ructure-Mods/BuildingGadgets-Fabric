@@ -6,9 +6,6 @@ import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.IObjectHandle;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.ItemHandlerProvider;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.objects.UniqueItem;
-import com.direwolf20.buildinggadgets.common.tileentities.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.util.CommonUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -43,7 +40,6 @@ import java.util.*;
  *  This entire class could do with some refactoring and cleaning :grin:
  */
 public class InventoryHelper {
-    public static final MaterialList PASTE_LIST = MaterialList.of(new UniqueItem(OurItems.CONSTRUCTION_PASTE_ITEM));
 
     private static final Set<Property<?>> UNSAFE_PROPERTIES =
             ImmutableSet.<Property<?>>builder()
@@ -115,9 +111,6 @@ public class InventoryHelper {
         if (player.isCreative()) {
             return true;
         }
-        if (itemStack.getItem() instanceof ConstructionPaste) {
-            itemStack = addPasteToContainer(player, itemStack);
-        }
         if (itemStack.getCount() == 0) {
             return true;
         }
@@ -174,49 +167,6 @@ public class InventoryHelper {
         return inv.add(giveItemStack);
     }
 
-    public static ItemStack addPasteToContainer(Player player, ItemStack itemStack) {
-        if (!(itemStack.getItem() instanceof ConstructionPaste)) {
-            return itemStack;
-        }
-
-        Inventory inv = player.getInventory();
-        List<Integer> slots = findItemClass(ConstructionPasteContainer.class, inv);
-        if (slots.size() == 0) {
-            return itemStack;
-        }
-
-        Map<Integer, Integer> slotMap = new HashMap<>();
-        for (int slot : slots) {
-            slotMap.put(slot, ConstructionPasteContainer.getPasteAmount(inv.getItem(slot)));
-        }
-
-        List<Map.Entry<Integer, Integer>> list = new ArrayList<>(slotMap.entrySet());
-        Comparator<Map.Entry<Integer, Integer>> comparator = Map.Entry.comparingByValue();
-        comparator = comparator.reversed();
-        list.sort(comparator);
-
-
-        for (Map.Entry<Integer, Integer> entry : list) {
-            ItemStack containerStack = inv.getItem(entry.getKey());
-            ConstructionPasteContainer item = ((ConstructionPasteContainer) containerStack.getItem());
-
-            int maxAmount = item.getMaxCapacity();
-            int pasteInContainer = ConstructionPasteContainer.getPasteAmount(containerStack);
-            int freeSpace = item.isCreative() ? Integer.MAX_VALUE : maxAmount - pasteInContainer;
-            int stackSize = itemStack.getCount();
-
-            int remainingPaste = stackSize - freeSpace;
-            if (remainingPaste < 0) {
-                remainingPaste = 0;
-            }
-
-            int usedPaste = Math.abs(stackSize - remainingPaste);
-            itemStack.setCount(remainingPaste);
-            ConstructionPasteContainer.setPasteAmount(containerStack, pasteInContainer + usedPaste);
-        }
-
-        return itemStack;
-    }
 
     private static List<ItemStack> findInvContainers(Inventory inv) {
         List<ItemStack> containers = new ArrayList<>();
@@ -268,12 +218,6 @@ public class InventoryHelper {
         BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof LiquidBlock)
             return Optional.empty();
-
-        if (state.getBlock() == OurBlocks.CONSTRUCTION_BLOCK) {
-            BlockEntity be = world.getBlockEntity(pos);
-            if (be instanceof ConstructionBlockTileEntity) //should already be checked
-                return Optional.of(((ConstructionBlockTileEntity) be).getConstructionBlockData());
-        }
 
         // Support doors
         if (state.getBlock() instanceof DoorBlock && state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER) {

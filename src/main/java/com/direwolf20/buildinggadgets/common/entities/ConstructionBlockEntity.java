@@ -33,12 +33,11 @@ public class ConstructionBlockEntity extends EntityBase {
         super(type, world);
     }
 
-    public ConstructionBlockEntity(Level world, BlockPos spawnPos, boolean makePaste) {
+    public ConstructionBlockEntity(Level world, BlockPos spawnPos) {
         this(TYPE, world);
         
         setPos(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
         targetPos = spawnPos;
-        setMakingPaste(makePaste);
     }
 
     @Override
@@ -66,54 +65,17 @@ public class ConstructionBlockEntity extends EntityBase {
 
     @Override
     protected void onSetDespawning() {
-        if (targetPos != null) {
-            if (!getMakingPaste()) {
-                BlockEntity be = level.getBlockEntity(targetPos);
-                if (be instanceof ConstructionBlockTileEntity) {
-                    BlockData tempState = ((ConstructionBlockTileEntity) be).getConstructionBlockData();
-
-                    boolean opaque = tempState.getState().isSolidRender(level, targetPos);
-                    boolean neighborBrightness = false;//tempState.useNeighbourBrightness(world, targetPos); //TODO find replacement
-                    //IBakedModel model;
-                    //model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(tempState.getState());
-                    //boolean ambient = model.isAmbientOcclusion();
-                    boolean ambient = false; //TODO Find a better way to get the proper ambient Occlusion value. This is client side only so can't be done here.
-                    if (opaque || neighborBrightness || ! ambient) {
-                        BlockData tempSetBlock = ((ConstructionBlockTileEntity) be).getConstructionBlockData();
-                        level.setBlockAndUpdate(targetPos, OurBlocks.CONSTRUCTION_BLOCK.defaultBlockState()
-                                .setValue(ConstructionBlock.BRIGHT, ! opaque)
-                                .setValue(ConstructionBlock.NEIGHBOR_BRIGHTNESS, neighborBrightness)
-                                .setValue(ConstructionBlock.AMBIENT_OCCLUSION, ambient));
-                        be = level.getBlockEntity(targetPos);
-                        if (be instanceof ConstructionBlockTileEntity) {
-                            ((ConstructionBlockTileEntity) be).setBlockState(tempSetBlock);
-                        }
-                    }
-                }
-            } else if (level.getBlockState(targetPos) == OurBlocks.CONSTRUCTION_POWDER_BLOCK.defaultBlockState()) {
-                level.setBlockAndUpdate(targetPos, OurBlocks.CONSTRUCTION_DENSE_BLOCK.defaultBlockState());
-            }
-        }
     }
 
-    public void setMakingPaste(boolean paste) {
-        entityData.set(MAKING, paste);
-    }
-
-    public boolean getMakingPaste() {
-        return entityData.get(MAKING);
-    }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        setMakingPaste(compound.getBoolean(NBTKeys.ENTITY_CONSTRUCTION_MAKING_PASTE));
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putBoolean(NBTKeys.ENTITY_CONSTRUCTION_MAKING_PASTE, getMakingPaste());
     }
 
     @Override

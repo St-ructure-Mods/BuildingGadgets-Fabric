@@ -74,12 +74,12 @@ public final class PlacementScheduler extends SteppedScheduler {
         lastWasSuccess = res.isSuccess();
         if (lastWasSuccess) {
             undoBuilder.record(view.getContext().getWorld(), target.getPos(), target.getData(), res.getMatch().getChosenOption(), res.getInsertedItems());
-            EffectBlock.spawnEffectBlock(view.getContext(), target, Mode.PLACE, res.isUsingPaste());
+            EffectBlock.spawnEffectBlock(view.getContext(), target, Mode.PLACE);
 
             BuildContext context = view.getContext();
             BlockData targetBlock = target.getData();
             if (target.getData().getState().getBlock() instanceof DoorBlock && targetBlock.getState().getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER && context.getWorld().isEmptyBlock(target.getPos().above())) {
-                EffectBlock.spawnEffectBlock(context.getWorld(), target.getPos().above(), new BlockData(targetBlock.getState().setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER), TileSupport.dummyTileEntityData()), Mode.PLACE, false);
+                EffectBlock.spawnEffectBlock(context.getWorld(), target.getPos().above(), new BlockData(targetBlock.getState().setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER), TileSupport.dummyTileEntityData()), Mode.PLACE);
             }
         }
     }

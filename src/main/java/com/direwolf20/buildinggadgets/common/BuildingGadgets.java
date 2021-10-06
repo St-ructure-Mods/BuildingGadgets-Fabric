@@ -9,7 +9,6 @@ import com.direwolf20.buildinggadgets.common.config.RecipeConstructionPaste.Seri
 import com.direwolf20.buildinggadgets.common.events.BlockPlaceCallback;
 import com.direwolf20.buildinggadgets.common.events.BreakEventHandler;
 import com.direwolf20.buildinggadgets.common.events.ItemPickupCallback;
-import com.direwolf20.buildinggadgets.common.events.ItemPickupHandler;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
 import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
@@ -87,7 +86,6 @@ public final class BuildingGadgets implements ModInitializer {
         Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(Reference.MODID, "construction_paste"), Serializer.INSTANCE);
 
         PlayerBlockBreakEvents.AFTER.register(new BreakEventHandler());
-        ItemPickupCallback.EVENT.register(new ItemPickupHandler());
 
         BlockPlaceCallback.ON_PLACE.register((serverPlayer, level, itemStack, interactionHand, blockHitResult) -> {
 
