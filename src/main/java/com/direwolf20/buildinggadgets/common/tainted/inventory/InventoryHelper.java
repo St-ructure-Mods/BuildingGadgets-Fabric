@@ -4,13 +4,12 @@ import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.handle.IObjectHandle;
 import com.direwolf20.buildinggadgets.common.util.CommonUtils;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
@@ -31,7 +30,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Property;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /*
  * @MichaelHillcox
@@ -64,23 +66,13 @@ public class InventoryHelper {
         return new PlayerItemIndex(tool, player);
     }
 
-    static List<IObjectHandle> indexMap(ItemStack tool, Player player) {
-        List<IObjectHandle> list = new ArrayList<>();
-
-        for (Storage<ItemVariant> handler : getHandlers(tool, player)) {
-            // TODO: Index
-        }
-
-        return list;
-    }
-
-    static List<Storage<ItemVariant>> getHandlers(ItemStack stack, Player player) {
+    static Storage<ItemVariant> getHandlers(ItemStack stack, Player player) {
         List<Storage<ItemVariant>> handlers = new ArrayList<>();
 
         InventoryLinker.getLinkedInventory(player.level, stack).ifPresent(handlers::add);
         handlers.add(PlayerInventoryStorage.of(player));
 
-        return handlers;
+        return new CombinedStorage<>(handlers);
     }
 
     public static void registerHandleProviders() {

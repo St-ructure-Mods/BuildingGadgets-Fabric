@@ -13,13 +13,7 @@ import java.util.Iterator;
  */
 public final class CreativeItemIndex implements IItemIndex {
     @Override
-    public Multiset<ItemVariant> insert(Multiset<ItemVariant> items, TransactionContext transaction) {
-        return items;
-    }
-
-    @Override
-    public void reIndex() {
-
+    public void insert(Multiset<ItemVariant> items, TransactionContext transaction) {
     }
 
     @Override

@@ -18,9 +18,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 public interface IItemIndex {
 
     //returns the remaining items
-    Multiset<ItemVariant> insert(Multiset<ItemVariant> items, TransactionContext transaction);
-
-    void reIndex();
+    void insert(Multiset<ItemVariant> items, TransactionContext transaction);
 
     MatchResult tryMatch(MaterialList list);
 

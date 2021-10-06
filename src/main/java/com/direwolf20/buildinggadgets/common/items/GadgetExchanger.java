@@ -17,7 +17,6 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.LangUtil;
@@ -29,12 +28,11 @@ import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Multiset;
-import dev.architectury.event.events.common.BlockEvent;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -166,7 +164,7 @@ public class GadgetExchanger extends AbstractGadget {
                     return super.use(world, player, hand);
                 }
             } else if (player instanceof ServerPlayer) {
-                try(Transaction transaction = Transaction.openOuter()) {
+                try (Transaction transaction = Transaction.openOuter()) {
                     exchange((ServerPlayer) player, itemstack, transaction);
                     transaction.commit();
                 }
@@ -297,7 +295,8 @@ public class GadgetExchanger extends AbstractGadget {
                 List<ItemStack> drops = Block.getDrops(currentBlock, (ServerLevel) buildContext.getWorld(), pos, buildContext.getWorld().getBlockEntity(pos));
                 producedItems.addAll(drops.stream().map(ItemVariant::of).collect(Collectors.toList()));
             }
-                index.insert(producedItems, transaction);
+
+            index.insert(producedItems, transaction);
 
             EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.REPLACE);
         }
