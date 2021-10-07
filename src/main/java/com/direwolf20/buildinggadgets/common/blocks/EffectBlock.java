@@ -72,8 +72,6 @@ public class EffectBlock extends BaseEntityBlock {
             }
         };
 
-        public static final Mode[] VALUES = values();
-
         public abstract void onBuilderRemoved(EffectBlockTileEntity builder);
     }
 

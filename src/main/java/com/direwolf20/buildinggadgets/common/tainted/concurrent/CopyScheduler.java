@@ -5,7 +5,6 @@ import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
-import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.IBuildView;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -35,8 +34,6 @@ public final class CopyScheduler extends SteppedScheduler {
         this.finisher = finisher;
         this.targets = worldView.spliterator();
         this.builder = ImmutableMap.builder();
-        BuildContext context = worldView.getContext();
-        this.regionBuilder = null;
     }
 
     @Override

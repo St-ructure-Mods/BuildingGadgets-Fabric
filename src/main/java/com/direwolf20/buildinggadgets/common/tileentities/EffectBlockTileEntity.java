@@ -117,7 +117,7 @@ public class EffectBlockTileEntity extends BlockEntity {
             nbt.contains(NBTKeys.GADGET_REPLACEMENT_BLOCK, NbtType.COMPOUND)) {
 
             ticks = nbt.getInt(NBTKeys.GADGET_TICKS);
-            mode = Mode.VALUES[nbt.getInt(NBTKeys.GADGET_MODE)];
+            mode = Mode.values()[nbt.getInt(NBTKeys.GADGET_MODE)];
             renderedBlock = BlockData.tryDeserialize(nbt.getCompound(NBTKeys.GADGET_REPLACEMENT_BLOCK), true);
             sourceBlock = BlockData.tryDeserialize(nbt.getCompound(NBTKeys.GADGET_SOURCE_BLOCK), true);
         }
