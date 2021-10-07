@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
-import com.direwolf20.buildinggadgets.client.renders.BuildRender;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
@@ -61,7 +60,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.direwolf20.buildinggadgets.common.util.GadgetUtils.*;
@@ -85,11 +83,6 @@ public class GadgetExchanger extends AbstractGadget {
     @Override
     public long getEnergyCost(ItemStack tool) {
         return BuildingGadgets.getConfig().GADGETS.GADGET_EXCHANGER.energyCost;
-    }
-
-    @Override
-    protected Supplier<BaseRenderer> createRenderFactory() {
-        return () -> new BuildRender(true);
     }
 
     @Override

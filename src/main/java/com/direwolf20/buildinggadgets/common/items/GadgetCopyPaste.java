@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
-import com.direwolf20.buildinggadgets.client.renders.CopyPasteRender;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
@@ -66,7 +65,6 @@ import team.reborn.energy.api.EnergyStorage;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class GadgetCopyPaste extends AbstractGadget {
 
@@ -124,16 +122,6 @@ public class GadgetCopyPaste extends AbstractGadget {
     @Override
     public long getEnergyCost(ItemStack tool) {
         return BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.energyCost;
-    }
-
-    @Override
-    protected Supplier<BaseRenderer> createRenderFactory() {
-        return CopyPasteRender::new;
-    }
-
-    @Override
-    public CopyPasteRender getRender() {
-        return (CopyPasteRender) super.getRender();
     }
 
     @Override

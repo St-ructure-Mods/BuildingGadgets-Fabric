@@ -5,18 +5,6 @@ plugins {
 
 repositories {
     maven {
-        name = "Technici4n"
-        url = "https://raw.githubusercontent.com/Technici4n/Technici4n-maven/master/"
-        content {
-            includeGroup "net.fabricmc.fabric-api" // until PR # is merged
-            includeGroup "dev.technici4n"
-        }
-    }
-    maven {
-        name = "BuildCraft"
-        url = "https://mod-buildcraft.com/maven"
-    }
-    maven {
         url "https://maven.shedaniel.me/"
         content {
             includeGroup "me.shedaniel"
@@ -60,23 +48,22 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-1.17.1:2021.09.05@zip")
     }
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modApi("dev.architectury:architectury-fabric:${project.architectury_version}")
-    modApi("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
-
-    include modApi("teamreborn:energy:${project.energy_version}")
 
     modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
         exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
     }
 
-    modImplementation "io.github.onyxstudios:Cardinal-Components-API:${project.cca_version}"
-    include "io.github.onyxstudios:Cardinal-Components-API:${project.cca_version}"
+    include modImplementation("teamreborn:energy:${project.energy_version}")
+
+    modRuntime("dev.architectury:architectury-fabric:${project.architectury_version}")
+    modRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
+
+    include modImplementation("io.github.onyxstudios:Cardinal-Components-API:${project.cca_version}")
 }
 
 // Processes main only resources

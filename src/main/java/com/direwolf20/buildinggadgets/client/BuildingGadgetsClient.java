@@ -4,9 +4,10 @@ import com.direwolf20.buildinggadgets.client.cache.CacheTemplateProvider;
 import com.direwolf20.buildinggadgets.client.events.EventKeyInput;
 import com.direwolf20.buildinggadgets.client.events.EventRenderWorldLast;
 import com.direwolf20.buildinggadgets.client.renderer.EffectBlockTER;
+import com.direwolf20.buildinggadgets.client.renders.BGRenderers;
+import com.direwolf20.buildinggadgets.client.renders.CopyPasteRender;
 import com.direwolf20.buildinggadgets.client.screen.TemplateManagerGUI;
 import com.direwolf20.buildinggadgets.common.containers.OurContainers;
-import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.ClientPacketHandler;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
@@ -33,7 +34,7 @@ public class BuildingGadgetsClient implements ClientModInitializer {
         BlockEntityRendererRegistry.register(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY, EffectBlockTER::new);
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> CACHE_TEMPLATE_PROVIDER.clear());
-        CACHE_TEMPLATE_PROVIDER.registerUpdateListener(((GadgetCopyPaste) OurItems.COPY_PASTE_GADGET_ITEM).getRender());
+        CACHE_TEMPLATE_PROVIDER.registerUpdateListener(BGRenderers.COPY_PASTE);
         ClientPacketHandler.registerMessages();
     }
 

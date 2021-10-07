@@ -1,7 +1,5 @@
 package com.direwolf20.buildinggadgets.common.items;
 
-import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
-import com.direwolf20.buildinggadgets.client.renders.DestructionRender;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
@@ -39,7 +37,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class GadgetDestruction extends AbstractGadget {
@@ -60,11 +57,6 @@ public class GadgetDestruction extends AbstractGadget {
     @Override
     public long getEnergyCost(ItemStack tool) {
         return BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.energyCost * getCostMultiplier(tool);
-    }
-
-    @Override
-    protected Supplier<BaseRenderer> createRenderFactory() {
-        return DestructionRender::new;
     }
 
     private int getCostMultiplier(ItemStack tool) {

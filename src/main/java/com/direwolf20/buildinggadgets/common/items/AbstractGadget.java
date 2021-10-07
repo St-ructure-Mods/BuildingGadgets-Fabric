@@ -1,7 +1,5 @@
 package com.direwolf20.buildinggadgets.common.items;
 
-
-import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
 import com.direwolf20.buildinggadgets.common.items.modes.*;
@@ -19,8 +17,6 @@ import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableSortedSet;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -49,7 +45,7 @@ import java.util.function.Supplier;
 import static com.direwolf20.buildinggadgets.common.util.GadgetUtils.withSuffix;
 
 public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
-    private final BaseRenderer renderer;
+
     private final Tag.Named<Block> whiteList;
     private final Tag.Named<Block> blackList;
     private final Supplier<UndoWorldSave> saveSupplier;
@@ -57,7 +53,6 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     public AbstractGadget(Properties builder, int undoLength, String undoName, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
         super(builder.defaultDurability(0));
 
-        renderer = createRenderFactory().get();
         this.whiteList = TagFactory.BLOCK.create(whiteListTag);
         this.blackList = TagFactory.BLOCK.create(blackListTag);
         saveSupplier = SaveManager.INSTANCE.registerUndoSave(w -> SaveManager.getUndoSave(w, undoLength, undoName));
@@ -84,14 +79,6 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     public Tag.Named<Block> getBlackList() {
         return blackList;
     }
-
-    @Environment(EnvType.CLIENT)
-    public BaseRenderer getRender() {
-        return renderer;
-    }
-
-    @Environment(EnvType.CLIENT)
-    protected abstract Supplier<BaseRenderer> createRenderFactory();
 
     protected UndoWorldSave getUndoSave() {
         return saveSupplier.get();

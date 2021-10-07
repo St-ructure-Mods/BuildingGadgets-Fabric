@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.client.events;
 
+import com.direwolf20.buildinggadgets.client.renders.BGRenderers;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Minecraft;
@@ -17,6 +18,6 @@ public class EventRenderWorldLast {
         if (heldItem.isEmpty())
             return;
 
-        ((AbstractGadget) heldItem.getItem()).getRender().render(evt, player, heldItem);
+        BGRenderers.find(heldItem.getItem()).render(evt, player, heldItem);
     }
 }

@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
-import com.direwolf20.buildinggadgets.client.renders.BuildRender;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
@@ -49,7 +48,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static com.direwolf20.buildinggadgets.common.util.GadgetUtils.*;
 
@@ -73,11 +71,6 @@ public class GadgetBuilding extends AbstractGadget {
     @Override
     public long getEnergyCost(ItemStack tool) {
         return BuildingGadgets.getConfig().GADGETS.GADGET_BUILDING.energyCost;
-    }
-
-    @Override
-    protected Supplier<BaseRenderer> createRenderFactory() {
-        return () -> new BuildRender(false);
     }
 
     public boolean placeAtop(ItemStack stack) {
