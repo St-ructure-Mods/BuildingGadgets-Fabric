@@ -2,12 +2,6 @@
   "schemaVersion": 1,
   "id": "buildinggadgets",
   "version": "${version}",
-  "custom": {
-    "cardinal-components": [
-      "buildinggadgets:template_provider",
-      "buildinggadgets:template_key"
-    ]
-  },
   "name": "Building Gadgets: Refabricated",
   "description": "Fabric port of Building Gadgets.",
   "authors": [
@@ -16,16 +10,15 @@
     "Direwolf20"
   ],
   "contact": {
-    "sources": "https://github.com/ProjectET/BuildingGadgets-Fabric.git"
+    "sources": "https://github.com/ProjectET/BuildingGadgets-Fabric",
+    "issues": "https://github.com/ProjectET/BuildingGadgets-Fabric/issues"
   },
-  "license": "MIT",
+  "license": [
+    "MIT"
+  ],
   "icon": "assets/buildinggadgets/buildinggadgets_logo.png",
-  "environment": "*",
   "accessWidener" : "buildinggadgets.accesswidener",
   "entrypoints": {
-    "client": [
-      "com.direwolf20.buildinggadgets.client.BuildingGadgetsClient"
-    ],
     "main": [
       "com.direwolf20.buildinggadgets.common.BuildingGadgets"
     ],
@@ -35,6 +28,9 @@
     "cardinal-components-world" : [
       "com.direwolf20.buildinggadgets.common.component.BGComponent"
     ],
+    "client": [
+      "com.direwolf20.buildinggadgets.client.BuildingGadgetsClient"
+    ],
     "modmenu": [
       "com.direwolf20.buildinggadgets.common.config.ModMenuCompat"
     ]
@@ -43,9 +39,15 @@
     "buildinggadgets.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.3",
-    "fabric": "*",
-    "minecraft": "1.17.*",
+    "minecraft": ">=1.17.1",
+    "fabricloader": ">=0.11.0",
+    "fabric": ">=0.40.0",
     "cloth-config2": ">=5.0.30"
+  },
+  "custom": {
+    "cardinal-components": [
+      "buildinggadgets:template_provider",
+      "buildinggadgets:template_key"
+    ]
   }
 }

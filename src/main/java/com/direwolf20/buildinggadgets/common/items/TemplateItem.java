@@ -17,8 +17,8 @@ import java.util.List;
 
 public class TemplateItem extends Item {
 
-    public TemplateItem() {
-        super(OurItems.itemProperties().stacksTo(1));
+    public TemplateItem(Properties properties) {
+        super(properties);
     }
 
     @Override

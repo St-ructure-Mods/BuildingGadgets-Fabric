@@ -3,23 +3,30 @@ plugins {
     id 'maven-publish'
 }
 
+group = project.maven_group
+version = project.mod_version
+
 repositories {
     maven {
         url "https://maven.shedaniel.me/"
+
         content {
             includeGroup "me.shedaniel"
             includeGroup "me.shedaniel.cloth"
             includeGroup "dev.architectury"
         }
     }
+
     maven {
         name = 'Ladysnake Mods'
         url = 'https://ladysnake.jfrog.io/artifactory/mods'
     }
+
     maven {
         name = "ParchmentMC"
         url = "https://maven.parchmentmc.org/"
     }
+
     maven {
         url = "https://maven.terraformersmc.com/releases/"
         content {
@@ -27,19 +34,6 @@ repositories {
         }
     }
 }
-
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
-
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
-
-loom {
-    accessWidenerPath = file("src/main/resources/buildinggadgets.accesswidener")
-}
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -55,83 +49,63 @@ dependencies {
     }
 
     modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
-        exclude group: "net.fabricmc.fabric-api", module: "fabric-api"
+        exclude(group: "net.fabricmc.fabric-api")
     }
 
     include modImplementation("teamreborn:energy:${project.energy_version}")
+    include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca_version}")
+    include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-item:${project.cca_version}")
+    include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-world:${project.cca_version}")
 
     modRuntime("dev.architectury:architectury-fabric:${project.architectury_version}")
     modRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
-
-    include modImplementation("io.github.onyxstudios:Cardinal-Components-API:${project.cca_version}")
 }
 
-// Processes main only resources
-//processResources {
-//    inputs.property('version', project.version)
-//    inputs.property('forge_major', forge_major)
-//
-//    from(sourceSets.main.resources.srcDirs) {
-//        include 'META-INF/mods.toml'
-//        expand 'version':project.version, 'forge_major':forge_major
-//    }
-//
-//    from(sourceSets.main.resources.srcDirs) {
-//        exclude 'META-INF/mods.toml'
-//    }
-//}
-
-jar {
-    from "LICENSE"
+base {
+    archivesName.set(project.archives_base_name)
 }
 
-task deobfJar(type: Jar) {
-    from(sourceSets.main.output)
-    archiveName = "${baseName}-${version}-deobf.${extension}"
+java {
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+
+    withSourcesJar()
 }
 
-task sourcesJar(type: Jar) {
-    from(sourceSets.main.allSource)
-    archiveName = "${baseName}-${version}-sources.${extension}"
+loom {
+    accessWidenerPath.set(file("src/main/resources/buildinggadgets.accesswidener"))
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    options.release.set(16)
+}
+
+tasks.withType(AbstractArchiveTask) {
+    from(project.file("LICENSE"))
+}
+
+processResources {
+    inputs.property("version", project.version)
+
+    filesMatching("fabric.mod.json") {
+        expand("version": project.version)
+    }
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            // add all the jars that should be included when publishing to maven
-            artifact(jar) {
-                builtBy remapJar
-            }
-            artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar"){
-                builtBy remapJar
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
+            from components.java
         }
     }
 
-    // select the repositories you want to publish to
     repositories {
-        // uncomment to publish to the local maven
-        // mavenLocal()
+        maven {
+            def releasesRepoUrl = uri("${buildDir}/repos/releases")
+            def snapshotsRepoUrl = uri("${buildDir}/repos/snapshots")
+            name = "Project"
+            url = version.toString().endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+        }
     }
-}
-
-processResources {
-    inputs.property "version", project.version
-
-    from("fabric.mod.json") {
-        expand "version": project.version
-    }
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
-
-
-artifacts {
-    archives deobfJar
-    archives sourcesJar
 }

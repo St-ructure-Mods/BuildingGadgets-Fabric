@@ -41,12 +41,8 @@ import java.util.stream.Collectors;
 
 public class GadgetDestruction extends AbstractGadget {
 
-    public GadgetDestruction() {
-        super(OurItems.nonStackableItemProperties(),
-                BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.undoSize,
-                Reference.SaveReference.UNDO_DESTRUCTION,
-                TagReference.WHITELIST_DESTRUCTION,
-                TagReference.BLACKLIST_DESTRUCTION);
+    public GadgetDestruction(Properties builder) {
+        super(builder, BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.undoSize, Reference.SaveReference.UNDO_DESTRUCTION, TagReference.WHITELIST_DESTRUCTION, TagReference.BLACKLIST_DESTRUCTION);
     }
 
     @Override

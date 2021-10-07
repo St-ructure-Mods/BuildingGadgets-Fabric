@@ -1,8 +1,14 @@
 {
+  "required": true,
+  "minVersion": "0.8",
   "package": "com.direwolf20.buildinggadgets.common.mixins",
+  "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],
   "client": [
     "client.ScreenRenderTooltip"
-  ]
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

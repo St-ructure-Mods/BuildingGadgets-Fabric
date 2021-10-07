@@ -10,13 +10,13 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "i": {
-      "tag": "forge:ingots/iron"
+      "item": "minecraft:iron_ingot"
     },
     "r": {
-      "tag": "forge:dusts/redstone"
+      "item": "minecraft:redstone"
     },
     "l": {
-      "tag": "forge:gems/lapis"
+      "item": "minecraft:lapis_lazuli"
     },
     "e": {
       "item": "minecraft:ender_pearl"

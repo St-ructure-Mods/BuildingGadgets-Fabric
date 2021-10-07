@@ -8,28 +8,28 @@ import net.minecraft.world.item.Item;
 
 public final class OurItems {
 
-    private static Item itemRegister(String path, Item item) {
-        return Registry.register(Registry.ITEM, BuildingGadgets.id(path), item);
-    }
-
     // Gadgets
-    public static final Item BUILDING_GADGET_ITEM = itemRegister("gadget_building", new GadgetBuilding());
-    public static final Item EXCHANGING_GADGET_ITEM = itemRegister("gadget_exchanging", new GadgetExchanger());
-    public static final Item COPY_PASTE_GADGET_ITEM = itemRegister("gadget_copy_paste", new GadgetCopyPaste());
-    public static final Item DESTRUCTION_GADGET_ITEM = itemRegister("gadget_destruction", new GadgetDestruction());
+    public static final Item BUILDING_GADGET_ITEM = new GadgetBuilding(itemProperties().stacksTo(1));
+    public static final Item EXCHANGING_GADGET_ITEM = new GadgetExchanger(itemProperties().stacksTo(1));
+    public static final Item COPY_PASTE_GADGET_ITEM = new GadgetCopyPaste(itemProperties().stacksTo(1));
+    public static final Item DESTRUCTION_GADGET_ITEM = new GadgetDestruction(itemProperties().stacksTo(1));
 
     // Template
-    public static final Item TEMPLATE_ITEM = itemRegister("template", new TemplateItem());
+    public static final Item TEMPLATE_ITEM = new TemplateItem(itemProperties().stacksTo(1));
 
     // Item Blocks
-    public static final Item TEMPLATE_MANGER_ITEM = itemRegister("template_manager", new BlockItem(OurBlocks.TEMPLATE_MANGER_BLOCK, OurItems.itemProperties()));
+    public static final Item TEMPLATE_MANGER_ITEM = new BlockItem(OurBlocks.TEMPLATE_MANGER_BLOCK, OurItems.itemProperties());
 
-
-    public static Item.Properties itemProperties() {
+    private static Item.Properties itemProperties() {
         return new Item.Properties().tab(BuildingGadgets.CREATIVE_TAB);
     }
 
-    public static Item.Properties nonStackableItemProperties() {
-        return itemProperties().stacksTo(1);
+    public static void registerItems() {
+        Registry.register(Registry.ITEM, BuildingGadgets.id("gadget_building"), BUILDING_GADGET_ITEM);
+        Registry.register(Registry.ITEM, BuildingGadgets.id("gadget_exchanging"), EXCHANGING_GADGET_ITEM);
+        Registry.register(Registry.ITEM, BuildingGadgets.id("gadget_copy_paste"), COPY_PASTE_GADGET_ITEM);
+        Registry.register(Registry.ITEM, BuildingGadgets.id("gadget_destruction"), DESTRUCTION_GADGET_ITEM);
+        Registry.register(Registry.ITEM, BuildingGadgets.id("template"), TEMPLATE_ITEM);
+        Registry.register(Registry.ITEM, BuildingGadgets.id("template_manager"), TEMPLATE_MANGER_ITEM);
     }
 }

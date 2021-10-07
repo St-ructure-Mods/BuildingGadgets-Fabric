@@ -55,12 +55,8 @@ public class GadgetBuilding extends AbstractGadget {
 
     private static final MockBuilderWorld fakeWorld = new MockBuilderWorld();
 
-    public GadgetBuilding() {
-        super(OurItems.nonStackableItemProperties(),
-                BuildingGadgets.getConfig().GADGETS.GADGET_BUILDING.undoSize,
-                Reference.SaveReference.UNDO_BUILDING,
-                TagReference.WHITELIST_BUILDING,
-                TagReference.BLACKLIST_BUILDING);
+    public GadgetBuilding(Properties builder) {
+        super(builder, BuildingGadgets.getConfig().GADGETS.GADGET_BUILDING.undoSize, Reference.SaveReference.UNDO_BUILDING, TagReference.WHITELIST_BUILDING, TagReference.BLACKLIST_BUILDING);
     }
 
     @Override

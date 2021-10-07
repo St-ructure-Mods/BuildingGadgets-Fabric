@@ -45,6 +45,7 @@ public final class BuildingGadgets implements ModInitializer {
     public void onInitialize() {
         AutoConfig.register(Config.class, GsonConfigSerializer::new);
         OurBlocks.registerBlocks();
+        OurItems.registerItems();
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> server.getCommands().getDispatcher()
                 .register(Commands.literal(Reference.MODID)
