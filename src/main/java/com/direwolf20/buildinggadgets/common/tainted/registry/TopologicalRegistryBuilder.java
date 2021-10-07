@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tainted.registry;
 
+import com.direwolf20.buildinggadgets.common.util.tools.TopologicalSort;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableBiMap;
@@ -97,7 +98,7 @@ public final class TopologicalRegistryBuilder<T> {
         validateUnbuild();
         build = true;
         values.clear();
-        List<ValueObject<T>> sorted = null;// TopologicalSort.topologicalSort(theGraph, Comparator.naturalOrder());
+        List<ValueObject<T>> sorted = TopologicalSort.topologicalSort(theGraph, Comparator.naturalOrder());
         final ImmutableList.Builder<T> objs = ImmutableList.builder();
         final ImmutableBiMap.Builder<ResourceLocation, T> map = ImmutableBiMap.builder();
         sorted.stream().filter(val -> val.getValue() != null).forEach(obj -> {

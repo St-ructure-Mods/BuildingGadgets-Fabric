@@ -78,27 +78,29 @@ public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChann
     @Override
     public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUUID();
+        try {
+            Template template = readTemplate(buf);
+            client.execute(() -> {
+                ClientProxy.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), template);
+            });
+        } catch (TemplateReadException e) {
+            e.printStackTrace();
+        }
 
-        client.execute(() -> {
-            try {
-                ClientProxy.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), readTemplate(buf));
-            } catch (TemplateReadException e) {
-                throw new RuntimeException("Failed to read TemplateItem from buffer!", e);
-            }
-        });
     }
 
     // C2S
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUUID();
+        try {
+            Template template = readTemplate(buf);
+            server.execute(() -> {
+                SaveManager.INSTANCE.getTemplateProvider().setTemplate(new TemplateKey(id), template);
+            });
+        } catch (TemplateReadException e) {
+            e.printStackTrace();
+        }
 
-        server.execute(() -> {
-            try {
-                SaveManager.INSTANCE.getTemplateProvider().setTemplate(new TemplateKey(id), readTemplate(buf));
-            } catch (TemplateReadException e) {
-                throw new RuntimeException("Failed to read TemplateItem from buffer!", e);
-            }
-        });
     }
 }

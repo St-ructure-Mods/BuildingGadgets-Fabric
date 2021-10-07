@@ -78,7 +78,7 @@ public class OurRenderTypes extends RenderType {
     public static final RenderType BlockOverlay = create("BGBlockOverlay",
             DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
             RenderType.CompositeState.builder()
-                    .setShaderState(RenderStateShard.RENDERTYPE_SOLID_SHADER)
+                    .setShaderState(RenderStateShard.BLOCK_SHADER)
                     .setLayeringState(VIEW_OFFSET_Z_LAYERING) // view_offset_z_layering
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
                     .setTextureState(NO_TEXTURE)
