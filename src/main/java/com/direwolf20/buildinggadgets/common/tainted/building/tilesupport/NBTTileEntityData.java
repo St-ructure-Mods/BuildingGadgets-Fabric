@@ -4,35 +4,20 @@ import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import com.direwolf20.buildinggadgets.common.tainted.template.SerialisationSupport;
-import com.google.common.base.MoreObjects;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.Objects;
 
-public class NBTTileEntityData implements ITileEntityData {
+public record NBTTileEntityData(@NotNull CompoundTag nbt,
+                                @Nullable MaterialList requiredMaterials) implements ITileEntityData {
     public static NBTTileEntityData ofTile(BlockEntity be) {
         CompoundTag nbt = new CompoundTag();
         be.save(nbt);
-        return new NBTTileEntityData(nbt);
-    }
-    @NotNull
-    private final CompoundTag nbt;
-    @Nullable
-    private final MaterialList requiredMaterials;
-
-    public NBTTileEntityData(CompoundTag nbt, @Nullable MaterialList requiredMaterials) {
-        this.nbt = Objects.requireNonNull(nbt);
-        this.requiredMaterials = requiredMaterials;
-    }
-
-    public NBTTileEntityData(CompoundTag nbt) {
-        this(nbt, null);
+        return new NBTTileEntityData(nbt, null);
     }
 
     @Override
@@ -71,33 +56,7 @@ public class NBTTileEntityData implements ITileEntityData {
         return requiredMaterials;
     }
 
-    protected CompoundTag getNBTModifiable() {
+    private CompoundTag getNBTModifiable() {
         return nbt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (! (o instanceof NBTTileEntityData)) return false;
-
-        NBTTileEntityData that = (NBTTileEntityData) o;
-
-        if (! nbt.equals(that.nbt)) return false;
-        return getRequiredMaterials() != null ? getRequiredMaterials().equals(that.getRequiredMaterials()) : that.getRequiredMaterials() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = nbt.hashCode();
-        result = 31 * result + (getRequiredMaterials() != null ? getRequiredMaterials().hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("nbt", nbt)
-                .add("requiredMaterials", requiredMaterials)
-                .toString();
     }
 }

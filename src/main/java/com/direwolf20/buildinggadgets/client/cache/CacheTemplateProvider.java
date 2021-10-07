@@ -12,7 +12,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 

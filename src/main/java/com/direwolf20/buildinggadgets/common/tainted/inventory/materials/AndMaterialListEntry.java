@@ -36,12 +36,12 @@ class AndMaterialListEntry extends SubMaterialListEntry {
      */
     @Override
     public PeekingIterator<ImmutableMultiset<ItemVariant>> iterator() {
-        if (! getAllSubEntries().findFirst().isPresent())
+        if (getAllSubEntries().findFirst().isEmpty())
             return Iterators.peekingIterator(Iterators.singletonIterator(ImmutableMultiset.of()));
         LinkedList<MaterialEntryWrapper> list = getAllSubEntries()
                 .map(MaterialEntryWrapper::new)
                 .collect(Collectors.toCollection(LinkedList::new));
-        return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<ItemVariant>>() {
+        return Iterators.peekingIterator(new AbstractIterator<>() {
             private final Deque<MaterialEntryWrapper> dequeue = list;
 
             @Override

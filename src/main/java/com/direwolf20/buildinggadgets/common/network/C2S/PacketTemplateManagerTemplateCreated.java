@@ -5,8 +5,6 @@ import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.Target;
-import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
-import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tileentities.TemplateManagerTileEntity;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -50,9 +48,7 @@ public class PacketTemplateManagerTemplateCreated implements ServerPlayNetworkin
                             BuildingGadgets.LOG.error("Failed to apply Template id on server!");
                         } else {
                             ((TemplateManagerTileEntity) blockEntity).setItem(1, stack);
-                            BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(level).ifPresent(provider -> {
-                                provider.requestUpdate(key, new Target(PacketFlow.CLIENTBOUND, player));
-                            });
+                            BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(level).ifPresent(provider -> provider.requestUpdate(key, new Target(PacketFlow.CLIENTBOUND, player)));
                         }
                     });
                 }

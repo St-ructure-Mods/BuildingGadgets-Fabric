@@ -2,7 +2,6 @@ package com.direwolf20.buildinggadgets.common.tainted;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * Should be attached to any method, class or var that is inferred to be tainted. This will be used to

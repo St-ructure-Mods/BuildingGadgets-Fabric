@@ -83,11 +83,9 @@ public class TemplateManagerContainer extends BaseContainer {
     }
 
     public static class SlotTemplateManager extends Slot {
-        private final String backgroundLoc;
 
         public SlotTemplateManager(Container container, int index, int xPosition, int yPosition, String backgroundLoc) {
             super(container, index, xPosition, yPosition);
-            this.backgroundLoc = backgroundLoc;
         }
 
         // @Override

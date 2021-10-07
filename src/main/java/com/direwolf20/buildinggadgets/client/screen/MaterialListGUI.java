@@ -52,12 +52,9 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
 
     private ScrollingMaterialList scrollingList;
 
-    private Button buttonClose;
     private Button buttonSortingModes;
     private Button buttonCopyList;
 
-    private int hoveringTextX;
-    private int hoveringTextY;
     private List<Component> hoveringText;
     private TemplateHeader header;
 
@@ -81,7 +78,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
         this.addRenderableWidget(scrollingList);
 
         int buttonY = getWindowBottomY() - (ScrollingMaterialList.BOTTOM / 2 + BUTTON_HEIGHT / 2);
-        this.buttonClose = new Button(0, buttonY, 0, BUTTON_HEIGHT, MaterialListTranslation.BUTTON_CLOSE.componentTranslation(), b -> Minecraft.getInstance().player.closeContainer());
+        Button buttonClose = new Button(0, buttonY, 0, BUTTON_HEIGHT, MaterialListTranslation.BUTTON_CLOSE.componentTranslation(), b -> Minecraft.getInstance().player.closeContainer());
         this.buttonSortingModes = new Button(0, buttonY, 0, BUTTON_HEIGHT, scrollingList.getSortingMode().getTranslationProvider().componentTranslation(), (button) -> {
             scrollingList.setSortingMode(scrollingList.getSortingMode().next());
             buttonSortingModes.setMessage(scrollingList.getSortingMode().getTranslationProvider().componentTranslation());
@@ -181,8 +178,6 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
     }
 
     public void setTaskHoveringText(int x, int y, List<Component> text) {
-        hoveringTextX = x;
-        hoveringTextY = y;
         hoveringText = text;
     }
 

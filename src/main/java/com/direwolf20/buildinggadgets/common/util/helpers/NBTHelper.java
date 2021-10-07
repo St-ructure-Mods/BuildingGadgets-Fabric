@@ -53,8 +53,7 @@ public class NBTHelper {
 
     public static <K, V> Map<K, V> deserializeMap(ListTag list, Map<K, V> toAppendTo, Function<Tag, ? extends K> keyDeserializer, Function<Tag, ? extends V> valueDeserializer) {
         for (Tag nbt : list) {
-            if (nbt instanceof CompoundTag) {
-                CompoundTag compound = (CompoundTag) nbt;
+            if (nbt instanceof CompoundTag compound) {
                 toAppendTo.put(
                         keyDeserializer.apply(compound.get(NBTKeys.MAP_SERIALIZE_KEY)),
                         valueDeserializer.apply(compound.get(NBTKeys.MAP_SERIALIZE_VALUE))
@@ -66,8 +65,7 @@ public class NBTHelper {
 
     public static <V> Map<UUID, V> deserializeUUIDMap(ListTag list, Map<UUID, V> toAppendTo, Function<Tag, ? extends V> valueDeserializer) {
         for (Tag nbt : list) {
-            if (nbt instanceof CompoundTag) {
-                CompoundTag compound = (CompoundTag) nbt;
+            if (nbt instanceof CompoundTag compound) {
                 toAppendTo.put(
                         compound.getUUID(NBTKeys.MAP_SERIALIZE_KEY),
                         valueDeserializer.apply(compound.get(NBTKeys.MAP_SERIALIZE_VALUE))
@@ -90,7 +88,7 @@ public class NBTHelper {
     }
 
     public static <T extends Tag> Collector<T, ListTag, ListTag> toListNBT() {
-        return new Collector<T, ListTag, ListTag>() {
+        return new Collector<>() {
             @Override
             public Supplier<ListTag> supplier() {
                 return ListTag::new;

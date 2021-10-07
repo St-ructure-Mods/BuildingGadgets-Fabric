@@ -10,7 +10,6 @@ import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.Collections;
@@ -105,8 +104,7 @@ public final class SaveTemplateProvider implements ITemplateProvider {
     }
 
     private UUID getFreeId() {
-        UUID freeId = getSave().getFreeUUID();
-        return freeId;
+        return getSave().getFreeUUID();
     }
 
     private void notifyListeners(ITemplateKey key, Template template, Function<IUpdateListener, TriConsumer<ITemplateProvider, ITemplateKey, Template>> function) {

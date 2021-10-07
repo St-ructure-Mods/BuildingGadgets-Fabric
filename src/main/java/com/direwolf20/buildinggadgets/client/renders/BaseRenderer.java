@@ -5,48 +5,39 @@ import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
 import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
-import com.direwolf20.buildinggadgets.common.world.MockTileEntityRenderWorld;
 import com.google.common.collect.Multiset;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
-import com.mojang.math.Matrix4f;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
-import org.apache.commons.lang3.tuple.Pair;
 import team.reborn.energy.api.base.SimpleBatteryItem;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public abstract class BaseRenderer {
+
     public static final BlockState AIR = Blocks.AIR.defaultBlockState();
 
-    private static final MockTileEntityRenderWorld tileEntityWorld = new MockTileEntityRenderWorld();
     private static final MockBuilderWorld builderWorld = new MockBuilderWorld();
-    private static final Set<BlockEntity> invalidTileEntities = new HashSet<>();
-
     private static final RemoteInventoryCache cacheInventory = new RemoteInventoryCache(false);
 
     public void render(WorldRenderContext evt, Player player, ItemStack heldItem) {
         // This is necessary to prevent issues with not rendering the overlay's at all (when Botania being present) - See #329 for more information
         bindBlocks();
 
-        if( this.isLinkable() )
+        if (this.isLinkable()) {
             BaseRenderer.renderLinkedInventoryOutline(evt, heldItem, player);
+        }
     }
 
     private void bindBlocks() {

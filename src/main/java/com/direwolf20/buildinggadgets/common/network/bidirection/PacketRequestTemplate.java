@@ -52,9 +52,7 @@ public class PacketRequestTemplate implements ClientPlayNetworking.PlayChannelHa
     public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUUID();
 
-        client.execute(() -> {
-            ClientProxy.CACHE_TEMPLATE_PROVIDER.requestRemoteUpdate(new TemplateKey(id));
-        });
+        client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.requestRemoteUpdate(new TemplateKey(id)));
     }
 
     // C2S
@@ -62,8 +60,6 @@ public class PacketRequestTemplate implements ClientPlayNetworking.PlayChannelHa
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUUID();
 
-        server.execute(() -> {
-            SaveManager.INSTANCE.getTemplateProvider().requestRemoteUpdate(new TemplateKey(id));
-        });
+        server.execute(() -> SaveManager.INSTANCE.getTemplateProvider().requestRemoteUpdate(new TemplateKey(id)));
     }
 }

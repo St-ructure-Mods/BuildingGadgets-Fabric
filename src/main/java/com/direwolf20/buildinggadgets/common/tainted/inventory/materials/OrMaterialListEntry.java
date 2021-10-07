@@ -36,10 +36,10 @@ class OrMaterialListEntry extends SubMaterialListEntry {
      */
     @Override
     public PeekingIterator<ImmutableMultiset<ItemVariant>> iterator() {
-        if (! getAllSubEntries().findFirst().isPresent())
+        if (getAllSubEntries().findFirst().isEmpty())
             return Iterators.peekingIterator(Iterators.singletonIterator(ImmutableMultiset.of()));
         Iterator<MaterialListEntry<?>> entryIterator = getAllSubEntries().iterator();
-        return Iterators.peekingIterator(new AbstractIterator<ImmutableMultiset<ItemVariant>>() {
+        return Iterators.peekingIterator(new AbstractIterator<>() {
             private Iterator<ImmutableMultiset<ItemVariant>> itemIterator;
 
             @Override
@@ -50,7 +50,7 @@ class OrMaterialListEntry extends SubMaterialListEntry {
                     else
                         return endOfData();
                 }
-                if (! itemIterator.hasNext()) {
+                if (!itemIterator.hasNext()) {
                     itemIterator = null;
                     return computeNext();
                 }

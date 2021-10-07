@@ -8,8 +8,8 @@ public enum ExchangingModes {
     VERTICAL_COLUMN(new VerticalColumnMode(true), "vertical_column"),
     HORIZONTAL_COLUMN(new HorizontalColumnMode(true), "horizontal_column");
 
-    AbstractMode mode;
-    String name;
+    final AbstractMode mode;
+    final String name;
 
     ExchangingModes(AbstractMode mode, String name) {
         this.mode = mode;

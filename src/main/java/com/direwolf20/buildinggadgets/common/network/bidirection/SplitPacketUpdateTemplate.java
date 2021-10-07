@@ -80,9 +80,7 @@ public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChann
         UUID id = buf.readUUID();
         try {
             Template template = readTemplate(buf);
-            client.execute(() -> {
-                ClientProxy.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), template);
-            });
+            client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), template));
         } catch (TemplateReadException e) {
             e.printStackTrace();
         }
@@ -95,9 +93,7 @@ public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChann
         UUID id = buf.readUUID();
         try {
             Template template = readTemplate(buf);
-            server.execute(() -> {
-                SaveManager.INSTANCE.getTemplateProvider().setTemplate(new TemplateKey(id), template);
-            });
+            server.execute(() -> SaveManager.INSTANCE.getTemplateProvider().setTemplate(new TemplateKey(id), template));
         } catch (TemplateReadException e) {
             e.printStackTrace();
         }

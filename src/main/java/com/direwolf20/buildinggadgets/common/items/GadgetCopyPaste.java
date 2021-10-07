@@ -347,7 +347,7 @@ public class GadgetCopyPaste extends AbstractGadget {
             setLowerRegionBound(stack, lookedAt);
         }
         Optional<Region> regionOpt = getSelectedRegion(stack);
-        if (!regionOpt.isPresent()) //notify of single copy
+        if (regionOpt.isEmpty()) //notify of single copy
             player.displayClientMessage(MessageTranslation.FIRST_COPY.componentTranslation().setStyle(Styles.DK_GREEN), true);
         regionOpt.ifPresent(region -> tryCopy(stack, world, player, region));
     }
@@ -407,20 +407,18 @@ public class GadgetCopyPaste extends AbstractGadget {
     }
 
     private void build(ItemStack stack, Level world, Player player, BlockPos pos) {
-        BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(world).ifPresent((ITemplateProvider provider) -> {
-            BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent((ITemplateKey key) -> {
-                Template template = provider.getTemplateForKey(key);
-                BuildContext buildContext = BuildContext.builder()
-                        .stack(stack)
-                        .player(player)
-                        .build(world);
-                IBuildView view = template.createViewInContext(buildContext);
-                view.translateTo(pos);
-                if (!checkPlacement(world, player, view.getBoundingBox()))
-                    return;
-                schedulePlacement(stack, view, player);
-            });
-        });
+        BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(world).ifPresent((ITemplateProvider provider) -> BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent((ITemplateKey key) -> {
+            Template template = provider.getTemplateForKey(key);
+            BuildContext buildContext = BuildContext.builder()
+                    .stack(stack)
+                    .player(player)
+                    .build(world);
+            IBuildView view = template.createViewInContext(buildContext);
+            view.translateTo(pos);
+            if (!checkPlacement(world, player, view.getBoundingBox()))
+                return;
+            schedulePlacement(stack, view, player);
+        }));
     }
 
     private boolean checkPlacement(Level world, Player player, Region region) {

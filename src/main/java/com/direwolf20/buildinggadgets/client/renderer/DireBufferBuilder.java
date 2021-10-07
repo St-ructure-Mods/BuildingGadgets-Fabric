@@ -87,9 +87,7 @@ public class DireBufferBuilder extends DefaultedVertexConsumer implements Buffer
             aint[k] = k;
         }
 
-        IntArrays.mergeSort(aint, (p_227830_1_, p_227830_2_) -> {
-            return Floats.compare(afloat[p_227830_1_], afloat[p_227830_2_]);
-        });
+        IntArrays.mergeSort(aint, (p_227830_1_, p_227830_2_) -> Floats.compare(afloat[p_227830_1_], afloat[p_227830_2_]));
         BitSet bitset = new BitSet();
         FloatBuffer floatbuffer1 = MemoryTracker.create(this.vertexFormat.getIntegerSize() * 4).asFloatBuffer();
 

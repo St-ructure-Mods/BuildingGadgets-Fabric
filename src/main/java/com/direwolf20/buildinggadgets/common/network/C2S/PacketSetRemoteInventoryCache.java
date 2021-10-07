@@ -1,11 +1,9 @@
 package com.direwolf20.buildinggadgets.common.network.C2S;
 
-import com.direwolf20.buildinggadgets.client.EventUtil;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
@@ -43,9 +41,7 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
         Data data = Data.read(buf);
 
         client.execute(() -> data.either.ifLeft(cache -> {
-            if (data.isCopyPaste()) {
-                EventUtil.setCache(cache.cache());
-            } else {
+            if (!data.isCopyPaste()) {
                 BaseRenderer.setInventoryCache(cache.cache());
             }
         }));

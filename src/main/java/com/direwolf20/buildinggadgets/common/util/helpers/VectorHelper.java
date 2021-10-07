@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.common.util.helpers;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

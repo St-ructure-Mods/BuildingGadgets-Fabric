@@ -104,5 +104,4 @@ public final class PlayerItemIndex implements IItemIndex {
             return MatchResult.failure(list, availableBuilder.build(), ImmutableMultiset.of());
         }
     }
-
 }

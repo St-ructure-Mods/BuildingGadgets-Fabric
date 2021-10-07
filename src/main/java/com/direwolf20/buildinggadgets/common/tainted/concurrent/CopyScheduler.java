@@ -29,14 +29,13 @@ public final class CopyScheduler extends SteppedScheduler {
     private final Spliterator<PlacementTarget> targets;
     private final ImmutableMap.Builder<BlockPos, BlockData> builder;
     private Region.Builder regionBuilder;
-    private final BuildContext context;
 
     private CopyScheduler(BiConsumer<ImmutableMap<BlockPos, BlockData>, Region> finisher, IBuildView worldView, int steps) {
         super(steps);
         this.finisher = finisher;
         this.targets = worldView.spliterator();
         this.builder = ImmutableMap.builder();
-        this.context = worldView.getContext();
+        BuildContext context = worldView.getContext();
         this.regionBuilder = null;
     }
 

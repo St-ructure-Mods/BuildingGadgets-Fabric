@@ -17,7 +17,7 @@ public abstract class DelegatingSpliterator<T, U> implements Spliterator<U> {
     @Override
     public boolean tryAdvance(Consumer<? super U> action) {
         found = false;
-        while (getOther().tryAdvance(t -> { found = advance(t, action);}) && ! found)
+        while (getOther().tryAdvance(t -> found = advance(t, action)) && ! found)
             ;
         return found;
     }

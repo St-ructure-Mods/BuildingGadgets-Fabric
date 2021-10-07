@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items.modes;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.config.Config;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 

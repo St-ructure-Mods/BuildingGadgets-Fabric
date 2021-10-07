@@ -47,7 +47,7 @@ public class PasteGUI extends Screen {
         Y.setValue(currentOffset.getY());
         Z.setValue(currentOffset.getZ());
 
-        List<AbstractButton> buttons = new ArrayList<AbstractButton>() {{
+        List<AbstractButton> buttons = new ArrayList<>() {{
             add(new CopyGUI.CenteredButton(y + 20, 70, GuiTranslation.SINGLE_CONFIRM.componentTranslation(), (button) -> {
                 PacketPasteGUI.send(X.getValue(), Y.getValue(), Z.getValue());
                 onClose();

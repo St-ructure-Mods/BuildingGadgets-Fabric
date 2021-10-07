@@ -12,13 +12,10 @@ public class DireVertexBuffer implements AutoCloseable {
 
     private int glBufferId;
     private final VertexFormat vertexFormat;
-    private int count;
 
     public DireVertexBuffer(VertexFormat vertexFormatIn) {
         this.vertexFormat = vertexFormatIn;
-        RenderSystem.glGenBuffers((p_227876_1_) -> {
-            this.glBufferId = p_227876_1_;
-        });
+        RenderSystem.glGenBuffers((p_227876_1_) -> this.glBufferId = p_227876_1_);
     }
 
     public void bindBuffer() {
@@ -27,9 +24,7 @@ public class DireVertexBuffer implements AutoCloseable {
 
     public void upload(DireBufferBuilder bufferIn) {
         if (!RenderSystem.isOnRenderThread()) {
-            RenderSystem.recordRenderCall(() -> {
-                this.uploadRaw(bufferIn);
-            });
+            RenderSystem.recordRenderCall(() -> this.uploadRaw(bufferIn));
         } else {
             this.uploadRaw(bufferIn);
         }
@@ -38,11 +33,7 @@ public class DireVertexBuffer implements AutoCloseable {
 
     public CompletableFuture<Void> uploadLater(DireBufferBuilder bufferIn) {
         if (!RenderSystem.isOnRenderThread()) {
-            return CompletableFuture.runAsync(() -> {
-                this.uploadRaw(bufferIn);
-            }, (p_227877_0_) -> {
-                RenderSystem.recordRenderCall(p_227877_0_::run);
-            });
+            return CompletableFuture.runAsync(() -> this.uploadRaw(bufferIn), (p_227877_0_) -> RenderSystem.recordRenderCall(p_227877_0_::run));
         } else {
             this.uploadRaw(bufferIn);
             return CompletableFuture.completedFuture(null);
@@ -53,7 +44,7 @@ public class DireVertexBuffer implements AutoCloseable {
         Pair<DireBufferBuilder.DrawState, ByteBuffer> pair = bufferIn.getNextBuffer();
         if (this.glBufferId != -1) {
             ByteBuffer bytebuffer = pair.getSecond();
-            this.count = bytebuffer.remaining() / this.vertexFormat.getVertexSize();
+            int count = bytebuffer.remaining() / this.vertexFormat.getVertexSize();
             this.bindBuffer();
             RenderSystem.glBufferData(34962, bytebuffer, 35044);
             unbindBuffer();

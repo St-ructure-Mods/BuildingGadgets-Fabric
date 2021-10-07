@@ -21,7 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 
 import org.jetbrains.annotations.Nullable;
-import java.util.Objects;
+
 import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 
@@ -31,7 +31,7 @@ import java.util.function.ToIntFunction;
  * <p>
  * Notice that this class is immutable as long as the {@link ITileEntityData} instance is immutable.
  */
-public final class BlockData {
+public record BlockData(BlockState state, ITileEntityData tileData) {
     public static final BlockData AIR = new BlockData(Blocks.AIR.defaultBlockState(), TileSupport.dummyTileEntityData());
 
     /**
@@ -49,7 +49,7 @@ public final class BlockData {
 
     @Nullable
     public static BlockData tryDeserialize(@Nullable CompoundTag tag, @Nullable IntFunction<ITileDataSerializer> serializerProvider, boolean readDataPersisted) {
-        if (tag == null || ! (tag.contains(NBTKeys.KEY_STATE) && tag.contains(NBTKeys.KEY_SERIALIZER) && tag.contains(NBTKeys.KEY_DATA)))
+        if (tag == null || !(tag.contains(NBTKeys.KEY_STATE) && tag.contains(NBTKeys.KEY_SERIALIZER) && tag.contains(NBTKeys.KEY_DATA)))
             return null;
         BlockState state = NbtUtils.readBlockState(tag.getCompound(NBTKeys.KEY_STATE));
         ITileDataSerializer serializer;
@@ -69,11 +69,11 @@ public final class BlockData {
     }
 
     /**
-     * @param tag The {@link CompoundTag} representing the serialized block data.
+     * @param tag       The {@link CompoundTag} representing the serialized block data.
      * @param persisted Whether or not the {@link CompoundTag} was created using an persisted save.
      * @return A new instance of {@code BlockData} as represented by the {@link CompoundTag}.
      * @throws IllegalArgumentException if the given tag does not represent a valid {@code BlockData}.
-     * @throws NullPointerException if the tag was null.
+     * @throws NullPointerException     if the tag was null.
      */
     public static BlockData deserialize(CompoundTag tag, boolean persisted) {
         return deserialize(tag, persisted ? null : i -> Registries.TileEntityData.getTileDataSerializers().byId(i), persisted);
@@ -99,37 +99,23 @@ public final class BlockData {
         return new BlockData(state, data);
     }
 
-    private final BlockState state;
-    private final ITileEntityData tileData;
-
-    /**
-     * Creates a new {@code BlockData} with the specified data.
-     * @param state The {@link BlockState} of the resulting data.
-     * @param tileData The {@link ITileEntityData} of the resulting data.
-     * @throws NullPointerException if state or tileData are null.
-     */
-    public BlockData(BlockState state, ITileEntityData tileData) {
-        this.state = Objects.requireNonNull(state);
-        this.tileData = Objects.requireNonNull(tileData);
-    }
-
     /**
      * @return The {@link BlockState} contained by this {@code BlockData}
      */
     public BlockState getState() {
-        return state;
+        return state();
     }
 
     /**
      * @return The {@link ITileEntityData} contained by this {@code BlockState}.
      */
     public ITileEntityData getTileData() {
-        return tileData;
+        return tileData();
     }
 
     /**
      * @param context The {@link BuildContext} in which to perform the placement.
-     * @param pos The {@link BlockPos} at which to perform the placement.
+     * @param pos     The {@link BlockPos} at which to perform the placement.
      * @return whether or not the {@link ITileEntityData} reported that placement was performed.
      */
     public boolean placeIn(BuildContext context, BlockPos pos) {
@@ -138,6 +124,7 @@ public final class BlockData {
 
     /**
      * Serializes this {@code BlockData} to NBT. If persisted is false, registry id's will be used instead of registry-names, for serialisation.
+     *
      * @param persisted Whether or not this should be written as a persisted save.
      * @return The serialized form of this {@code BlockData}.
      */
@@ -166,31 +153,5 @@ public final class BlockData {
 
     public MaterialList getRequiredItems(BuildContext context, @Nullable HitResult target, @Nullable BlockPos pos) {
         return getTileData().getRequiredItems(context, getState(), target, pos);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (! (o instanceof BlockData)) return false;
-
-        BlockData blockData = (BlockData) o;
-
-        if (! getState().equals(blockData.getState())) return false;
-        return getTileData().equals(blockData.getTileData());
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getState().hashCode();
-        result = 31 * result + getTileData().hashCode();
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("state", state)
-                .add("tileData", tileData)
-                .toString();
     }
 }

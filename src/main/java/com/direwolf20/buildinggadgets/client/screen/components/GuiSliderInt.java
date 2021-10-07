@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.client.screen.components;
 
 import com.direwolf20.buildinggadgets.client.BuildingGadgetsClient;
-import com.direwolf20.buildinggadgets.client.ClientProxy;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketChangeRange;
 import com.google.common.collect.ImmutableSet;
@@ -122,8 +121,8 @@ public class GuiSliderInt extends AbstractSliderButton {
     public Collection<AbstractWidget> getComponents() {
         return ImmutableSet.of(
                 this,
-                new GuiButtonIncrement(this, x - height, y, height, height, new TextComponent("-"), b -> increment.accept(this, - 1)),
-                new GuiButtonIncrement(this, x + width, y, height, height, new TextComponent("+"), b -> increment.accept(this, 1)
+                new GuiButtonIncrement(this, x - height, y, width, height, new TextComponent("-"), b -> increment.accept(this, - 1)),
+                new GuiButtonIncrement(this, x + width, y, width, height, new TextComponent("+"), b -> increment.accept(this, 1)
         ));
     }
 

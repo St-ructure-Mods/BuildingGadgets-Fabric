@@ -15,13 +15,13 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.Objects;
 
-class SimpleMaterialListEntry implements MaterialListEntry<SimpleMaterialListEntry> {
+record SimpleMaterialListEntry(ImmutableMultiset<ItemVariant> items) implements MaterialListEntry<SimpleMaterialListEntry> {
     static final MaterialListEntry.Serializer<SimpleMaterialListEntry> SERIALIZER = new Serializer();
-    private final ImmutableMultiset<ItemVariant> items;
 
     SimpleMaterialListEntry(ImmutableMultiset<ItemVariant> items) {
         this.items = Objects.requireNonNull(items, "Cannot have a SimpleMaterialListEntry without any Materials!");
@@ -32,7 +32,7 @@ class SimpleMaterialListEntry implements MaterialListEntry<SimpleMaterialListEnt
     }
 
     @Override
-    public PeekingIterator<ImmutableMultiset<ItemVariant>> iterator() {
+    public @NotNull PeekingIterator<ImmutableMultiset<ItemVariant>> iterator() {
         return Iterators.peekingIterator(Iterators.singletonIterator(items));
     }
 

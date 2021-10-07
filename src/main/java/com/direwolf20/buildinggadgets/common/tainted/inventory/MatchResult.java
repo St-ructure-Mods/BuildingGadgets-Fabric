@@ -8,12 +8,7 @@ import com.google.common.collect.ImmutableMultiset;
  * The result of a match by an {@link IItemIndex}. Allows access to the {@link #getMatchedList() matched MaterialList}, the Items which were found, the chosen option and of course
  * whether the match was a success or not.
  */
-public final class MatchResult {
-    private final MaterialList matchedList;
-    private final ImmutableMultiset<ItemVariant> foundItems;
-    private final ImmutableMultiset<ItemVariant> chosenOption;
-    private final boolean isSuccess;
-
+public record MatchResult(MaterialList matchedList, ImmutableMultiset<ItemVariant> foundItems, ImmutableMultiset<ItemVariant> chosenOption, boolean isSuccess) {
     public static MatchResult success(MaterialList matchedList, ImmutableMultiset<ItemVariant> foundItems, ImmutableMultiset<ItemVariant> chosenOption) {
         return new MatchResult(matchedList, foundItems, chosenOption, true);
     }
@@ -26,17 +21,6 @@ public final class MatchResult {
         return new MatchResult(matchedList, foundItems, chosenOption, false);
     }
 
-    MatchResult(MaterialList matchedList, ImmutableMultiset<ItemVariant> foundItems, ImmutableMultiset<ItemVariant> chosenOption, boolean isSuccess) {
-        this.matchedList = matchedList;
-        this.foundItems = foundItems;
-        this.chosenOption = chosenOption;
-        this.isSuccess = isSuccess;
-    }
-
-    public MaterialList getMatchedList() {
-        return matchedList;
-    }
-
     /**
      * If this result is a success, then this will be a reference to the same set returned by {@link #getChosenOption()} as all the {@link ItemVariant unique objects}
      * in there will be available. If this match is not a success, then this will return the amount of found Items for all {@link ItemVariant unique objects} across
@@ -45,14 +29,10 @@ public final class MatchResult {
      * @return The found items
      */
     public ImmutableMultiset<ItemVariant> getFoundItems() {
-        return foundItems;
+        return foundItems();
     }
 
     public ImmutableMultiset<ItemVariant> getChosenOption() {
-        return chosenOption;
-    }
-
-    public boolean isSuccess() {
-        return isSuccess;
+        return chosenOption();
     }
 }

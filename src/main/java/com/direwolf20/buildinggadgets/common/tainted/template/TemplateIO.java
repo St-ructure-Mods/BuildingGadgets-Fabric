@@ -103,7 +103,8 @@ public final class TemplateIO {
         }
     }
 
-    private static final class TemplateJsonRepresentation {
+    private record TemplateJsonRepresentation(TemplateHeader header, String body) {
+
         public static TemplateJsonRepresentation ofTemplate(Template template, @Nullable BuildContext context) throws TemplateWriteException {
             TemplateHeader header = context != null ?
                     template.getHeaderAndForceMaterials(context) :
@@ -112,22 +113,6 @@ public final class TemplateIO {
             writeTemplate(template, baos);
             String base64 = Base64.getEncoder().encodeToString(baos.toByteArray());
             return new TemplateJsonRepresentation(header, base64);
-        }
-
-        private final TemplateHeader header;
-        private final String body;
-
-        private TemplateJsonRepresentation(TemplateHeader header, String body) {
-            this.header = header;
-            this.body = body;
-        }
-
-        private TemplateHeader getHeader() {
-            return header;
-        }
-
-        private String getBody() {
-            return body;
         }
 
         private Template getTemplate() throws TemplateReadException {

@@ -13,6 +13,7 @@ import com.google.gson.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -132,7 +133,7 @@ public final class MaterialList implements Iterable<ImmutableMultiset<ItemVarian
 
     @Override
     @SuppressWarnings("unchecked") //The iterator is independent of the type anyway
-    public PeekingIterator<ImmutableMultiset<ItemVariant>> iterator() {
+    public @NotNull PeekingIterator<ImmutableMultiset<ItemVariant>> iterator() {
         return getRootEntry().iterator();
     }
 
@@ -246,14 +247,7 @@ public final class MaterialList implements Iterable<ImmutableMultiset<ItemVarian
         }
     }
 
-    public static final class JsonSerializer implements JsonBiDiSerializer<MaterialList> {
-        private final boolean printName;
-        private final boolean extended;
-
-        public JsonSerializer(boolean printName, boolean extended) {
-            this.printName = printName;
-            this.extended = extended;
-        }
+    public record JsonSerializer(boolean printName, boolean extended) implements JsonBiDiSerializer<MaterialList> {
 
         @Override
         @SuppressWarnings("unchecked") // only called on the entry itself... this is ok

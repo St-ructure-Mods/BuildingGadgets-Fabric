@@ -27,7 +27,8 @@ import java.util.Objects;
  * {@link Template}. Only the boundingBox information is required. However it is advised to provide Users with as
  * much information as possible about the {@link Template} they would like to use.
  */
-public final class TemplateHeader {
+public record TemplateHeader(@Nullable String name, @Nullable String author, @Nullable MaterialList requiredItems, @NotNull Region boundingBox) {
+
     public static final String VERSION = "2.1.0";
 
     /**
@@ -95,6 +96,7 @@ public final class TemplateHeader {
             return object;
         }
     };
+
     /**
      * Creates a new {@link Builder} which can be used to create {@code TemplateHeader} objects.
      *
@@ -166,16 +168,7 @@ public final class TemplateHeader {
                 .registerTypeAdapter(TemplateHeader.class, BI_DI_SERIALIZER);
     }
 
-    @Nullable
-    private final String name;
-    @Nullable
-    private final String author;
-    @NotNull
-    private final Region boundingBox;
-    @Nullable
-    private final MaterialList requiredItems;
-
-    private TemplateHeader(@Nullable String name, @Nullable String author, @Nullable MaterialList requiredItems, @NotNull Region boundingBox) {
+    public TemplateHeader(@Nullable String name, @Nullable String author, @Nullable MaterialList requiredItems, @NotNull Region boundingBox) {
         this.name = name;
         this.author = author;
         this.requiredItems = requiredItems;
@@ -226,7 +219,7 @@ public final class TemplateHeader {
             nbt.putString(NBTKeys.KEY_NAME, getName());
         if (getAuthor() != null)
             nbt.putString(NBTKeys.KEY_AUTHOR, getAuthor());
-        if (! persisted && getRequiredItems() != null)
+        if (!persisted && getRequiredItems() != null)
             nbt.put(NBTKeys.KEY_MATERIALS, getRequiredItems().serialize(persisted));
         return nbt;
     }

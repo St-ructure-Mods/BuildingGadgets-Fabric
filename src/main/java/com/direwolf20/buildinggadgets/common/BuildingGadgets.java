@@ -26,14 +26,14 @@ import org.apache.logging.log4j.Logger;
 
 public final class BuildingGadgets implements ModInitializer {
 
-    public static Logger LOG = LogManager.getLogger();
+    public static final Logger LOG = LogManager.getLogger();
 
     /**
      * Register our creative tab. Notice that we're also modifying the NBT data of the
      * building gadget to remove the damage / energy indicator from the creative
      * tabs icon.
      */
-    public static CreativeModeTab creativeTab = FabricItemGroupBuilder.build(BuildingGadgets.id("tab"), () -> {
+    public static final CreativeModeTab creativeTab = FabricItemGroupBuilder.build(BuildingGadgets.id("tab"), () -> {
         ItemStack stack = new ItemStack(OurItems.BUILDING_GADGET_ITEM);
         stack.getOrCreateTag().putByte(NBTKeys.CREATIVE_MARKER, (byte) 0);
         return stack;
@@ -46,16 +46,14 @@ public final class BuildingGadgets implements ModInitializer {
     }
 
     private void serverLoad() {
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            server.getCommands().getDispatcher().register(
-                    Commands.literal(Reference.MODID)
-                            .then(OverrideBuildSizeCommand.registerToggle())
-                            .then(OverrideCopySizeCommand.registerToggle())
-                            .then(ForceUnloadedCommand.registerToggle())
-                            .then(OverrideBuildSizeCommand.registerList())
-                            .then(OverrideCopySizeCommand.registerList())
-                            .then(ForceUnloadedCommand.registerList()));
-        });
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> server.getCommands().getDispatcher().register(
+                Commands.literal(Reference.MODID)
+                        .then(OverrideBuildSizeCommand.registerToggle())
+                        .then(OverrideCopySizeCommand.registerToggle())
+                        .then(ForceUnloadedCommand.registerToggle())
+                        .then(OverrideBuildSizeCommand.registerList())
+                        .then(OverrideCopySizeCommand.registerList())
+                        .then(ForceUnloadedCommand.registerList())));
     }
 
     private void serverLoaded() {

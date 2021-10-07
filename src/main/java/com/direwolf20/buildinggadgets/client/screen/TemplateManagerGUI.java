@@ -565,12 +565,10 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         }
 
         runAfterUpdate(0, () -> { //we are copying form 0 to 1 => slot 0 needs to be the recent one
-            templateProvider.ifPresent((ITemplateProvider provider) -> {
-                BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(left).ifPresent((ITemplateKey key) -> {
-                    Template templateToSave = provider.getTemplateForKey(key).withName(nameField.getValue());
-                    pasteTemplateToStack(provider, right, templateToSave, replaced);
-                });
-            });
+            templateProvider.ifPresent((ITemplateProvider provider) -> BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(left).ifPresent((ITemplateKey key) -> {
+                Template templateToSave = provider.getTemplateForKey(key).withName(nameField.getValue());
+                pasteTemplateToStack(provider, right, templateToSave, replaced);
+            }));
         });
     }
 
@@ -584,43 +582,39 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         }
 
         runAfterUpdate(1, () -> { //we are copying form 1 to 0 => slot 1 needs to be the recent one
-            templateProvider.ifPresent((ITemplateProvider provider) -> {
-                BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(right).ifPresent((ITemplateKey key) -> {
-                    Template templateToSave = provider.getTemplateForKey(key);
-                    pasteTemplateToStack(provider, left, templateToSave, replaced);
-                });
-            });
+            templateProvider.ifPresent((ITemplateProvider provider) -> BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(right).ifPresent((ITemplateKey key) -> {
+                Template templateToSave = provider.getTemplateForKey(key);
+                pasteTemplateToStack(provider, left, templateToSave, replaced);
+            }));
         });
     }
 
     private void onCopy() {
         runAfterUpdate(0, () -> { //we are copying from slot 1 => slot 1 needs to be updated
             ItemStack stack = container.getSlot(0).getItem();
-            templateProvider.ifPresent((ITemplateProvider provider) -> {
-                BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent((ITemplateKey key) -> {
-                    Player player = getMinecraft().player;
-                    assert player != null;
+            templateProvider.ifPresent((ITemplateProvider provider) -> BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent((ITemplateKey key) -> {
+                Player player = getMinecraft().player;
+                assert player != null;
 
-                    BuildContext buildContext = BuildContext.builder()
-                            .player(player)
-                            .stack(stack)
-                            .build(getWorld());
-                    try {
-                        Template template = provider.getTemplateForKey(key);
-                        if (! nameField.getValue().isEmpty())
-                            template = template.withName(nameField.getValue());
-                        String json = TemplateIO.writeTemplateJson(template, buildContext);
-                        getMinecraft().keyboardHandler.setClipboard(json);
-                        player.displayClientMessage(MessageTranslation.CLIPBOARD_COPY_SUCCESS.componentTranslation().setStyle(Styles.DK_GREEN), false);
-                    } catch (DataCannotBeWrittenException e) {
-                        BuildingGadgets.LOG.error("Failed to write Template.", e);
-                        player.displayClientMessage(MessageTranslation.CLIPBOARD_COPY_ERROR_TEMPLATE.componentTranslation().setStyle(Styles.RED), false);
-                    } catch (Exception e) {
-                        BuildingGadgets.LOG.error("Failed to copy Template to clipboard.", e);
-                        player.displayClientMessage(MessageTranslation.CLIPBOARD_COPY_ERROR.componentTranslation().setStyle(Styles.RED), false);
-                    }
-                });
-            });
+                BuildContext buildContext = BuildContext.builder()
+                        .player(player)
+                        .stack(stack)
+                        .build(getWorld());
+                try {
+                    Template template = provider.getTemplateForKey(key);
+                    if (! nameField.getValue().isEmpty())
+                        template = template.withName(nameField.getValue());
+                    String json = TemplateIO.writeTemplateJson(template, buildContext);
+                    getMinecraft().keyboardHandler.setClipboard(json);
+                    player.displayClientMessage(MessageTranslation.CLIPBOARD_COPY_SUCCESS.componentTranslation().setStyle(Styles.DK_GREEN), false);
+                } catch (DataCannotBeWrittenException e) {
+                    BuildingGadgets.LOG.error("Failed to write Template.", e);
+                    player.displayClientMessage(MessageTranslation.CLIPBOARD_COPY_ERROR_TEMPLATE.componentTranslation().setStyle(Styles.RED), false);
+                } catch (Exception e) {
+                    BuildingGadgets.LOG.error("Failed to copy Template to clipboard.", e);
+                    player.displayClientMessage(MessageTranslation.CLIPBOARD_COPY_ERROR.componentTranslation().setStyle(Styles.RED), false);
+                }
+            }));
         });
     }
 

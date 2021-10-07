@@ -37,12 +37,13 @@ import java.util.Map;
 import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 
-public final class Undo {
+public record Undo(ResourceKey<Level> dim, Map<BlockPos, BlockInfo> dataMap, Region boundingBox) {
+
     static Undo deserialize(CompoundTag nbt) {
         Preconditions.checkArgument(nbt.contains(NBTKeys.WORLD_SAVE_DIM, NbtType.STRING)
-                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_BLOCK_LIST, NbtType.LIST)
-                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_DATA_LIST, NbtType.LIST)
-                && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_DATA_SERIALIZER_LIST, NbtType.LIST));
+                                    && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_BLOCK_LIST, NbtType.LIST)
+                                    && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_DATA_LIST, NbtType.LIST)
+                                    && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_DATA_SERIALIZER_LIST, NbtType.LIST));
         DataDecompressor<ITileDataSerializer> serializerReverseObjectIncrementer = new DataDecompressor<>(
                 (ListTag) nbt.get(NBTKeys.WORLD_SAVE_UNDO_DATA_SERIALIZER_LIST),
                 inbt -> {
@@ -87,16 +88,6 @@ public final class Undo {
         return new Builder();
     }
 
-    private final ResourceKey<Level> dim;
-    private final Map<BlockPos, BlockInfo> dataMap;
-    private final Region boundingBox;
-
-    public Undo(ResourceKey<Level> dim, Map<BlockPos, BlockInfo> dataMap, Region boundingBox) {
-        this.dim = dim;
-        this.dataMap = dataMap;
-        this.boundingBox = boundingBox;
-    }
-
     public Region getBoundingBox() {
         return boundingBox;
     }
@@ -133,25 +124,14 @@ public final class Undo {
         return res;
     }
 
-    public static final class BlockInfo {
+    public record BlockInfo(BlockData recordedData, BlockData placedData, Multiset<ItemVariant> usedItems,
+                            Multiset<ItemVariant> producedItems) {
         private static BlockInfo deserialize(CompoundTag nbt, IntFunction<BlockData> dataSupplier, IntFunction<Multiset<ItemVariant>> itemSetSupplier) {
             BlockData data = dataSupplier.apply(nbt.getInt(NBTKeys.WORLD_SAVE_UNDO_RECORDED_DATA));
             BlockData placedData = dataSupplier.apply(nbt.getInt(NBTKeys.WORLD_SAVE_UNDO_PLACED_DATA));
             Multiset<ItemVariant> usedItems = itemSetSupplier.apply(nbt.getInt(NBTKeys.WORLD_SAVE_UNDO_ITEMS_USED));
             Multiset<ItemVariant> producedItems = itemSetSupplier.apply(nbt.getInt(NBTKeys.WORLD_SAVE_UNDO_ITEMS_PRODUCED));
             return new BlockInfo(data, placedData, usedItems, producedItems);
-        }
-
-        private final BlockData recordedData;
-        private final BlockData placedData;
-        private final Multiset<ItemVariant> usedItems;
-        private final Multiset<ItemVariant> producedItems;
-
-        private BlockInfo(BlockData recordedData, BlockData placedData, Multiset<ItemVariant> usedItems, Multiset<ItemVariant> producedItems) {
-            this.recordedData = recordedData;
-            this.placedData = placedData;
-            this.usedItems = usedItems;
-            this.producedItems = producedItems;
         }
 
         private CompoundTag serialize(ToIntFunction<BlockData> dataIdSupplier, ToIntFunction<Multiset<ItemVariant>> itemIdSupplier) {

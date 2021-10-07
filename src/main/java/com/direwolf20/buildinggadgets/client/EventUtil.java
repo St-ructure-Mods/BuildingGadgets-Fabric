@@ -1,13 +1,11 @@
 package com.direwolf20.buildinggadgets.client;
 
-import com.direwolf20.buildinggadgets.client.cache.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
@@ -20,6 +18,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -50,11 +49,6 @@ public class EventUtil {
             .thenComparing(e -> Registry.ITEM.getKey(e.getElement().getItem()));
 
     private static final int STACKS_PER_LINE = 8;
-    private static final RemoteInventoryCache cache = new RemoteInventoryCache(true);
-
-    public static void setCache(Multiset<ItemVariant> cache) {
-        EventUtil.cache.setCache(cache);
-    }
 
     public static void addTemplatePadding(ItemStack stack, List<Component> tooltip) {
         //This method extends the tooltip box size to fit the item's we will render in onDrawTooltip
@@ -62,40 +56,38 @@ public class EventUtil {
         if (mc.level == null || mc.player == null) //populateSearchTreeManager...
             return;
 
-        BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(mc.level).ifPresent((ITemplateProvider provider) -> {
-            BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent((ITemplateKey templateKey) -> {
-                Template template = provider.getTemplateForKey(templateKey);
-                IItemIndex index = InventoryHelper.index(stack, mc.player);
+        BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(mc.level).ifPresent((ITemplateProvider provider) -> BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent((ITemplateKey templateKey) -> {
+            Template template = provider.getTemplateForKey(templateKey);
+            IItemIndex index = InventoryHelper.index(stack, mc.player);
 
-                BuildContext buildContext = BuildContext.builder()
-                        .stack(stack)
-                        .player(mc.player)
-                        .build(mc.level);
+            BuildContext buildContext = BuildContext.builder()
+                    .stack(stack)
+                    .player(mc.player)
+                    .build(mc.level);
 
-                TemplateHeader header = template.getHeaderAndForceMaterials(buildContext);
-                MaterialList list = header.getRequiredItems();
-                if (list == null)
-                    list = MaterialList.empty();
+            TemplateHeader header = template.getHeaderAndForceMaterials(buildContext);
+            MaterialList list = header.getRequiredItems();
+            if (list == null)
+                list = MaterialList.empty();
 
-                MatchResult match;
+            MatchResult match;
 
-                try (Transaction transaction = Transaction.openOuter()) {
-                    match = index.match(list, transaction);
-                }
+            try (Transaction transaction = Transaction.openOuter()) {
+                match = index.match(list, transaction);
+            }
 
-                int count = match.isSuccess() ? match.getChosenOption().entrySet().size() : match.getChosenOption().entrySet().size() + 1;
-                if (count > 0 && Screen.hasShiftDown()) {
-                    int lines = (((count - 1) / STACKS_PER_LINE) + 1) * 2;
-                    int width = Math.min(STACKS_PER_LINE, count) * 18;
-                    String spaces = PLACE_HOLDER;
-                    while (mc.font.width(spaces) < width)
-                        spaces += " ";
+            int count = match.isSuccess() ? match.getChosenOption().entrySet().size() : match.getChosenOption().entrySet().size() + 1;
+            if (count > 0 && Screen.hasShiftDown()) {
+                int lines = (((count - 1) / STACKS_PER_LINE) + 1) * 2;
+                int width = Math.min(STACKS_PER_LINE, count) * 18;
+                String spaces = PLACE_HOLDER;
+                while (mc.font.width(spaces) < width)
+                    spaces += " ";
 
-                    for (int j = 0; j < lines; j++)
-                        tooltip.add(new TextComponent(spaces));
-                }
-            });
-        });
+                for (int j = 0; j < lines; j++)
+                    tooltip.add(new TextComponent(spaces));
+            }
+        }));
     }
 
     public static void onDrawTooltip(PoseStack poseStack, ItemStack itemStack, int xin, int yin) {
@@ -105,54 +97,52 @@ public class EventUtil {
         //This method will draw items on the tooltip
         Minecraft mc = Minecraft.getInstance();
 
-        if( mc.level == null || mc.player == null )
+        if (mc.level == null || mc.player == null)
             return;
 
-        BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(mc.level).ifPresent((ITemplateProvider provider) -> {
-            BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(itemStack).ifPresent((ITemplateKey templateKey) -> {
-                Template template = provider.getTemplateForKey(templateKey);
-                IItemIndex index = InventoryHelper.index(itemStack, mc.player);
-                BuildContext buildContext = BuildContext.builder()
-                        .stack(itemStack)
-                        .player(mc.player)
-                        .build(mc.level);
-                TemplateHeader header = template.getHeaderAndForceMaterials(buildContext);
-                MaterialList list = header.getRequiredItems();
-                if (list == null)
-                    list = MaterialList.empty();
+        BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(mc.level).ifPresent((ITemplateProvider provider) -> BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(itemStack).ifPresent((ITemplateKey templateKey) -> {
+            Template template = provider.getTemplateForKey(templateKey);
+            IItemIndex index = InventoryHelper.index(itemStack, mc.player);
+            BuildContext buildContext = BuildContext.builder()
+                    .stack(itemStack)
+                    .player(mc.player)
+                    .build(mc.level);
+            TemplateHeader header = template.getHeaderAndForceMaterials(buildContext);
+            MaterialList list = header.getRequiredItems();
+            if (list == null)
+                list = MaterialList.empty();
 
-                MatchResult match;
+            MatchResult match;
 
-                try (Transaction transaction = Transaction.openOuter()) {
-                    match = index.match(list, transaction);
-                }
+            try (Transaction transaction = Transaction.openOuter()) {
+                match = index.match(list, transaction);
+            }
 
-                Multiset<ItemVariant> existing = match.getFoundItems();
-                List<Multiset.Entry<ItemVariant>> sortedEntries = ImmutableList.sortedCopyOf(ENTRY_COMPARATOR, match.getChosenOption().entrySet());
+            Multiset<ItemVariant> existing = match.getFoundItems();
+            List<Entry<ItemVariant>> sortedEntries = ImmutableList.sortedCopyOf(ENTRY_COMPARATOR, match.getChosenOption().entrySet());
 
-                int by = yin;
-                int j = 0;
-                int totalMissing = 0;
-                List<? extends FormattedText> tooltip = itemStack.getTooltipLines(mc.player, TooltipFlag.Default.NORMAL);
-                Font fontRenderer = Minecraft.getInstance().font;
-                for (FormattedText s : tooltip) {
-                    if (s.getString().trim().equals(PLACE_HOLDER))
-                        break;
-                    by += fontRenderer.lineHeight;
-                }
-                //add missing offset because the Stack is 16 by 16 as a render, not 9 by 9
-                //needs to be 8 instead of 7, so that there is a one pixel padding to the text, just as there is between stacks
-                by += 8;
-                RenderSystem.enableBlend();
-                RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                for (Multiset.Entry<ItemVariant> entry : sortedEntries) {
-                    int x = xin + (j % STACKS_PER_LINE) * 18;
-                    int y = by + (j / STACKS_PER_LINE) * 20;
-                    totalMissing += renderRequiredBlocks(poseStack, entry.getElement().toStack(), x, y, existing.count(entry.getElement()), entry.getCount());
-                    j++;
-                }
-            });
-        });
+            int by = yin;
+            int j = 0;
+            int totalMissing = 0;
+            List<? extends FormattedText> tooltip = itemStack.getTooltipLines(mc.player, TooltipFlag.Default.NORMAL);
+            Font fontRenderer = Minecraft.getInstance().font;
+            for (FormattedText s : tooltip) {
+                if (s.getString().trim().equals(PLACE_HOLDER))
+                    break;
+                by += fontRenderer.lineHeight;
+            }
+            //add missing offset because the Stack is 16 by 16 as a render, not 9 by 9
+            //needs to be 8 instead of 7, so that there is a one pixel padding to the text, just as there is between stacks
+            by += 8;
+            RenderSystem.enableBlend();
+            RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            for (Entry<ItemVariant> entry : sortedEntries) {
+                int x = xin + (j % STACKS_PER_LINE) * 18;
+                int y = by + (j / STACKS_PER_LINE) * 20;
+                totalMissing += renderRequiredBlocks(poseStack, entry.getElement().toStack(), x, y, existing.count(entry.getElement()), entry.getCount());
+                j++;
+            }
+        }));
     }
 
     private static int renderRequiredBlocks(PoseStack matrices, ItemStack itemStack, int x, int y, int count, int req) {

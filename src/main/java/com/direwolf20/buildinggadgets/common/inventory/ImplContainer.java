@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.common.inventory;
 
-import com.direwolf20.buildinggadgets.common.tileentities.TemplateManagerTileEntity;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -25,6 +24,7 @@ public interface ImplContainer extends Container {
 
     /**
      * Checks if the inventory is empty.
+     *
      * @return true if this inventory has only empty stacks, false otherwise.
      */
     @Override
@@ -48,6 +48,7 @@ public interface ImplContainer extends Container {
 
     /**
      * Removes items from an inventory slot.
+     *
      * @param slot  The slot to remove from.
      * @param count How many items to remove. If there are less items in the slot than what are requested,
      *              takes all items in that slot.
@@ -63,6 +64,7 @@ public interface ImplContainer extends Container {
 
     /**
      * Removes all items from an inventory slot.
+     *
      * @param slot The slot to remove from.
      */
     @Override
@@ -72,6 +74,7 @@ public interface ImplContainer extends Container {
 
     /**
      * Replaces the current stack in an inventory slot with the provided stack.
+     *
      * @param slot  The inventory slot of which to replace the itemstack.
      * @param stack The replacing itemstack. If the stack is too big for
      *              this inventory ({@link Container#getMaxStackSize()}),
@@ -86,7 +89,9 @@ public interface ImplContainer extends Container {
     }
 
     @Override
-    default void clearContent() { getItems().clear(); }
+    default void clearContent() {
+        getItems().clear();
+    }
 
     /**
      * Marks the state as dirty.

@@ -24,18 +24,7 @@ import java.util.function.ToLongFunction;
  * This class performs all Placement checks required for the Copy-Paste-Gadget. Aka it tests for availability of energy, items and free placement-space.
  * You can extract information about whether the tests succeed, paste was used etc. from the CheckResult.
  */
-public final class PlacementChecker {
-    private final EnergyStorage energyStorage;
-    private final ToLongFunction<PlacementTarget> energyFun;
-    private final IItemIndex index;
-    private final BiPredicate<BuildContext, PlacementTarget> placeCheck;
-
-    public PlacementChecker(EnergyStorage energyStorage, ToLongFunction<PlacementTarget> energyFun, IItemIndex index, BiPredicate<BuildContext, PlacementTarget> placeCheck) {
-        this.energyStorage = energyStorage;
-        this.energyFun = energyFun;
-        this.index = index;
-        this.placeCheck = placeCheck;
-    }
+public record PlacementChecker(EnergyStorage energyStorage, ToLongFunction<PlacementTarget> energyFun, IItemIndex index, BiPredicate<BuildContext, PlacementTarget> placeCheck) {
 
     /**
      * @implNote This code is so god damn messy. Good luck understanding it.
@@ -96,27 +85,18 @@ public final class PlacementChecker {
         return new CheckResult(match, insertedItems, match.isSuccess());
     }
 
-    public static final class CheckResult {
-        private final MatchResult match;
-        private final Multiset<ItemVariant> insertedItems;
-        private final boolean success;
-
-        private CheckResult(MatchResult match, Multiset<ItemVariant> insertedItems, boolean success) {
-            this.match = match;
-            this.insertedItems = insertedItems;
-            this.success = success;
-        }
+    public record CheckResult(MatchResult match, Multiset<ItemVariant> insertedItems, boolean success) {
 
         public Multiset<ItemVariant> getInsertedItems() {
-            return insertedItems;
+            return insertedItems();
         }
 
         public MatchResult getMatch() {
-            return match;
+            return match();
         }
 
         public boolean isSuccess() {
-            return success;
+            return success();
         }
     }
 }

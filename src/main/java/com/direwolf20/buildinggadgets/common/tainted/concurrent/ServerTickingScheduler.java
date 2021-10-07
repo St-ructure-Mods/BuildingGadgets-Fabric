@@ -14,8 +14,6 @@ public final class ServerTickingScheduler {
     }
 
     static {
-        ServerTickEvents.START_SERVER_TICK.register(server -> {
-            TASKS.removeIf(BooleanSupplier::getAsBoolean);
-        });
+        ServerTickEvents.START_SERVER_TICK.register(server -> TASKS.removeIf(BooleanSupplier::getAsBoolean));
     }
 }

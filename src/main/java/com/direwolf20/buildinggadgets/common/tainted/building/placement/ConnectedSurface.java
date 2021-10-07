@@ -76,7 +76,7 @@ public class ConnectedSurface implements Iterable<BlockPos> {
     public Iterator<BlockPos> iterator() {
         BlockState selectedBlock = getReferenceFor(searchingCenter);
 
-        return new AbstractIterator<BlockPos>() {
+        return new AbstractIterator<>() {
             private final Queue<BlockPos> queue = new LinkedList<>();
             private final Set<BlockPos> searched = new HashSet<>(searchingRegion.size());
 
@@ -95,13 +95,13 @@ public class ConnectedSurface implements Iterable<BlockPos> {
                 // The position is guaranteed to be valid
                 BlockPos current = queue.remove();
 
-                for (int i = - 1; i <= 1; i++) {
-                    for (int j = - 1; j <= 1; j++) {
+                for (int i = -1; i <= 1; i++) {
+                    for (int j = -1; j <= 1; j++) {
                         if (side != null) {
                             BlockPos neighbor = perpendicularSurfaceOffset(current, side.getAxis(), i, j);
                             addNeighbour(neighbor);
                         } else {
-                            for (int k = - 1; k <= 1; k++) {
+                            for (int k = -1; k <= 1; k++) {
                                 BlockPos neighbor = current.offset(i, j, k);
                                 addNeighbour(neighbor);
                             }
@@ -112,8 +112,8 @@ public class ConnectedSurface implements Iterable<BlockPos> {
             }
 
             private void addNeighbour(BlockPos neighbor) {
-                boolean isSearched = ! searched.add(neighbor);
-                if (isSearched || ! isValid(neighbor))
+                boolean isSearched = !searched.add(neighbor);
+                if (isSearched || !isValid(neighbor))
                     return;
                 queue.add(neighbor);
             }
@@ -129,14 +129,11 @@ public class ConnectedSurface implements Iterable<BlockPos> {
     }
 
     public BlockPos perpendicularSurfaceOffset(BlockPos pos, Direction.Axis intersector, int i, int j) {
-        switch (intersector) {
-            case X:
-                return pos.offset(0, i, j);
-            case Y:
-                return pos.offset(i, 0, j);
-            case Z:
-                return pos.offset(i, j, 0);
-        }
+        return switch (intersector) {
+            case X -> pos.offset(0, i, j);
+            case Y -> pos.offset(i, 0, j);
+            case Z -> pos.offset(i, j, 0);
+        };
         throw new IllegalArgumentException("Unknown facing " + intersector);
     }
 }

@@ -223,10 +223,8 @@ public class ModeRadialMenu extends Screen {
         boolean isDestruction = tool.getItem() instanceof GadgetDestruction;
         ScreenPosition right = isDestruction ? ScreenPosition.BOTTOM : ScreenPosition.RIGHT;
         for (GuiEventListener widget : children()) {
-            if (!(widget instanceof PositionedIconActionable))
+            if (!(widget instanceof PositionedIconActionable button))
                 continue;
-
-            PositionedIconActionable button = (PositionedIconActionable) widget;
 
             if (!button.visible) continue;
             int offset;
@@ -551,33 +549,22 @@ public class ModeRadialMenu extends Screen {
             PacketChangeRange.send(valueNew);
     }
 
-    private static final class NameDisplayData {
-        private final int x;
-        private final int y;
-        private final boolean selected;
-        private final boolean centralize;
-
-        private NameDisplayData(int x, int y, boolean selected, boolean centralize) {
-            this.x = x;
-            this.y = y;
-            this.selected = selected;
-            this.centralize = centralize;
-        }
+    private record NameDisplayData(int x, int y, boolean selected, boolean centralize) {
 
         private int getX() {
-            return x;
+            return x();
         }
 
         private int getY() {
-            return y;
+            return y();
         }
 
         private boolean isSelected() {
-            return selected;
+            return selected();
         }
 
         private boolean isCentralized() {
-            return centralize;
+            return centralize();
         }
     }
 
@@ -596,8 +583,8 @@ public class ModeRadialMenu extends Screen {
     }
 
     private static class Vector2f {
-        public float x;
-        public float y;
+        public final float x;
+        public final float y;
 
         public Vector2f(float x, float y) {
             this.x = x;

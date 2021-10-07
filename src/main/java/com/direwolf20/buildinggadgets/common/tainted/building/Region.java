@@ -9,7 +9,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.LevelReader;
 
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -17,7 +16,7 @@ import java.util.stream.Stream;
 /**
  * Represents a region in the world with a finite and nonzero size.
  */
-public final class Region implements Serializable {
+public final class Region {
     private static final Region ZERO = new Region(BlockPos.ZERO);
 
     public static Region singleZero() {
@@ -47,8 +46,6 @@ public final class Region implements Serializable {
     public static Builder enclosingBuilder(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
         return new Builder(minX, minY, minZ, maxX, maxY, maxZ);
     }
-
-    private static final long serialVersionUID = 8391481277782374853L;
 
     public static Region deserializeFrom(CompoundTag tag) {
         return new Region(

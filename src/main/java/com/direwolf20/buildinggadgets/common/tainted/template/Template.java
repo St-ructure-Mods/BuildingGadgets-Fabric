@@ -140,16 +140,15 @@ public final class Template {
         int zFac = 1;
         Mirror mirror;
         switch (axis) {
-            case X:
+            case X -> {
                 mirror = Mirror.LEFT_RIGHT;
-                zFac = - 1;
-                break;
-            case Z:
+                zFac = -1;
+            }
+            case Z -> {
                 mirror = Mirror.FRONT_BACK;
-                xFac = - 1;
-                break;
-            default:
-                mirror = Mirror.NONE;
+                xFac = -1;
+            }
+            default -> mirror = Mirror.NONE;
         }
         Region.Builder regionBuilder = Region.enclosingBuilder();
         ImmutableMap.Builder<BlockPos, BlockData> mapBuilder = ImmutableMap.builder();

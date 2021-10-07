@@ -10,7 +10,6 @@ import net.minecraft.core.BlockPos;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Spliterator;
-import java.util.function.Function;
 
 /**
  * A simple {@link IBuildView} backed by a {@link Map Map<BlockPos, BlockData>}. {@link PlacementTarget PlacementTargets} will be created

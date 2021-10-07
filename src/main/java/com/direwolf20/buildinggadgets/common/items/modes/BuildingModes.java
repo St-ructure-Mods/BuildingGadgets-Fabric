@@ -12,8 +12,8 @@ public enum BuildingModes {
     GRID(new GridMode(false), "grid"),
     SURFACE(new SurfaceMode(false), "surface");
 
-    AbstractMode mode;
-    String name;
+    final AbstractMode mode;
+    final String name;
     BuildingModes(AbstractMode mode, String name) {
         this.mode = mode;
         this.name = name;

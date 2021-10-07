@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
 
 public class GuiTextFieldBase extends EditBox {
     private boolean suspended;
-    private String valueDefault, valueOld;
+    private String valueOld;
     private BiConsumer<GuiTextFieldBase, String> postModification;
 
     public GuiTextFieldBase(Font fontRenderer, int x, int y, int width) {
@@ -55,7 +55,7 @@ public class GuiTextFieldBase extends EditBox {
     }
 
     public int getInt() {
-        try {            
+        try {
             return Integer.parseInt(getValue());
         } catch (NumberFormatException e) {
             return 0;
@@ -67,7 +67,6 @@ public class GuiTextFieldBase extends EditBox {
     }
 
     public GuiTextFieldBase setDefaultValue(String defaultValue) {
-        this.valueDefault = defaultValue;
         return this;
     }
 }
