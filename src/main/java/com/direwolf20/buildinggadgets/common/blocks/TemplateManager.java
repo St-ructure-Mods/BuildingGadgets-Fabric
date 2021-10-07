@@ -48,8 +48,8 @@ public class TemplateManager extends BaseEntityBlock {
 
     @Override
     public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (newState.getBlock() != this) {
-            Containers.dropContents(worldIn, pos, (Container) worldIn.getBlockEntity(pos));
+        if (worldIn.getBlockEntity(pos) instanceof Container container) {
+            Containers.dropContents(worldIn, pos, container);
             super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
@@ -68,18 +68,24 @@ public class TemplateManager extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-        TemplateManagerTileEntity be = (TemplateManagerTileEntity) worldIn.getBlockEntity(pos);
-        if (!worldIn.isClientSide) {
+        if (!worldIn.isClientSide && worldIn.getBlockEntity(pos) instanceof TemplateManagerTileEntity be) {
             ITemplateProvider templateProvider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.getNullable(worldIn);
-            for (int i = 0; i < be.getItems().size(); i++) {
-                ItemStack itemStack = be.getItems().get(i);
-                ITemplateKey key;
-                if ((key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(itemStack)) != null)
+
+            for (ItemStack item : be.getItems()) {
+                ITemplateKey key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(item);
+
+                if (key != null) {
                     templateProvider.requestRemoteUpdate(key, new Target(PacketFlow.CLIENTBOUND, (ServerPlayer) player));
+                }
             }
+
             MenuProvider menuProvider = state.getMenuProvider(worldIn, pos);
-            if (menuProvider != null) player.openMenu(menuProvider);
+
+            if (menuProvider != null) {
+                player.openMenu(menuProvider);
+            }
         }
+
         return InteractionResult.SUCCESS;
     }
 }
