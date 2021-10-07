@@ -134,7 +134,5 @@ public class ConnectedSurface implements Iterable<BlockPos> {
             case Y -> pos.offset(i, 0, j);
             case Z -> pos.offset(i, j, 0);
         };
-        throw new IllegalArgumentException("Unknown facing " + intersector);
     }
 }
-
