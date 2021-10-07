@@ -72,7 +72,7 @@ class ScrollingMaterialList extends EntryList<Entry> {
             return;
 
         IItemIndex index = InventoryHelper.index(gui.getTemplateItem(), player);
-        MatchResult result = index.tryMatch(multisetIterator.next());
+        MatchResult result = index.match(multisetIterator.next());
 
         for (Multiset.Entry<ItemVariant> entry : result.getChosenOption().entrySet()) {
             ItemVariant item = entry.getElement();

@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 
 /**
@@ -31,25 +30,16 @@ public final class RecordingItemIndex implements IItemIndex {
     }
 
     @Override
-    public MatchResult tryMatch(MaterialList list, TransactionContext transaction) {
-        return other.tryMatch(MaterialList.and(list, MaterialList.of(extractedItems)), transaction);
+    public MatchResult match(MaterialList list, TransactionContext transaction) {
+        return other.match(MaterialList.and(list, MaterialList.of(extractedItems)), transaction);
     }
 
     @Override
-    public MatchResult tryMatch(Multiset<ItemVariant> items) {
-        return other.tryMatch(ImmutableMultiset.<ItemVariant>builder()
+    public MatchResult match(Multiset<ItemVariant> items) {
+        return other.match(ImmutableMultiset.<ItemVariant>builder()
                 .addAll(items)
                 .addAll(extractedItems)
                 .build());
     }
 
-    @Override
-    public boolean applyMatch(MatchResult result, TransactionContext transaction) {
-        if (result.isSuccess()) {
-            extractedItems.addAll(Multisets.difference(result.getChosenOption(), extractedItems));
-            return true;
-        }
-
-        return false;
-    }
 }

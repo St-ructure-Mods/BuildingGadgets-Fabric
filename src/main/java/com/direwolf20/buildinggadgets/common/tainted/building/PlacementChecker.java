@@ -60,7 +60,7 @@ public final class PlacementChecker {
             targetRayTrace = CommonUtils.fakeRayTrace(player.position(), target.getPos());
         }
         MaterialList materials = target.getRequiredMaterials(context, targetRayTrace);
-        MatchResult match = index.tryMatch(materials, transaction);
+        MatchResult match = index.match(materials, transaction);
 
         ServerLevel world = context.getServerWorld();
         BlockState state = world.getBlockState(target.getPos());
@@ -93,7 +93,7 @@ public final class PlacementChecker {
             }
         }
 
-        return new CheckResult(match, insertedItems, index.applyMatch(match, transaction));
+        return new CheckResult(match, insertedItems, match.isSuccess());
     }
 
     public static final class CheckResult {

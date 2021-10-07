@@ -258,14 +258,15 @@ public class GadgetExchanger extends AbstractGadget {
                 .build(world);
 
         MaterialList requiredItems = setBlock.getRequiredItems(buildContext, null, pos);
-        MatchResult match = index.tryMatch(requiredItems, transaction);
-        if (!match.isSuccess()) {
-            if (setBlock.getState().hasBlockEntity())
-                return;
+        MatchResult match = index.match(requiredItems, transaction);
+
+        if (!match.isSuccess() && setBlock.getState().hasBlockEntity()) {
+            return;
         }
 
-        if (!player.mayBuild() || !world.mayInteract(player, pos))
+        if (!player.mayBuild() || !world.mayInteract(player, pos)) {
             return;
+        }
 
         if (!world.mayInteract(player, pos)) {
             return;
@@ -279,27 +280,24 @@ public class GadgetExchanger extends AbstractGadget {
 
         this.applyDamage(tool, player);
 
-        if (index.applyMatch(match, transaction)) {
-            MaterialList materials = data.getRequiredItems(
-                    buildContext,
-                    currentBlock,
-                    world.clip(new ClipContext(player.position(), Vec3.atLowerCornerOf(pos), ClipContext.Block.COLLIDER, Fluid.NONE, player)),
-                    pos);
+        MaterialList materials = data.getRequiredItems(
+                buildContext,
+                currentBlock,
+                world.clip(new ClipContext(player.position(), Vec3.atLowerCornerOf(pos), ClipContext.Block.COLLIDER, Fluid.NONE, player)),
+                pos);
 
-            Iterator<ImmutableMultiset<ItemVariant>> it = materials.iterator();
-            Multiset<ItemVariant> producedItems = LinkedHashMultiset.create();
+        Iterator<ImmutableMultiset<ItemVariant>> it = materials.iterator();
+        Multiset<ItemVariant> producedItems = LinkedHashMultiset.create();
 
-            if (buildContext.getStack().isEnchanted() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, buildContext.getStack()) > 0) {
-                producedItems = it.hasNext() ? it.next() : ImmutableMultiset.of();
-            } else {
-                List<ItemStack> drops = Block.getDrops(currentBlock, (ServerLevel) buildContext.getWorld(), pos, buildContext.getWorld().getBlockEntity(pos));
-                producedItems.addAll(drops.stream().map(ItemVariant::of).collect(Collectors.toList()));
-            }
-
-            index.insert(producedItems, transaction);
-
-            EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.REPLACE);
+        if (buildContext.getStack().isEnchanted() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, buildContext.getStack()) > 0) {
+            producedItems = it.hasNext() ? it.next() : ImmutableMultiset.of();
+        } else {
+            List<ItemStack> drops = Block.getDrops(currentBlock, (ServerLevel) buildContext.getWorld(), pos, buildContext.getWorld().getBlockEntity(pos));
+            producedItems.addAll(drops.stream().map(ItemVariant::of).collect(Collectors.toList()));
         }
+
+        index.insert(producedItems, transaction);
+        EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.REPLACE);
     }
 
     public static ItemStack getGadget(Player player) {

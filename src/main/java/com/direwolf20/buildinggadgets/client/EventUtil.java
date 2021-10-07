@@ -2,7 +2,6 @@ package com.direwolf20.buildinggadgets.client;
 
 import com.direwolf20.buildinggadgets.client.cache.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
-import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
@@ -14,7 +13,6 @@ import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateHeader;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -78,7 +76,7 @@ public class EventUtil {
                 if (list == null)
                     list = MaterialList.empty();
 
-                MatchResult match = index.tryMatch(list);
+                MatchResult match = index.match(list);
                 int count = match.isSuccess() ? match.getChosenOption().entrySet().size() : match.getChosenOption().entrySet().size() + 1;
                 if (count > 0 && Screen.hasShiftDown()) {
                     int lines = (((count - 1) / STACKS_PER_LINE) + 1) * 2;
@@ -117,7 +115,7 @@ public class EventUtil {
                 if (list == null)
                     list = MaterialList.empty();
 
-                MatchResult match = index.tryMatch(list);
+                MatchResult match = index.match(list);
                 Multiset<ItemVariant> existing = match.getFoundItems();
                 List<Multiset.Entry<ItemVariant>> sortedEntries = ImmutableList.sortedCopyOf(ENTRY_COMPARATOR, match.getChosenOption().entrySet());
 

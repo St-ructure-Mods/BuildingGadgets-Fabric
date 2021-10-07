@@ -1,7 +1,11 @@
 package com.direwolf20.buildinggadgets.common.items;
 
+import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
+import com.direwolf20.buildinggadgets.client.renders.BuildRender;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
+import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
+import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
@@ -10,11 +14,6 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
-import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
-import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
-import com.direwolf20.buildinggadgets.client.renders.BuildRender;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
@@ -27,26 +26,27 @@ import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference.BlockReference.TagReference;
 import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
 import com.google.common.collect.ImmutableMultiset;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -150,7 +150,7 @@ public class GadgetBuilding extends AbstractGadget {
             //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(15000000, false));
             if (player.isShiftKeyDown()) {
                 InteractionResultHolder<Block> result = selectBlock(itemstack, player);
-                if( !result.getResult().consumesAction() ) {
+                if (!result.getResult().consumesAction()) {
                     player.displayClientMessage(MessageTranslation.INVALID_BLOCK.componentTranslation(result.getObject().getName()).setStyle(Styles.AQUA), true);
                     return super.use(world, player, hand);
                 }
@@ -212,14 +212,13 @@ public class GadgetBuilding extends AbstractGadget {
                     new AbstractMode.UseContext(world, blockData.getState(), lookingAt.getBlockPos(), heldItem, sideHit, placeAtop(stack), getConnectedArea(stack)),
                     player
             );
-        }
-        else  //If we do have an anchor, erase it (Even if the build fails)
+        } else  //If we do have an anchor, erase it (Even if the build fails)
             setAnchor(stack);
 
         Undo.Builder builder = Undo.builder();
         IItemIndex index = InventoryHelper.index(stack, player);
 
-         //TODO replace with a better TileEntity supporting Fake IWorld
+        //TODO replace with a better TileEntity supporting Fake IWorld
         fakeWorld.setWorldAndState(player.level, blockData.getState(), coords); // Initialize the fake world's blocks
         for (BlockPos coordinate : coords) {
             //Get the extended block state in the fake world
@@ -243,24 +242,23 @@ public class GadgetBuilding extends AbstractGadget {
         MaterialList requiredItems = setBlock.getRequiredItems(buildContext, null, pos);
 
         // #majorcode
-        MatchResult match = index.tryMatch(requiredItems);
-        if (! match.isSuccess()) {
-            if (setBlock.getState().hasBlockEntity())
-                return;
-        }
-
-        if (!(world.mayInteract(player, pos) && this.canUse(heldItem, player) && setBlock.getState().canSurvive(world, pos)))
-            return;
-
-        this.applyDamage(heldItem, player);
-
         try (Transaction transaction = Transaction.openOuter()) {
-            if (index.applyMatch(match, transaction)) {
-                ImmutableMultiset<ItemVariant> usedItems = match.getChosenOption();
-                builder.record(world, pos, setBlock, usedItems, ImmutableMultiset.of());
-                EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.PLACE);
-                transaction.commit();
+            MatchResult match = index.match(requiredItems, transaction);
+
+            if (!match.isSuccess()) {
+                return;
             }
+
+            if (!(world.mayInteract(player, pos) && this.canUse(heldItem, player) && setBlock.getState().canSurvive(world, pos))) {
+                return;
+            }
+
+            this.applyDamage(heldItem, player);
+
+            ImmutableMultiset<ItemVariant> usedItems = match.getChosenOption();
+            builder.record(world, pos, setBlock, usedItems, ImmutableMultiset.of());
+            EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.PLACE);
+            transaction.commit();
         }
     }
 

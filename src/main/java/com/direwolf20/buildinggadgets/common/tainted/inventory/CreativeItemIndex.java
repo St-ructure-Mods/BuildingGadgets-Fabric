@@ -17,14 +17,9 @@ public final class CreativeItemIndex implements IItemIndex {
     }
 
     @Override
-    public MatchResult tryMatch(MaterialList list, TransactionContext transaction) {
+    public MatchResult match(MaterialList list, TransactionContext transaction) {
         Iterator<ImmutableMultiset<ItemVariant>> it = list.iterator();
         ImmutableMultiset<ItemVariant> chosen = it.hasNext() ? it.next() : ImmutableMultiset.of();
         return MatchResult.success(list, chosen, chosen);
-    }
-
-    @Override
-    public boolean applyMatch(MatchResult result, TransactionContext transaction) {
-        return result.isSuccess();
     }
 }

@@ -49,14 +49,17 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     @Override
-    public MatchResult tryMatch(MaterialList list, TransactionContext transaction) {
+    public MatchResult match(MaterialList list, TransactionContext transaction) {
         MatchResult result = null;
 
         for (ImmutableMultiset<ItemVariant> multiset : list) {
-            result = match(list, multiset, transaction);
+            try (Transaction inner = Transaction.openNested(transaction)) {
+                result = match(list, multiset, inner);
 
-            if (result.isSuccess()) {
-                return MatchResult.success(list, result.getFoundItems(), multiset);
+                if (result.isSuccess()) {
+                    inner.commit();
+                    return MatchResult.success(list, result.getFoundItems(), multiset);
+                }
             }
         }
 
@@ -86,12 +89,12 @@ public final class PlayerItemIndex implements IItemIndex {
 
     private MatchResult match(MaterialList list, Multiset<ItemVariant> multiset, TransactionContext transaction) {
         ImmutableMultiset.Builder<ItemVariant> availableBuilder = ImmutableMultiset.builder();
-        boolean success = false;
+        boolean success = true;
 
         for (Entry<ItemVariant> entry : multiset.entrySet()) {
             int remainingCount = entry.getCount();
             int extracted = (int) storage.extract(entry.getElement(), remainingCount, transaction);
-            success |= extracted == remainingCount;
+            success &= extracted == remainingCount;
             availableBuilder.addCopies(entry.getElement(), extracted);
         }
 
@@ -102,12 +105,4 @@ public final class PlayerItemIndex implements IItemIndex {
         }
     }
 
-    @Override
-    public boolean applyMatch(MatchResult result, TransactionContext transaction) {
-        if (!result.isSuccess()) {
-            return false;
-        }
-
-        return match(result.getMatchedList(), result.getChosenOption(), transaction).isSuccess();
-    }
 }

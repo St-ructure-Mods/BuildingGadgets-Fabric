@@ -124,7 +124,7 @@ public class BuildRender extends BaseRenderer {
                     hasEnergy -= ((AbstractGadget) heldItem.getItem()).getEnergyCost(heldItem);
 
                     VertexConsumer builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
-                    MatchResult match = index.tryMatch(materials, transaction);
+                    MatchResult match = index.match(materials, transaction);
 
                     if (!match.isSuccess() || hasEnergy < 0) {
                         if (hasLinkedInventory && remainingCached > 0) {
@@ -134,7 +134,6 @@ public class BuildRender extends BaseRenderer {
                             renderMissingBlock(matrix.last().pose(), builder, coordinate);
                         }
                     } else {
-                        index.applyMatch(match, transaction); // Notify the recording index that this counts
                         renderBoxSolid(matrix.last().pose(), builder, coordinate, .97f, 1f, .99f, .1f);
                     }
 

@@ -264,7 +264,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         drawString(matrices, getMinecraft().font, title, 5 - (font.width(title)), 0, Color.WHITE.getRGB());
 
         // The things you have to do to get anything from this system is just stupid.
-        MatchResult list = InventoryHelper.CREATIVE_INDEX.tryMatch(requirements);
+        MatchResult list = InventoryHelper.CREATIVE_INDEX.match(requirements);
         ImmutableMultiset<ItemVariant> foundItems = list.getFoundItems();
 
         // Reverse sorted list of items required.

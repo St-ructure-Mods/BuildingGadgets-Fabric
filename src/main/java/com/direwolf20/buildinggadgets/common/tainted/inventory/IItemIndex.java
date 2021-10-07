@@ -20,17 +20,15 @@ public interface IItemIndex {
     //returns the remaining items
     void insert(Multiset<ItemVariant> items, TransactionContext transaction);
 
-    MatchResult tryMatch(MaterialList list, TransactionContext transaction);
+    MatchResult match(MaterialList list, TransactionContext transaction);
 
-    default MatchResult tryMatch(MaterialList list) {
+    default MatchResult match(MaterialList list) {
         try (Transaction transaction = Transaction.openOuter()) {
-            return tryMatch(list, transaction);
+            return match(list, transaction);
         }
     }
 
-    default MatchResult tryMatch(Multiset<ItemVariant> items) {
-        return tryMatch(MaterialList.of(items));
+    default MatchResult match(Multiset<ItemVariant> items) {
+        return match(MaterialList.of(items));
     }
-
-    boolean applyMatch(MatchResult result, TransactionContext transaction);
 }
