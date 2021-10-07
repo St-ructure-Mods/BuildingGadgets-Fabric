@@ -40,7 +40,7 @@ public final class PlayerItemIndex implements IItemIndex {
         int remainingCount = insertIntoProviders(obj, count, transaction);
 
         if (remainingCount != 0) {
-            PlayerInventoryStorage.of(player).drop(obj, count, transaction);
+            PlayerInventoryStorage.of(player).drop(obj, remainingCount, transaction);
         }
     }
 

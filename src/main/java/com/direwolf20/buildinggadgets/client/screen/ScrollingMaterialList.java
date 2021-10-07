@@ -13,6 +13,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Multiset;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import com.mojang.blaze3d.platform.Lighting;
@@ -72,7 +73,11 @@ class ScrollingMaterialList extends EntryList<Entry> {
             return;
 
         IItemIndex index = InventoryHelper.index(gui.getTemplateItem(), player);
-        MatchResult result = index.match(multisetIterator.next());
+        MatchResult result;
+
+        try (Transaction transaction = Transaction.openOuter()) {
+            result = index.match(MaterialList.of(multisetIterator.next()), transaction);
+        }
 
         for (Multiset.Entry<ItemVariant> entry : result.getChosenOption().entrySet()) {
             ItemVariant item = entry.getElement();

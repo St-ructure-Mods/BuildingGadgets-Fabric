@@ -20,6 +20,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -76,7 +77,12 @@ public class EventUtil {
                 if (list == null)
                     list = MaterialList.empty();
 
-                MatchResult match = index.match(list);
+                MatchResult match;
+
+                try (Transaction transaction = Transaction.openOuter()) {
+                    match = index.match(list, transaction);
+                }
+
                 int count = match.isSuccess() ? match.getChosenOption().entrySet().size() : match.getChosenOption().entrySet().size() + 1;
                 if (count > 0 && Screen.hasShiftDown()) {
                     int lines = (((count - 1) / STACKS_PER_LINE) + 1) * 2;
@@ -115,7 +121,12 @@ public class EventUtil {
                 if (list == null)
                     list = MaterialList.empty();
 
-                MatchResult match = index.match(list);
+                MatchResult match;
+
+                try (Transaction transaction = Transaction.openOuter()) {
+                    match = index.match(list, transaction);
+                }
+
                 Multiset<ItemVariant> existing = match.getFoundItems();
                 List<Multiset.Entry<ItemVariant>> sortedEntries = ImmutableList.sortedCopyOf(ENTRY_COMPARATOR, match.getChosenOption().entrySet());
 

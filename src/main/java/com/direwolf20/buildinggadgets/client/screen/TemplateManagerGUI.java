@@ -42,6 +42,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -264,7 +265,12 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         drawString(matrices, getMinecraft().font, title, 5 - (font.width(title)), 0, Color.WHITE.getRGB());
 
         // The things you have to do to get anything from this system is just stupid.
-        MatchResult list = InventoryHelper.CREATIVE_INDEX.match(requirements);
+        MatchResult list;
+
+        try (Transaction transaction = Transaction.openOuter()) {
+            list = InventoryHelper.CREATIVE_INDEX.match(requirements, transaction);
+        }
+
         ImmutableMultiset<ItemVariant> foundItems = list.getFoundItems();
 
         // Reverse sorted list of items required.

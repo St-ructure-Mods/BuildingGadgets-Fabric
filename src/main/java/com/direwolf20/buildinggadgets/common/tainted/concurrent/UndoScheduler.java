@@ -7,6 +7,7 @@ import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSu
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
+import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo.BlockInfo;
 import com.google.common.base.Preconditions;
@@ -72,7 +73,7 @@ public final class UndoScheduler extends SteppedScheduler {
         }
 
         try (Transaction transaction = Transaction.openOuter()) {
-            MatchResult matchResult = index.match(entry.getValue().getProducedItems());
+            MatchResult matchResult = index.match(MaterialList.of(entry.getValue().getProducedItems()), transaction);
             lastWasSuccess = matchResult.isSuccess();
 
             if (lastWasSuccess) {
