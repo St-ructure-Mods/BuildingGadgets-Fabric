@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
-
 import org.jetbrains.annotations.Nullable;
 
 public class TemplateManager extends BaseEntityBlock {
@@ -70,16 +69,16 @@ public class TemplateManager extends BaseEntityBlock {
     @Override
     public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
         TemplateManagerTileEntity be = (TemplateManagerTileEntity) worldIn.getBlockEntity(pos);
-        if(!worldIn.isClientSide) {
-        ITemplateProvider templateProvider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.getNullable(worldIn);
-                for (int i = 0; i < be.getItems().size(); i++) {
-                    ItemStack itemStack = be.getItems().get(i);
-                    ITemplateKey key;
-                    if((key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(itemStack)) != null)
-                        templateProvider.requestRemoteUpdate(key, new Target(PacketFlow.CLIENTBOUND, (ServerPlayer) player));
-                }
+        if (!worldIn.isClientSide) {
+            ITemplateProvider templateProvider = BGComponent.TEMPLATE_PROVIDER_COMPONENT.getNullable(worldIn);
+            for (int i = 0; i < be.getItems().size(); i++) {
+                ItemStack itemStack = be.getItems().get(i);
+                ITemplateKey key;
+                if ((key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(itemStack)) != null)
+                    templateProvider.requestRemoteUpdate(key, new Target(PacketFlow.CLIENTBOUND, (ServerPlayer) player));
+            }
             MenuProvider menuProvider = state.getMenuProvider(worldIn, pos);
-            if(menuProvider != null)player.openMenu(menuProvider);
+            if (menuProvider != null) player.openMenu(menuProvider);
         }
         return InteractionResult.SUCCESS;
     }

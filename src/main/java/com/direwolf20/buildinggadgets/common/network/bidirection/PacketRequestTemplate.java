@@ -26,10 +26,9 @@ import java.util.UUID;
 public class PacketRequestTemplate implements ClientPlayNetworking.PlayChannelHandler, ServerPlayNetworking.PlayChannelHandler {
 
     public static void sendToTarget(Target target, UUID id) {
-        if(target.flow() == PacketFlow.CLIENTBOUND) {
+        if (target.flow() == PacketFlow.CLIENTBOUND) {
             sendToClient(target.player(), id);
-        }
-        else {
+        } else {
             send(id);
         }
     }

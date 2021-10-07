@@ -19,23 +19,23 @@ import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference.BlockReference.TagReference;
 import com.google.common.collect.ImmutableMultiset;
 import net.fabricmc.fabric.impl.client.rendering.fluid.FluidRenderHandlerRegistryImpl;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -54,7 +54,7 @@ public class GadgetDestruction extends AbstractGadget {
 
     @Override
     public long getEnergyCapacity() {
-        return  BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.maxEnergy;
+        return BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.maxEnergy;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class GadgetDestruction extends AbstractGadget {
     }
 
     private int getCostMultiplier(ItemStack tool) {
-        return (int) (! getFuzzy(tool) ? BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyMultiplier : 1);
+        return (int) (!getFuzzy(tool) ? BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyMultiplier : 1);
     }
 
     @Override
@@ -77,21 +77,21 @@ public class GadgetDestruction extends AbstractGadget {
         addEnergyInformation(tooltip, stack);
 
         tooltip.add(TooltipTranslation.GADGET_DESTROYWARNING
-                            .componentTranslation()
-                            .setStyle(Styles.RED));
+                .componentTranslation()
+                .setStyle(Styles.RED));
 
         tooltip.add(TooltipTranslation.GADGET_DESTROYSHOWOVERLAY
-                            .componentTranslation(String.valueOf(getOverlay(stack)))
-                            .setStyle(Styles.AQUA));
+                .componentTranslation(String.valueOf(getOverlay(stack)))
+                .setStyle(Styles.AQUA));
 
         tooltip.add(TooltipTranslation.GADGET_BUILDING_PLACE_ATOP
-                            .componentTranslation(String.valueOf(getConnectedArea(stack)))
-                            .setStyle(Styles.YELLOW));
+                .componentTranslation(String.valueOf(getConnectedArea(stack)))
+                .setStyle(Styles.YELLOW));
 
         if (BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled)
             tooltip.add(TooltipTranslation.GADGET_FUZZY
-                                .componentTranslation(String.valueOf(getFuzzy(stack)))
-                                .setStyle(Styles.GOLD));
+                    .componentTranslation(String.valueOf(getFuzzy(stack)))
+                    .setStyle(Styles.GOLD));
 
         addInformationRayTraceFluid(tooltip, stack);
     }
@@ -140,7 +140,7 @@ public class GadgetDestruction extends AbstractGadget {
     }
 
     public static void switchOverlay(Player player, ItemStack stack) {
-        boolean newOverlay = ! getOverlay(stack);
+        boolean newOverlay = !getOverlay(stack);
         setOverlay(stack, newOverlay);
         player.displayClientMessage(TooltipTranslation.GADGET_DESTROYSHOWOVERLAY
                 .componentTranslation(newOverlay).setStyle(Styles.AQUA), true);
@@ -160,7 +160,7 @@ public class GadgetDestruction extends AbstractGadget {
         player.startUsingItem(hand);
 
         if (!world.isClientSide) {
-            if (! player.isShiftKeyDown()) {
+            if (!player.isShiftKeyDown()) {
                 BlockPos anchorPos = getAnchor(stack);
                 Direction anchorSide = getAnchorSide(stack);
                 if (anchorPos != null && anchorSide != null) {
@@ -170,7 +170,7 @@ public class GadgetDestruction extends AbstractGadget {
                 }
 
                 BlockHitResult lookingAt = VectorHelper.getLookingAt(player, stack);
-                if (! world.isEmptyBlock(lookingAt.getBlockPos())) {
+                if (!world.isEmptyBlock(lookingAt.getBlockPos())) {
                     clearArea(world, lookingAt.getBlockPos(), lookingAt.getDirection(), (ServerPlayer) player, stack);
                     onAnchorRemoved(stack, player);
                     return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
@@ -200,7 +200,7 @@ public class GadgetDestruction extends AbstractGadget {
         ItemStack tool = getGadget(player);
         int depth = getToolValue(stack, NBTKeys.GADGET_VALUE_DEPTH);
 
-        if (tool.isEmpty() || depth == 0 || ! player.mayBuild())
+        if (tool.isEmpty() || depth == 0 || !player.mayBuild())
             return new ArrayList<>();
 
         boolean vertical = incomingSide.getAxis().isVertical();
@@ -218,8 +218,8 @@ public class GadgetDestruction extends AbstractGadget {
         return new Region(first, second).stream()
                 .filter(e ->
                         isFluidOnly
-                            ? isFluidBlock(world, e)
-                            : isValidBlock(world, e, player, world.getBlockState(e))
+                                ? isFluidBlock(world, e)
+                                : isValidBlock(world, e, player, world.getBlockState(e))
                 )
                 .sorted(Comparator.comparing(player.blockPosition()::distSqr))
                 .collect(Collectors.toList());
@@ -235,9 +235,9 @@ public class GadgetDestruction extends AbstractGadget {
 
     public static boolean isValidBlock(Level world, BlockPos voidPos, Player player, BlockState currentBlock) {
         if (world.isEmptyBlock(voidPos) ||
-                currentBlock.equals(OurBlocks.EFFECT_BLOCK.defaultBlockState()) ||
-                currentBlock.getDestroySpeed(world, voidPos) < 0 ||
-                ! world.mayInteract(player, voidPos)) return false;
+            currentBlock.equals(OurBlocks.EFFECT_BLOCK.defaultBlockState()) ||
+            currentBlock.getDestroySpeed(world, voidPos) < 0 ||
+            !world.mayInteract(player, voidPos)) return false;
 
         BlockEntity be = world.getBlockEntity(voidPos);
         return (be == null);
@@ -268,7 +268,7 @@ public class GadgetDestruction extends AbstractGadget {
         if (tool.isEmpty())
             return false;
 
-        if (! this.canUse(tool, player))
+        if (!this.canUse(tool, player))
             return false;
 
         this.applyDamage(tool, player);

@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.ItemStack;
 
-public class PacketToggleMode implements ServerPlayNetworking.PlayChannelHandler{
+public class PacketToggleMode implements ServerPlayNetworking.PlayChannelHandler {
 
     public static void send(int mode) {
         FriendlyByteBuf buf = PacketByteBufs.create();

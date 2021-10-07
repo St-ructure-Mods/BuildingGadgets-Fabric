@@ -29,7 +29,9 @@ public final class NBTKeys {
     public static final String KEY_SUB_ENTRIES = "sub_entries";
     public static final ResourceLocation OR_SERIALIZER_ID = new ResourceLocation(MODID, "alternatives");
     public static final ResourceLocation SIMPLE_SERIALIZER_ID = new ResourceLocation(MODID, "entries");
-    private NBTKeys() {}
+
+    private NBTKeys() {
+    }
 
     public static final String CREATIVE_MARKER = "creative";
 

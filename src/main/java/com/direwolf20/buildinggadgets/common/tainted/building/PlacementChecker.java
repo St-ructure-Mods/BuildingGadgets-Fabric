@@ -5,10 +5,10 @@ import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.CommonUtils;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.server.level.ServerLevel;
@@ -24,7 +24,8 @@ import java.util.function.ToLongFunction;
  * This class performs all Placement checks required for the Copy-Paste-Gadget. Aka it tests for availability of energy, items and free placement-space.
  * You can extract information about whether the tests succeed, paste was used etc. from the CheckResult.
  */
-public record PlacementChecker(EnergyStorage energyStorage, ToLongFunction<PlacementTarget> energyFun, IItemIndex index, BiPredicate<BuildContext, PlacementTarget> placeCheck) {
+public record PlacementChecker(EnergyStorage energyStorage, ToLongFunction<PlacementTarget> energyFun, IItemIndex index,
+                               BiPredicate<BuildContext, PlacementTarget> placeCheck) {
 
     /**
      * @implNote This code is so god damn messy. Good luck understanding it.

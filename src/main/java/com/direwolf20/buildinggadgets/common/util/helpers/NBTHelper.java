@@ -4,8 +4,8 @@ import com.direwolf20.buildinggadgets.common.tainted.Tainted;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.Multiset;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
 
 import java.util.*;
@@ -15,8 +15,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.StreamSupport;
-
-import java.util.stream.Collector.Characteristics;
 
 /**
  * Utility class providing additional Methods for reading and writing array's which are not normally provided as

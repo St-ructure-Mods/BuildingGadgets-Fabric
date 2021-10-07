@@ -3,10 +3,10 @@ package com.direwolf20.buildinggadgets.common.tainted.building;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSortedSet;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelReader;
 
 import java.util.Comparator;
@@ -95,17 +95,16 @@ public final class Region {
     }
 
     /**
-     * @see #translate(int, int, int)
-     *
      * @param direction Direction to translate to
      * @return {@link Region}
+     * @see #translate(int, int, int)
      */
     public Region translate(Vec3i direction) {
         return this.translate(direction.getX(), direction.getY(), direction.getZ());
     }
 
     public Region inverseTranslate(Vec3i direction) {
-        return this.translate(- direction.getX(), - direction.getY(), - direction.getZ());
+        return this.translate(-direction.getX(), -direction.getY(), -direction.getZ());
     }
 
     /**
@@ -134,7 +133,6 @@ public final class Region {
      * @param x X
      * @param y Y
      * @param z Z
-     *
      * @return {@link Region}
      */
     public Region shrink(int x, int y, int z) {
@@ -143,6 +141,7 @@ public final class Region {
 
     /**
      * See {@link #grow(int)} - subtracting instead of adding.
+     *
      * @param size Size to shrink to
      * @return {@link Region}
      */
@@ -174,7 +173,6 @@ public final class Region {
      * <li>{@link #shrink(int)} - contracts in all directions
      * </ul>
      *
-     *
      * @param x X
      * @param y Y
      * @param z Z
@@ -196,7 +194,6 @@ public final class Region {
      * If contracting and the amount to contract by is larger than the length of a side, then the side will wrap (still
      * creating a valid region - see samples on {@link #grow(int, int, int)}).
      *
-     *
      * @param size Size to expand to
      * @return {@link Region}
      */
@@ -208,27 +205,26 @@ public final class Region {
      * @param x X
      * @param y Y
      * @param z Z
-     * @see #expand(int, int, int) - substracting instead of adding.
      * @return {@link Region}
+     * @see #expand(int, int, int) - substracting instead of adding.
      */
     public Region collapse(int x, int y, int z) {
         return expand(-x, -y, -z);
     }
 
     /**
-     * @see #collapse(int, int, int) - read x, y, and z from the {@link Vector3i}.
      * @param vec Vector3i to collapse to
      * @return {@link Region}
+     * @see #collapse(int, int, int) - read x, y, and z from the {@link Vector3i}.
      */
     public Region collapse(Vec3i vec) {
         return collapse(vec.getX(), vec.getY(), vec.getZ());
     }
 
     /**
-     * @see #collapse(int, int, int) - collapse on all three axes.
-     *
      * @param size Size to collapse to
      * @return {@link Region}
+     * @see #collapse(int, int, int) - collapse on all three axes.
      */
     public Region collapse(int size) {
         return expand(-size);
@@ -326,7 +322,7 @@ public final class Region {
         return z >= minZ && z <= maxZ;
     }
 
-//    /**
+    //    /**
 //     * Accurate representation of whether the position is a part the structure or not.
 //     *
 //     * @see #contains(int, int, int)
@@ -340,7 +336,6 @@ public final class Region {
      * @param x X
      * @param y Y
      * @param z Z
-     *
      * @return whether or not this {@link BlockPos} lies within this Region
      */
     public boolean contains(int x, int y, int z) {
@@ -353,11 +348,11 @@ public final class Region {
 
     public boolean intersectsWith(Region other) {
         return this.maxX >= other.minX &&
-                this.minX <= other.maxX &&
-                this.maxZ >= other.minZ &&
-                this.minZ <= other.maxZ &&
-                this.maxY >= other.minY &&
-                this.minY <= other.maxY;
+               this.minX <= other.maxX &&
+               this.maxZ >= other.minZ &&
+               this.minZ <= other.maxZ &&
+               this.maxY >= other.minY &&
+               this.minY <= other.maxY;
     }
 
     public Stream<BlockPos> stream() {
@@ -407,11 +402,11 @@ public final class Region {
         if (o == null || getClass() != o.getClass()) return false;
         Region region = (Region) o;
         return minX == region.minX &&
-                minY == region.minY &&
-                minZ == region.minZ &&
-                maxX == region.maxX &&
-                maxY == region.maxY &&
-                maxZ == region.maxZ;
+               minY == region.minY &&
+               minZ == region.minZ &&
+               maxX == region.maxX &&
+               maxY == region.maxY &&
+               maxZ == region.maxZ;
     }
 
     @Override
@@ -424,15 +419,15 @@ public final class Region {
         ImmutableSortedSet.Builder<ChunkPos> posBuilder = ImmutableSortedSet.orderedBy(Comparator.comparing(ChunkPos::getMinBlockX).thenComparing(ChunkPos::getMinBlockZ));
         for (int i = minX; i <= maxX; i += 16) {
             for (int j = minZ; j <= maxZ; j += 16) {
-                if (! reader.hasChunk(i >> 4, j >> 4))
+                if (!reader.hasChunk(i >> 4, j >> 4))
                     posBuilder.add(new ChunkPos(i >> 4, j >> 4));
             }
         }
         for (int j = minZ; j <= maxZ; j += 16) {//check the last x row
-            if (! reader.hasChunk(maxX >> 4, j >> 4))
+            if (!reader.hasChunk(maxX >> 4, j >> 4))
                 posBuilder.add(new ChunkPos(maxX >> 4, j >> 4));
         }
-        if (! reader.hasChunk(maxX >> 4, maxZ >> 4))// might have still missed the last one
+        if (!reader.hasChunk(maxX >> 4, maxZ >> 4))// might have still missed the last one
             posBuilder.add(new ChunkPos(maxX >> 4, maxZ >> 4));
         return posBuilder.build();
     }
@@ -494,9 +489,8 @@ public final class Region {
 
         /**
          * @param vec Vex3i
-         * @see #enclose(int, int, int)
-         *
          * @return {@link Builder}
+         * @see #enclose(int, int, int)
          */
         public Builder enclose(Vec3i vec) {
             return enclose(vec.getX(), vec.getY(), vec.getZ());

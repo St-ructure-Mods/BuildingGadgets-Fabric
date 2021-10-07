@@ -12,7 +12,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -113,9 +112,9 @@ public class EffectBlockTileEntity extends BlockEntity {
         super.load(nbt);
 
         if (nbt.contains(NBTKeys.GADGET_TICKS, NbtType.INT) &&
-                nbt.contains(NBTKeys.GADGET_MODE, NbtType.INT) &&
-                nbt.contains(NBTKeys.GADGET_SOURCE_BLOCK, NbtType.COMPOUND) &&
-                nbt.contains(NBTKeys.GADGET_REPLACEMENT_BLOCK, NbtType.COMPOUND)) {
+            nbt.contains(NBTKeys.GADGET_MODE, NbtType.INT) &&
+            nbt.contains(NBTKeys.GADGET_SOURCE_BLOCK, NbtType.COMPOUND) &&
+            nbt.contains(NBTKeys.GADGET_REPLACEMENT_BLOCK, NbtType.COMPOUND)) {
 
             ticks = nbt.getInt(NBTKeys.GADGET_TICKS);
             mode = Mode.VALUES[nbt.getInt(NBTKeys.GADGET_MODE)];

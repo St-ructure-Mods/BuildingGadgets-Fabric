@@ -2,7 +2,6 @@ package com.direwolf20.buildinggadgets.common.tainted.building.tilesupport;
 
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries.TileEntityData;
 import net.minecraft.world.level.block.entity.BlockEntity;
-
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -20,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public interface ITileDataFactory {
     /**
      * Creates a new {@link ITileEntityData} for the given tileEntity if supported by this {@code ITileDataFactory}.
+     *
      * @param tileEntity The {@link TileEntity} to provide {@link ITileEntityData} for.
      * @return A new {@link ITileEntityData} if this {@code ITileDataFactory} can create one for the given tileEntity or null if not.
      */

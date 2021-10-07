@@ -2,8 +2,8 @@ package com.direwolf20.buildinggadgets.common.util.compression;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.direwolf20.buildinggadgets.common.items.modes;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class HorizontalColumnMode extends AbstractMode {
         List<BlockPos> coordinates = new ArrayList<>();
 
         Direction side = XYZ.isAxisY(context.getHitSide()) ? player.getDirection() : context.getHitSide().getOpposite();
-        if( !isExchanging() ) {
+        if (!isExchanging()) {
             for (int i = 0; i < context.getRange(); i++)
                 coordinates.add(XYZ.extendPosSingle(i, start, side, XYZ.fromFacing(side)));
         } else {

@@ -29,7 +29,7 @@ public class TemplateItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-        if( !playerIn.isShiftKeyDown() )
+        if (!playerIn.isShiftKeyDown())
             return super.use(worldIn, playerIn, handIn);
 
         if (worldIn.isClientSide) {

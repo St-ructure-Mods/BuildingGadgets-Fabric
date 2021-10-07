@@ -7,8 +7,8 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMap;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.saveddata.SavedData;
 
@@ -49,7 +49,7 @@ public abstract class TimedDataSave<T extends TimedValue> extends SavedData {
         T val = idToValue.remove(id);
         if (val != null) {
             Set<UUID> set = timeToId.get(val.getUpdateTime());
-            if (! set.isEmpty()) {
+            if (!set.isEmpty()) {
                 set.remove(id);
                 if (set.isEmpty())
                     timeToId.remove(val.getUpdateTime());

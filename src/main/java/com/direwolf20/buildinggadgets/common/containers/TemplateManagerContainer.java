@@ -3,13 +3,13 @@ package com.direwolf20.buildinggadgets.common.containers;
 import com.direwolf20.buildinggadgets.common.tileentities.TemplateManagerTileEntity;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 public class TemplateManagerContainer extends BaseContainer {
@@ -45,7 +45,7 @@ public class TemplateManagerContainer extends BaseContainer {
     @Override
     public boolean canTakeItemForPickAll(ItemStack itemStack, Slot slot) {
         return (slot.index == 0 && be.isTemplateStack(itemStack)) ||
-                (slot.index == 1 && (be.isTemplateStack(itemStack) || TemplateManagerTileEntity.TEMPLATE_CONVERTIBLES.contains(itemStack.getItem())));
+               (slot.index == 1 && (be.isTemplateStack(itemStack) || TemplateManagerTileEntity.TEMPLATE_CONVERTIBLES.contains(itemStack.getItem())));
     }
 
     @Override
@@ -59,10 +59,10 @@ public class TemplateManagerContainer extends BaseContainer {
             itemstack = currentStack.copy();
 
             if (index < TemplateManagerTileEntity.SIZE) {
-                if (! this.moveItemStackTo(currentStack, TemplateManagerTileEntity.SIZE, this.slots.size(), true)) {
+                if (!this.moveItemStackTo(currentStack, TemplateManagerTileEntity.SIZE, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (! this.moveItemStackTo(currentStack, 0, TemplateManagerTileEntity.SIZE, false)) {
+            } else if (!this.moveItemStackTo(currentStack, 0, TemplateManagerTileEntity.SIZE, false)) {
                 return ItemStack.EMPTY;
             }
 
@@ -75,7 +75,6 @@ public class TemplateManagerContainer extends BaseContainer {
 
         return itemstack;
     }
-
 
 
     public TemplateManagerTileEntity getTe() {

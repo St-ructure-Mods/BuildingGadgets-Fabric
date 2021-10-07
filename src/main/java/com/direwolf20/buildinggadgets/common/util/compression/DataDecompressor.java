@@ -2,8 +2,8 @@ package com.direwolf20.buildinggadgets.common.util.compression;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -35,7 +35,7 @@ public class DataDecompressor<T> implements IntFunction<T> {
 
     @Override
     public T apply(int value) {
-        if (! int2ObjectMap.containsKey(value))
+        if (!int2ObjectMap.containsKey(value))
             return defaultFun.apply(value);
         return int2ObjectMap.get(value);
     }

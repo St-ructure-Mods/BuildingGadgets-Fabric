@@ -1,9 +1,8 @@
 package com.direwolf20.buildinggadgets.common.util.lang;
 
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
-
-import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 public enum CommandTranslation implements ITranslationProvider {
     FORCE_UNLOADED_NO_PLAYER("force_unloaded.no_player", 0),

@@ -1,18 +1,20 @@
 package com.direwolf20.buildinggadgets.common.items.modes;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @implNote I'm 100% sure I could solve the xyz == XYZ.X by using a helper method but I'm happy
- *           with it for now.
+ * with it for now.
  */
 public class VerticalWallMode extends AbstractMode {
-    public VerticalWallMode() { super(false); }
+    public VerticalWallMode() {
+        super(false);
+    }
 
     @Override
     List<BlockPos> collect(UseContext context, Player player, BlockPos start) {
@@ -20,18 +22,18 @@ public class VerticalWallMode extends AbstractMode {
 
         // Handle top and bottom
         int halfRange = context.getRange() / 2;
-        if( XYZ.isAxisY(context.getHitSide()) ) {
+        if (XYZ.isAxisY(context.getHitSide())) {
             // This allows us to figure out how to move the render
             XYZ xyz = XYZ.fromFacing(player.getDirection().getOpposite());
-            for(int i = 0; i < context.getRange(); i ++ ) {
-                for(int j = -halfRange; j <= halfRange; j ++) {
+            for (int i = 0; i < context.getRange(); i++) {
+                for (int j = -halfRange; j <= halfRange; j++) {
                     int value = XYZ.invertOnFace(context.getHitSide(), i);
 
                     // Depending on the player view, change the expansion point.
                     coordinates.add(
                             xyz == XYZ.X
-                                ? new BlockPos(start.getX(), start.getY() + value, start.getZ() + j)
-                                : new BlockPos(start.getX() + j, start.getY() + value, start.getZ())
+                                    ? new BlockPos(start.getX(), start.getY() + value, start.getZ() + j)
+                                    : new BlockPos(start.getX() + j, start.getY() + value, start.getZ())
                     );
                 }
             }
@@ -41,8 +43,8 @@ public class VerticalWallMode extends AbstractMode {
 
         // Handle sides. Half and half :D
         XYZ xyz = XYZ.fromFacing(context.getHitSide());
-        for (int i = -halfRange; i <= halfRange; i ++) {
-            for(int j = -halfRange; j <= halfRange; j++)
+        for (int i = -halfRange; i <= halfRange; i++) {
+            for (int j = -halfRange; j <= halfRange; j++)
                 coordinates.add(
                         xyz == XYZ.X
                                 ? new BlockPos(start.getX(), start.getY() + i, start.getZ() + j)

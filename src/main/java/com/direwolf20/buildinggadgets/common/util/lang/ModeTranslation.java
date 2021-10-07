@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.util.lang;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import org.jetbrains.annotations.NotNull;
 
-public enum ModeTranslation implements ITranslationProvider{
+public enum ModeTranslation implements ITranslationProvider {
     COPY("copy"),
     PASTE("paste");
 

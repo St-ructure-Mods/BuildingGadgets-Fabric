@@ -3,14 +3,14 @@ package com.direwolf20.buildinggadgets.common.tainted.building.view;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.util.CommonUtils;
-import net.minecraft.world.entity.player.Player;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -27,6 +27,7 @@ import java.util.Spliterators;
  * 2 distinct instances of {@code IBuildView} will produce the same results even if they were constructed by the same {@link BuildContext}.
  * <p>
  * All Methods in this class may throw an {@link IllegalStateException} if called after the {@code IBuildView} has been closed.
+ *
  * @implSpec Notice that no guarantees are made for the order in which {@link PlacementTarget}'s are produced by this {@code IBuildView}.
  * Order may be arbitrary or sorted, consult the documentation of the implementation you are currently faced with for information about traversal order.
  */

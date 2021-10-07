@@ -337,7 +337,7 @@ public class MockDelegationWorld implements LevelAccessor {
     @Override
     public boolean destroyBlock(BlockPos pos, boolean dropBlock) {
         // adapted from World
-        return ! this.getBlockState(pos).isAir() && removeBlock(pos, true);
+        return !this.getBlockState(pos).isAir() && removeBlock(pos, true);
     }
 
     @Override
@@ -429,7 +429,7 @@ public class MockDelegationWorld implements LevelAccessor {
 
         public BlockInfo setState(BlockState state) {
             Preconditions.checkNotNull(state);
-            if (this.state.getBlock() != state.getBlock() || ! state.hasBlockEntity()) {
+            if (this.state.getBlock() != state.getBlock() || !state.hasBlockEntity()) {
                 onRemove();
             }
             this.state = state;
@@ -443,8 +443,8 @@ public class MockDelegationWorld implements LevelAccessor {
                     entity = ((EntityBlock) state.getBlock()).newBlockEntity(pos, state);
                     //if (entity != null) {
 
-                        //if we pass our wrapped world down to this, it will cause it to determine an errornous blockstate...
-                        //we'd need to reflect into the be...
+                    //if we pass our wrapped world down to this, it will cause it to determine an errornous blockstate...
+                    //we'd need to reflect into the be...
                     //}
                 } catch (Exception e) {
                     BuildingGadgets.LOG.debug("Tile Entity at {} with state {} threw exception whilst creating.", pos, state, e);

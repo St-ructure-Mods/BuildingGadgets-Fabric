@@ -1,9 +1,9 @@
 package com.direwolf20.buildinggadgets.common.util.tools;
 
 import com.direwolf20.buildinggadgets.common.tainted.Tainted;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.core.BlockPos;
 
 @Tainted(reason = "Shouldn't exist.")
 public final class MathUtils {
@@ -11,17 +11,19 @@ public final class MathUtils {
     public static final int B2_BYTE_MASK = 0xFF_FF;
     public static final int B3_BYTE_MASK = 0xFF_FF_FF;
     public static final long B5_BYTE_MASK = ((long) 0xFF_FF_FF_FF) << 8 | 0xFF;
-    private MathUtils() {}
+
+    private MathUtils() {
+    }
 
     public static short additiveInverse(short num) {
-        return (short) - num;
+        return (short) -num;
     }
 
     /**
      * Converts the BlockPos to a long. Under the assumption, that it is non-negative and does not exceed [0, 255] for the y Coordinate
      * and [0, 65536] for x and z‬ Coordinates.
-     * @param pos   BlockPos
      *
+     * @param pos BlockPos
      * @return BlockPos to a long
      */
     public static long posToLong(BlockPos pos) {

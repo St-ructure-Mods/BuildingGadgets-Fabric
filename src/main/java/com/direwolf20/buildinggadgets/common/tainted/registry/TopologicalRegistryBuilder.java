@@ -39,7 +39,7 @@ public final class TopologicalRegistryBuilder<T> {
     public TopologicalRegistryBuilder<T> addValue(ResourceLocation key, T value) {
         validateUnbuild();
         ValueObject<T> obj;
-        Preconditions.checkArgument(! containsValue(value), "Cannot have duplicate values, as the mapping needs to be bijective!");
+        Preconditions.checkArgument(!containsValue(value), "Cannot have duplicate values, as the mapping needs to be bijective!");
         if (values.containsKey(Objects.requireNonNull(key))) {
             obj = values.get(key);
             obj.setValue(value);//override existing value
@@ -70,9 +70,9 @@ public final class TopologicalRegistryBuilder<T> {
 
     public TopologicalRegistryBuilder<T> addDependency(ResourceLocation source, ResourceLocation dependent) {
         validateUnbuild();
-        if (! values.containsKey(source))
+        if (!values.containsKey(source))
             addMarker(source);
-        if (! values.containsKey(dependent))
+        if (!values.containsKey(dependent))
             addMarker(dependent);
         ValueObject<T> sourceObj = values.get(Objects.requireNonNull(source));
         ValueObject<T> dependentObj = values.get(Objects.requireNonNull(dependent));
@@ -109,7 +109,7 @@ public final class TopologicalRegistryBuilder<T> {
     }
 
     private void validateUnbuild() {
-        Preconditions.checkState(! build, "Cannot access already created Builder!");
+        Preconditions.checkState(!build, "Cannot access already created Builder!");
     }
 
     @Override
@@ -162,7 +162,7 @@ public final class TopologicalRegistryBuilder<T> {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (! (o instanceof ValueObject)) return false;
+            if (!(o instanceof ValueObject)) return false;
             ValueObject<?> that = (ValueObject<?>) o;
 
             return getKey().equals(that.getKey());

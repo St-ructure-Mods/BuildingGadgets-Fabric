@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
 
-public class PacketCopyCoords implements ServerPlayNetworking.PlayChannelHandler{
+public class PacketCopyCoords implements ServerPlayNetworking.PlayChannelHandler {
 
     public static void send(BlockPos start, BlockPos end) {
         FriendlyByteBuf buf = PacketByteBufs.create();

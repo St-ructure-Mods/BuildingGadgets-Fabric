@@ -5,7 +5,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class LangUtil {
-    private LangUtil() {}
+    private LangUtil() {
+    }
 
     public static String getLangKey(String type, String... args) {
         return String.join(".", type, Reference.MODID, String.join(".", args));

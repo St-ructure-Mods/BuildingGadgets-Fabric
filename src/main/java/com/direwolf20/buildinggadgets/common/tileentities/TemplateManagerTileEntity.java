@@ -70,7 +70,7 @@ public class TemplateManagerTileEntity extends BlockEntity implements ExtendedSc
 
     public boolean canInteractWith(Player playerIn) {
         // If we are too far away (>4 blocks) from this tile entity you cannot use it
-        return ! isRemoved() && playerIn.distanceToSqr(Vec3.atLowerCornerOf(worldPosition).add(0.5D, 0.5D, 0.5D)) <= 64D;
+        return !isRemoved() && playerIn.distanceToSqr(Vec3.atLowerCornerOf(worldPosition).add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
 
     @Override

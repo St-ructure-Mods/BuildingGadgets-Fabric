@@ -2,13 +2,13 @@ package com.direwolf20.buildinggadgets.common.tainted.building.placement;
 
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.google.common.collect.AbstractIterator;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
-
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -45,7 +45,7 @@ public class ConnectedSurface implements Iterable<BlockPos> {
                     BlockState reference = world.getBlockState(searching2referenceMapper.apply(pos));
                     boolean isAir = reference.isAir();
                     // If fuzzy=true, we ignore the block for reference
-                    return ! isAir && (fuzzy || filter == reference);
+                    return !isAir && (fuzzy || filter == reference);
                 });
     }
 

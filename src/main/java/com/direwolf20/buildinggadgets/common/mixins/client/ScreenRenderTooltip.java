@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Screen.class)
 public class ScreenRenderTooltip {
 
-    @Inject(method = "renderTooltip(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/item/ItemStack;II)V", at=@At("TAIL"))
+    @Inject(method = "renderTooltip(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/item/ItemStack;II)V", at = @At("TAIL"))
     protected void renderTooltip(PoseStack poseStack, ItemStack itemStack, int i, int j, CallbackInfo ci) {
         EventUtil.onDrawTooltip(poseStack, itemStack, i, j);
     }

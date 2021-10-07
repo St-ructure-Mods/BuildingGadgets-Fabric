@@ -54,7 +54,8 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
             dispatcher.renderSingleBlock(
                     renderBlockState, stack, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY
             );
-        } catch (Exception ignored) {} // if it fails to render then we'll get a bug report I'm sure.
+        } catch (Exception ignored) {
+        } // if it fails to render then we'll get a bug report I'm sure.
 
         stack.popPose();
         stack.pushPose();
@@ -83,7 +84,7 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
 
         if (alpha > 0.33f)
             alpha = 0.33f;
-        
+
         Matrix4f matrix = stack.last().pose();
 
         // Down

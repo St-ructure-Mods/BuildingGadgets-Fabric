@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.ItemStack;
 
-public class PacketToggleFluidOnly implements ServerPlayNetworking.PlayChannelHandler{
+public class PacketToggleFluidOnly implements ServerPlayNetworking.PlayChannelHandler {
 
     public static void send() {
         ClientPlayNetworking.send(PacketHandler.PacketToggleFluidOnly, PacketByteBufs.empty());
@@ -23,7 +23,7 @@ public class PacketToggleFluidOnly implements ServerPlayNetworking.PlayChannelHa
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         server.execute(() -> {
             ItemStack stack = AbstractGadget.getGadget(player);
-            if(stack.getItem() instanceof GadgetDestruction) {
+            if (stack.getItem() instanceof GadgetDestruction) {
                 GadgetDestruction.toggleFluidMode(stack);
             }
         });

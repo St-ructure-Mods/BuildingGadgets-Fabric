@@ -4,14 +4,15 @@ import com.direwolf20.buildinggadgets.common.tainted.Tainted;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public final class CommonUtils {
-    private CommonUtils() {}
+    private CommonUtils() {
+    }
 
     public static BlockHitResult fakeRayTrace(Vec3 simulatePos, BlockPos pos) {
         Vec3 simVec = Vec3.atLowerCornerOf(pos).subtract(simulatePos);

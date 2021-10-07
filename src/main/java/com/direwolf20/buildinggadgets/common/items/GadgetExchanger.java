@@ -213,9 +213,9 @@ public class GadgetExchanger extends AbstractGadget {
         BlockState lookingAtState = player.level.getBlockState(lookingAt.getBlockPos());
         Block lookAtBlock = lookingAtState.getBlock();
         if (blockData.getState() == Blocks.AIR.defaultBlockState()
-                || lookAtBlock == OurBlocks.EFFECT_BLOCK
-                || blockData.getState() == lookingAtState
-                || tileEntity != null) {
+            || lookAtBlock == OurBlocks.EFFECT_BLOCK
+            || blockData.getState() == lookingAtState
+            || tileEntity != null) {
             return;
         }
 

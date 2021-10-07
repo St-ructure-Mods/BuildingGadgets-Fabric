@@ -15,14 +15,14 @@ import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.tools.MathUtils;
 import com.google.common.collect.ImmutableMap;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.nbt.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.core.BlockPos;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -94,7 +94,7 @@ public final class Template {
     }
 
     public CompoundTag serialize(boolean persisted) {
-        if (! isNormalized)
+        if (!isNormalized)
             return normalize().serialize(persisted);
         CompoundTag res = new CompoundTag();
         ListTag posList = new ListTag();

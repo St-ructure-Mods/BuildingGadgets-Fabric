@@ -14,6 +14,7 @@ public enum BuildingModes {
 
     final AbstractMode mode;
     final String name;
+
     BuildingModes(AbstractMode mode, String name) {
         this.mode = mode;
         this.name = name;

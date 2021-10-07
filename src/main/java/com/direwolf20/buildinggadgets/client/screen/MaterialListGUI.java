@@ -87,7 +87,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
         this.buttonCopyList = new Button(0, buttonY, 0, BUTTON_HEIGHT, MaterialListTranslation.BUTTON_COPY.componentTranslation(), (button) -> {
             Minecraft.getInstance().keyboardHandler.setClipboard(evaluateTemplateHeader().toJson(false, hasControlDown()));
 
-            if( Minecraft.getInstance().player != null )
+            if (Minecraft.getInstance().player != null)
                 Minecraft.getInstance().player.displayClientMessage(new TranslatableComponent(MaterialListTranslation.MESSAGE_COPY_SUCCESS.getTranslationKey()), true);
         });
 
@@ -155,7 +155,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
     }
 
     public Template getTemplateCapability() {
-        if( Minecraft.getInstance().level == null || Minecraft.getInstance().player == null )
+        if (Minecraft.getInstance().level == null || Minecraft.getInstance().player == null)
             return null;
 
         Optional<ITemplateProvider> providerCap = BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(minecraft.level);
@@ -268,8 +268,8 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
 
     public static boolean isPointInBox(double x, double y, int bx, int by, int width, int height) {
         return x >= bx &&
-                y >= by &&
-                x < bx + width &&
-                y < by + height;
+               y >= by &&
+               x < bx + width &&
+               y < by + height;
     }
 }

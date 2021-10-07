@@ -14,7 +14,6 @@ import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.util.VersionNumber;
@@ -27,7 +26,8 @@ import java.util.Objects;
  * {@link Template}. Only the boundingBox information is required. However it is advised to provide Users with as
  * much information as possible about the {@link Template} they would like to use.
  */
-public record TemplateHeader(@Nullable String name, @Nullable String author, @Nullable MaterialList requiredItems, @NotNull Region boundingBox) {
+public record TemplateHeader(@Nullable String name, @Nullable String author, @Nullable MaterialList requiredItems,
+                             @NotNull Region boundingBox) {
 
     public static final String VERSION = "2.1.0";
 

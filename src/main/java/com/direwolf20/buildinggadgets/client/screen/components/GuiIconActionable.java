@@ -26,15 +26,16 @@ public class GuiIconActionable extends Button {
     private boolean selected;
     private final boolean isSelectable;
 
-    private final Color selectedColor     = Color.GREEN;
-    private final Color deselectedColor   = new Color(255, 255, 255);
+    private final Color selectedColor = Color.GREEN;
+    private final Color deselectedColor = new Color(255, 255, 255);
     private Color activeColor;
 
     private final ResourceLocation selectedTexture;
     private final ResourceLocation deselectedTexture;
 
     public GuiIconActionable(int x, int y, String texture, Component message, boolean isSelectable, Predicate<Boolean> action) {
-        super(x, y, 25, 25, message, (b) -> {});
+        super(x, y, 25, 25, message, (b) -> {
+        });
         this.activeColor = deselectedColor;
         this.isSelectable = isSelectable;
         this.action = action;
@@ -70,7 +71,7 @@ public class GuiIconActionable extends Button {
 
     @Override
     public void playDownSound(SoundManager soundHandler) {
-        soundHandler.play(SimpleSoundInstance.forUI(OurSounds.BEEP.getSound(), selected ? .6F: 1F));
+        soundHandler.play(SimpleSoundInstance.forUI(OurSounds.BEEP.getSound(), selected ? .6F : 1F));
     }
 
     @Override
@@ -78,7 +79,7 @@ public class GuiIconActionable extends Button {
         super.onClick(mouseX, mouseY);
         this.action.test(true);
 
-        if( !this.isSelectable )
+        if (!this.isSelectable)
             return;
 
         this.setSelected(!this.selected);
@@ -86,7 +87,7 @@ public class GuiIconActionable extends Button {
 
     @Override
     public void render(PoseStack matrices, int mouseX, int mouseY, float partialTick) {
-        if( !visible )
+        if (!visible)
             return;
 
         RenderSystem.enableBlend();
@@ -106,8 +107,8 @@ public class GuiIconActionable extends Button {
 
         blit(matrices, this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
 
-        if( mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height )
-            drawString(matrices, Minecraft.getInstance().font, this.getMessage().getString(), mouseX > (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) ?  mouseX + 2 : mouseX - Minecraft.getInstance().font.width(getMessage().getString()), mouseY - 10, activeColor.getRGB());
+        if (mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height)
+            drawString(matrices, Minecraft.getInstance().font, this.getMessage().getString(), mouseX > (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) ? mouseX + 2 : mouseX - Minecraft.getInstance().font.width(getMessage().getString()), mouseY - 10, activeColor.getRGB());
 
         RenderSystem.disableBlend();
     }

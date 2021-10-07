@@ -22,6 +22,7 @@ public final class JsonKeys {
     public static final String HEADER_VERSION = "version";
     public static final String HEADER_MC_VERSION = "mc_version";
 
-    private JsonKeys() {}
+    private JsonKeys() {
+    }
 
 }

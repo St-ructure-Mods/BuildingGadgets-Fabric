@@ -8,8 +8,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
 import java.util.UUID;
@@ -28,7 +28,7 @@ final class AllowPlayerOverrideManager {
                 .expireAfterWrite(5, TimeUnit.MINUTES)
                 .removalListener((RemovalListener<UUID, Boolean>) notification -> BuildingGadgets.LOG.info(
                         "Player with id {} was removed from the list of players for which '{}' is {} enabled. " +
-                                "He/She will need to run the command again for '{}' to become active again.",
+                        "He/She will need to run the command again for '{}' to become active again.",
                         notification.getKey(), logMessage, notification.getValue() ? "" : "not", logMessage))
                 .build();
 
@@ -44,7 +44,7 @@ final class AllowPlayerOverrideManager {
 
     void toggleAllowOverride(UUID uuid) {
         try {
-            allowPlayerOverrideCache.put(uuid, ! allowPlayerOverrideCache.get(uuid, () -> false));
+            allowPlayerOverrideCache.put(uuid, !allowPlayerOverrideCache.get(uuid, () -> false));
         } catch (ExecutionException e) {
             BuildingGadgets.LOG.warn("Failed to toggle '{}' for player {}", logMessage, uuid, e);
         }

@@ -1,8 +1,8 @@
 package com.direwolf20.buildinggadgets.common.tainted.template;
 
 import net.minecraft.nbt.CompoundTag;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -40,8 +40,10 @@ public final class TemplateKey implements ITemplateKey {
     }
 
     @Override
-    public void readFromNbt(CompoundTag tag) {}
+    public void readFromNbt(CompoundTag tag) {
+    }
 
     @Override
-    public void writeToNbt(CompoundTag tag) {}
+    public void writeToNbt(CompoundTag tag) {
+    }
 }

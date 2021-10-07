@@ -5,22 +5,22 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.lang.ITranslationProvider;
 import com.direwolf20.buildinggadgets.common.util.lang.MaterialListTranslation;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Multiset;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
@@ -29,7 +29,8 @@ import java.util.Iterator;
 
 import static com.direwolf20.buildinggadgets.client.screen.MaterialListGUI.*;
 import static com.direwolf20.buildinggadgets.client.screen.ScrollingMaterialList.Entry;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 // Todo change to AbstractList as it's an easy fix compared to duping the class
 class ScrollingMaterialList extends EntryList<Entry> {
@@ -69,7 +70,7 @@ class ScrollingMaterialList extends EntryList<Entry> {
         Player player = Minecraft.getInstance().player;
 
         // Could likely just assert
-        if( player == null )
+        if (player == null)
             return;
 
         IItemIndex index = InventoryHelper.index(gui.getTemplateItem(), player);

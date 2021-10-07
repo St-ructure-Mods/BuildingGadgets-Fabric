@@ -16,7 +16,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
@@ -25,8 +27,8 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,22 +41,22 @@ public class EffectBlock extends BaseEntityBlock {
             @Override
             public void onBuilderRemoved(EffectBlockTileEntity builder) {
                 Level world = builder.getLevel();
-                if( world == null )
+                if (world == null)
                     return;
 
                 BlockPos targetPos = builder.getBlockPos();
                 BlockData targetBlock = builder.getRenderedBlock();
-                    if( targetBlock.getState().getBlock() instanceof LeavesBlock) {
-                        targetBlock = new BlockData(targetBlock.getState().setValue(LeavesBlock.PERSISTENT, true), targetBlock.getTileData());
-                    }
+                if (targetBlock.getState().getBlock() instanceof LeavesBlock) {
+                    targetBlock = new BlockData(targetBlock.getState().setValue(LeavesBlock.PERSISTENT, true), targetBlock.getTileData());
+                }
 
-                    targetBlock.placeIn(BuildContext.builder().build(world), targetPos);
+                targetBlock.placeIn(BuildContext.builder().build(world), targetPos);
 
-                    // Instead of removing the block, we just sync the client & server to know that the block has been replaced
-                    world.sendBlockUpdated(targetPos, targetBlock.getState(), targetBlock.getState(), 1);
+                // Instead of removing the block, we just sync the client & server to know that the block has been replaced
+                world.sendBlockUpdated(targetPos, targetBlock.getState(), targetBlock.getState(), 1);
 
-                    BlockPos upPos = targetPos.above();
-                    world.getBlockState(targetPos).neighborChanged(world, targetPos, world.getBlockState(upPos).getBlock(), upPos, false);
+                BlockPos upPos = targetPos.above();
+                world.getBlockState(targetPos).neighborChanged(world, targetPos, world.getBlockState(upPos).getBlock(), upPos, false);
             }
         },
         REMOVE() {
@@ -95,7 +97,7 @@ public class EffectBlock extends BaseEntityBlock {
         if (target.getData().getState() != Blocks.AIR.defaultBlockState()) {
             Mode mode = state.isAir() ? Mode.PLACE : Mode.REPLACE;
             spawnEffectBlock(curTe, state, context.getWorld(), target.getPos(), target.getData(), mode);
-        } else if (! state.isAir()) {
+        } else if (!state.isAir()) {
             spawnEffectBlock(curTe, state, context.getWorld(), target.getPos(), TileSupport.createBlockData(state, curTe), Mode.REMOVE);
         }
     }

@@ -163,7 +163,7 @@ public class CopyGUI extends Screen {
             int collectiveWidth = buttons.stream().mapToInt(AbstractButton::getWidth).sum() + (buttons.size() - 1) * 5;
 
             int nextX = startX - collectiveWidth / 2;
-            for(AbstractButton button : buttons) {
+            for (AbstractButton button : buttons) {
                 button.x = nextX;
                 nextX += button.getWidth() + 5;
             }

@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials;
 
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.ref.JsonKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.tools.JsonBiDiSerializer;
@@ -10,11 +9,12 @@ import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.PeekingIterator;
 import com.google.gson.*;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -86,7 +86,7 @@ public final class MaterialList implements Iterable<ImmutableMultiset<ItemVarian
         MaterialListEntry.Serializer<?> serializer = getSerializerForId(id);
         Preconditions.checkArgument(serializer != null,
                 "Failed to recognize Serializer " + id +
-                        "! If you believe you need another implementation, please contact us and we can sort something out!");
+                "! If you believe you need another implementation, please contact us and we can sort something out!");
         return serializer.readFromNBT(nbt, persisted);
     }
 
@@ -115,13 +115,13 @@ public final class MaterialList implements Iterable<ImmutableMultiset<ItemVarian
     }
 
     public Iterable<ImmutableMultiset<ItemVariant>> getItemOptions() {
-        return rootEntry instanceof SubMaterialListEntry?
+        return rootEntry instanceof SubMaterialListEntry ?
                 ((SubMaterialListEntry) rootEntry).viewOnlySubEntries() :
                 ImmutableList.of();
     }
 
     public ImmutableMultiset<ItemVariant> getRequiredItems() {
-        SimpleMaterialListEntry simpleEntry = rootEntry instanceof SubMaterialListEntry?
+        SimpleMaterialListEntry simpleEntry = rootEntry instanceof SubMaterialListEntry ?
                 ((SubMaterialListEntry) rootEntry).getCombinedConstantEntry() :
                 ((SimpleMaterialListEntry) rootEntry);
         return simpleEntry.getItems();

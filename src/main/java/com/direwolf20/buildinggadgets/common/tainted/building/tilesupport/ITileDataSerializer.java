@@ -14,20 +14,22 @@ public interface ITileDataSerializer {
     /**
      * Serializes a given {@link ITileEntityData}. The persisted flag is meant to allow for more efficient usage of a Player's Network capabilities by using for example
      * RegistryId's for serialisation instead of RegistryNames.
-     * @param data The {@link ITileEntityData} to serialize.
+     *
+     * @param data      The {@link ITileEntityData} to serialize.
      * @param persisted Whether or not this data is meant to be persisted.
      * @return A {@link CompoundTag} representing the serialized form of the given {@link ITileEntityData}. May be empty but <b>not null</b> to
-     *         indicate that no data requires serialization.
+     * indicate that no data requires serialization.
      * @throws IllegalArgumentException If the {@link ITileEntityData} implementation is not supported by this serializer or
-     *         if a persisted save is attempted to be retrieved non-persistently or vice-versa.
+     *                                  if a persisted save is attempted to be retrieved non-persistently or vice-versa.
      */
     CompoundTag serialize(ITileEntityData data, boolean persisted);
 
     /**
      * Deserializes an {@link ITileEntityData} from the given {@link CompoundTag}.
+     *
      * @param tagCompound The {@link CompoundTag} to deserialize an {@link ITileEntityData} for.
-     * @param persisted Whether or not this data was previously persisted. It can be expected that this flag matches
-     *         whatever was passed into {@link #serialize(ITileEntityData, boolean)} to create the {@link CompoundTag}.
+     * @param persisted   Whether or not this data was previously persisted. It can be expected that this flag matches
+     *                    whatever was passed into {@link #serialize(ITileEntityData, boolean)} to create the {@link CompoundTag}.
      * @return The {@link ITileEntityData} representing the serialized data in the {@link CompoundTag}.
      * @throws IllegalArgumentException If the data does not match the format of this serializer or if a persisted save is attempted to be retrieved non-persistently or vice-versa.
      */

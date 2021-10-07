@@ -12,6 +12,7 @@ public abstract class SteppedScheduler implements BooleanSupplier {
             return b ? SUCCESS : END;
         }
     }
+
     private final int steps;
     private boolean finished;
 
@@ -24,10 +25,10 @@ public abstract class SteppedScheduler implements BooleanSupplier {
     public boolean getAsBoolean() {
         if (finished)
             return false;
-        for (int i = 0; advance() != StepResult.END && i < steps - 1; ++ i)
+        for (int i = 0; advance() != StepResult.END && i < steps - 1; ++i)
             ;
         boolean res = advance() != StepResult.END;
-        if (! res) {
+        if (!res) {
             this.finished = true;
             onFinish();
         }

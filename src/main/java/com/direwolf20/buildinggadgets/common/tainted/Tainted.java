@@ -11,5 +11,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface Tainted {
     String reason();
+
     String resolve() default "Replace with a new system";
 }

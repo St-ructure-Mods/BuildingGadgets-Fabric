@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.ItemStack;
 
-public class PacketToggleConnectedArea implements ServerPlayNetworking.PlayChannelHandler{
+public class PacketToggleConnectedArea implements ServerPlayNetworking.PlayChannelHandler {
 
     public static void send() {
         ClientPlayNetworking.send(PacketHandler.PacketToggleConnectedArea, PacketByteBufs.empty());

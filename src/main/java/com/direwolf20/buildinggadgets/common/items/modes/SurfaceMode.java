@@ -2,16 +2,18 @@ package com.direwolf20.buildinggadgets.common.items.modes;
 
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.building.placement.ConnectedSurface;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SurfaceMode extends AbstractMode {
-    public SurfaceMode(boolean isExchanging) { super(isExchanging); }
+    public SurfaceMode(boolean isExchanging) {
+        super(isExchanging);
+    }
 
     @Override
     List<BlockPos> collect(UseContext context, Player player, BlockPos start) {
@@ -41,11 +43,11 @@ public class SurfaceMode extends AbstractMode {
     public boolean validator(Player player, BlockPos pos, UseContext context) {
         // Do our default checks, then do our more complex fuzzy aware checks.
         boolean topRow = super.validator(player, pos, context);
-        if( this.isExchanging() )
+        if (this.isExchanging())
             return topRow;
 
         BlockState startState = context.getWorldState(context.getStartPos());
-        if( context.isFuzzy() )
+        if (context.isFuzzy())
             return topRow && !context.getWorld().isEmptyBlock(pos.relative(context.getHitSide().getOpposite()));
 
         return topRow && context.getWorld().getBlockState(pos.relative(context.getHitSide().getOpposite())) == startState;

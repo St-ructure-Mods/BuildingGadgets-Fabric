@@ -1,17 +1,17 @@
 package com.direwolf20.buildinggadgets.client.renderer;
 
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 
 import java.util.OptionalDouble;
 
@@ -95,23 +95,20 @@ public class OurRenderTypes extends RenderType {
     /**
      * This is used for rendering blocks with an alpha value as the alpha currently isn't
      * supported by minecraft.
-     *
+     * <p>
      * Literally just wraps the buffer so we can render a different RenderType
      */
-    public static class MultiplyAlphaRenderTypeBuffer implements MultiBufferSource
-    {
+    public static class MultiplyAlphaRenderTypeBuffer implements MultiBufferSource {
         private final MultiBufferSource inner;
         private final float constantAlpha;
 
-        public MultiplyAlphaRenderTypeBuffer(MultiBufferSource inner, float constantAlpha)
-        {
+        public MultiplyAlphaRenderTypeBuffer(MultiBufferSource inner, float constantAlpha) {
             this.inner = inner;
             this.constantAlpha = constantAlpha;
         }
 
         @Override
-        public VertexConsumer getBuffer(RenderType type)
-        {
+        public VertexConsumer getBuffer(RenderType type) {
             RenderType localType = type;
             if (localType instanceof CompositeRenderType) {
                 // all of this requires a lot of AT's so be aware of that on ports
@@ -119,8 +116,7 @@ public class OurRenderTypes extends RenderType {
                         .orElse(InventoryMenu.BLOCK_ATLAS);
 
                 localType = entityTranslucentCull(texture);
-            }
-            else if (localType.toString().equals(Sheets.translucentCullBlockSheet().toString())) {
+            } else if (localType.toString().equals(Sheets.translucentCullBlockSheet().toString())) {
                 localType = Sheets.translucentCullBlockSheet();
             }
 
@@ -130,33 +126,28 @@ public class OurRenderTypes extends RenderType {
         /**
          * Required for modifying the alpha value.
          */
-        public static class MultiplyAlphaVertexBuilder implements VertexConsumer
-        {
+        public static class MultiplyAlphaVertexBuilder implements VertexConsumer {
             private final VertexConsumer inner;
             private final float constantAlpha;
 
-            public MultiplyAlphaVertexBuilder(VertexConsumer inner, float constantAlpha)
-            {
+            public MultiplyAlphaVertexBuilder(VertexConsumer inner, float constantAlpha) {
                 this.inner = inner;
                 this.constantAlpha = constantAlpha;
             }
 
             @Override
-            public VertexConsumer vertex(double x, double y, double z)
-            {
-                return inner.vertex(x,y,z);
+            public VertexConsumer vertex(double x, double y, double z) {
+                return inner.vertex(x, y, z);
             }
 
             @Override
-            public VertexConsumer vertex(Matrix4f matrixIn, float x, float y, float z)
-            {
+            public VertexConsumer vertex(Matrix4f matrixIn, float x, float y, float z) {
                 return inner.vertex(matrixIn, x, y, z);
             }
 
             @Override
-            public VertexConsumer color(int red, int green, int blue, int alpha)
-            {
-                return inner.color(red,green,blue, (int) (alpha * constantAlpha));
+            public VertexConsumer color(int red, int green, int blue, int alpha) {
+                return inner.color(red, green, blue, (int) (alpha * constantAlpha));
             }
 
             @Override
@@ -165,33 +156,28 @@ public class OurRenderTypes extends RenderType {
             }
 
             @Override
-            public VertexConsumer overlayCoords(int u, int v)
-            {
+            public VertexConsumer overlayCoords(int u, int v) {
                 return inner.overlayCoords(u, v);
             }
 
 
             @Override
-            public VertexConsumer uv2(int u, int v)
-            {
+            public VertexConsumer uv2(int u, int v) {
                 return inner.uv2(u, v);
             }
 
             @Override
-            public VertexConsumer normal(float x, float y, float z)
-            {
-                return inner.normal(x,y,z);
+            public VertexConsumer normal(float x, float y, float z) {
+                return inner.normal(x, y, z);
             }
 
             @Override
-            public VertexConsumer normal(Matrix3f matrixIn, float x, float y, float z)
-            {
+            public VertexConsumer normal(Matrix3f matrixIn, float x, float y, float z) {
                 return inner.normal(matrixIn, x, y, z);
             }
 
             @Override
-            public void endVertex()
-            {
+            public void endVertex() {
                 inner.endVertex();
             }
 

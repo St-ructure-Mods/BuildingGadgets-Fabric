@@ -48,6 +48,7 @@ public interface ITemplateProvider extends Component {
     /**
      * Requests an update <b>for<b/> the other side - aka sends an update packet to it. On the client this will send the data to the server,
      * on the server this will send the data to <b>all logged in Clients</b>.
+     *
      * @param key The key to request a remote update for
      * @return whether or not a remote update was requested.
      */

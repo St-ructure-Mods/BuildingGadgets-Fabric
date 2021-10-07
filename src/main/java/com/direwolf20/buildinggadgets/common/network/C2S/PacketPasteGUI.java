@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.ItemStack;
 
-public class PacketPasteGUI implements ServerPlayNetworking.PlayChannelHandler{
+public class PacketPasteGUI implements ServerPlayNetworking.PlayChannelHandler {
 
     public static void send(int x, int y, int z) {
         FriendlyByteBuf buf = PacketByteBufs.create();
@@ -31,7 +31,7 @@ public class PacketPasteGUI implements ServerPlayNetworking.PlayChannelHandler{
 
         server.execute(() -> {
             ItemStack heldItem = GadgetCopyPaste.getGadget(player);
-            if(!heldItem.isEmpty()) GadgetCopyPaste.setRelativeVector(heldItem, new BlockPos(x, y, z));
+            if (!heldItem.isEmpty()) GadgetCopyPaste.setRelativeVector(heldItem, new BlockPos(x, y, z));
         });
     }
 }

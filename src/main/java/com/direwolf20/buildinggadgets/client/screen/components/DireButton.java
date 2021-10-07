@@ -34,7 +34,7 @@ public class DireButton extends Button {
 
             int j = 14737632;
 
-            if (! this.active) {
+            if (!this.active) {
                 j = 10526880;
             } else if (this.isHovered) {
                 j = 16777120;

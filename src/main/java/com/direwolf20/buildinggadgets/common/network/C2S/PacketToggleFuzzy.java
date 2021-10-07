@@ -16,7 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.ItemStack;
 
-public class PacketToggleFuzzy implements ServerPlayNetworking.PlayChannelHandler{
+public class PacketToggleFuzzy implements ServerPlayNetworking.PlayChannelHandler {
 
     public static void send() {
         ClientPlayNetworking.send(PacketHandler.PacketToggleFuzzy, PacketByteBufs.empty());
@@ -26,7 +26,7 @@ public class PacketToggleFuzzy implements ServerPlayNetworking.PlayChannelHandle
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         server.execute(() -> {
             ItemStack stack = AbstractGadget.getGadget(player);
-            if(stack.getItem() instanceof GadgetExchanger || stack.getItem() instanceof GadgetBuilding || (stack.getItem() instanceof GadgetDestruction && BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled)) {
+            if (stack.getItem() instanceof GadgetExchanger || stack.getItem() instanceof GadgetBuilding || (stack.getItem() instanceof GadgetDestruction && BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled)) {
                 AbstractGadget.toggleFuzzy(player, stack);
             }
         });

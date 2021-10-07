@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.ItemStack;
 
-public class PacketUndo implements ServerPlayNetworking.PlayChannelHandler{
+public class PacketUndo implements ServerPlayNetworking.PlayChannelHandler {
 
     public static void send() {
         ClientPlayNetworking.send(PacketHandler.PacketUndo, PacketByteBufs.empty());
@@ -23,7 +23,7 @@ public class PacketUndo implements ServerPlayNetworking.PlayChannelHandler{
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         server.execute(() -> {
             ItemStack stack = AbstractGadget.getGadget(player);
-            if (! stack.isEmpty() && !(stack.getItem() instanceof GadgetExchanger))
+            if (!stack.isEmpty() && !(stack.getItem() instanceof GadgetExchanger))
                 ((AbstractGadget) stack.getItem()).undo(player.level, player, stack);
         });
     }

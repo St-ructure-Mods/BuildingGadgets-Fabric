@@ -1,13 +1,13 @@
 package com.direwolf20.buildinggadgets.common.items.modes;
 
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 
 /**
  * Mostly used to turn a {@link Direction} into an {@link XYZ} representation.
  * Some common methods have been added to actual do computation based on the result
  * of the XYZ.
- *
+ * <p>
  * Most of the cleverness to this class is the transform from Direction to an X, Y or Z.
  * I don't have a better name for this atm, soz :P
  */
@@ -15,10 +15,10 @@ public enum XYZ {
     X, Y, Z;
 
     public static XYZ fromFacing(Direction facing) {
-        if( facing == Direction.SOUTH || facing == Direction.NORTH )
+        if (facing == Direction.SOUTH || facing == Direction.NORTH)
             return XYZ.Z;
 
-        if( facing == Direction.EAST || facing == Direction.WEST )
+        if (facing == Direction.EAST || facing == Direction.WEST)
             return XYZ.X;
 
         return XYZ.Y;
@@ -37,8 +37,8 @@ public enum XYZ {
     }
 
     public static int posToXYZ(BlockPos pos, XYZ xyz) {
-        if( xyz == X ) return pos.getX();
-        if( xyz == Y ) return pos.getY();
+        if (xyz == X) return pos.getX();
+        if (xyz == Y) return pos.getY();
 
         return pos.getZ();
     }
@@ -50,8 +50,8 @@ public enum XYZ {
     public static BlockPos extendPosSingle(int value, BlockPos pos, Direction facing, XYZ xyz) {
         int change = invertOnFace(facing, value);
 
-        if( xyz == X ) return new BlockPos(pos.getX() + change, pos.getY(), pos.getZ());
-        if( xyz == Y ) return new BlockPos(pos.getX(), pos.getY() + change, pos.getZ());
+        if (xyz == X) return new BlockPos(pos.getX() + change, pos.getY(), pos.getZ());
+        if (xyz == Y) return new BlockPos(pos.getX(), pos.getY() + change, pos.getZ());
 
         return new BlockPos(pos.getX(), pos.getY(), pos.getZ() + change);
     }

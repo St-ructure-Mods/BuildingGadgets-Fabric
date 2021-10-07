@@ -5,17 +5,18 @@ import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries.TileEntityData;
 import com.direwolf20.buildinggadgets.common.tainted.template.SerialisationSupport;
 import com.google.common.base.MoreObjects;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
-
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.Objects;
 
 public final class TileSupport {
-    private TileSupport() {}
+    private TileSupport() {
+    }
 
     private static final ITileDataFactory DATA_PROVIDER_FACTORY = new DataProviderFactory();
 

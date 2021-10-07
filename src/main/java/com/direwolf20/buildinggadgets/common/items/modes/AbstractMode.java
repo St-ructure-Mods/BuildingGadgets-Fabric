@@ -1,23 +1,23 @@
 package com.direwolf20.buildinggadgets.common.items.modes;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
+import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.shapes.Shapes;
 
 import java.util.Comparator;
 import java.util.List;
@@ -73,12 +73,12 @@ public abstract class AbstractMode {
         BlockState worldBlockState = context.getWorldState(pos);
         BlockEntity be = context.getWorld().getBlockEntity(pos);
         // No air! or water
-        if( worldBlockState.getMaterial() == Material.AIR || worldBlockState.getMaterial().isLiquid() )
+        if (worldBlockState.getMaterial() == Material.AIR || worldBlockState.getMaterial().isLiquid())
             return false;
 
         // No effect blocks and don't try with the same block as you're trying to exchange with
         if (worldBlockState == OurBlocks.EFFECT_BLOCK.defaultBlockState()
-                || worldBlockState == context.getSetState() )
+            || worldBlockState == context.getSetState())
             return false;
 
         if (be != null && be.getBlockState() == context.getSetState())
@@ -93,11 +93,11 @@ public abstract class AbstractMode {
 
         // Finally, ensure at least a single face is exposed.
         boolean hasSingeValid = false;
-        for(Direction direction : Direction.values()) {
+        for (Direction direction : Direction.values()) {
             BlockPos offset = pos.relative(direction);
             BlockState state = context.getWorld().getBlockState(offset);
-            if( state.isAir()
-                    || (state.getShape(context.getWorld(), offset) != Shapes.block() && !(state.getBlock() instanceof StairBlock))) {
+            if (state.isAir()
+                || (state.getShape(context.getWorld(), offset) != Shapes.block() && !(state.getBlock() instanceof StairBlock))) {
                 hasSingeValid = true;
                 break;
             }
@@ -197,15 +197,15 @@ public abstract class AbstractMode {
         @Override
         public String toString() {
             return "UseContext{" +
-                    "world=" + world +
-                    ", setState=" + setState +
-                    ", startPos=" + startPos +
-                    ", hitSide=" + hitSide +
-                    ", isFuzzy=" + isFuzzy +
-                    ", placeOnTop=" + placeOnTop +
-                    ", range=" + range +
-                    ", rayTraceFluid=" + rayTraceFluid +
-                    '}';
+                   "world=" + world +
+                   ", setState=" + setState +
+                   ", startPos=" + startPos +
+                   ", hitSide=" + hitSide +
+                   ", isFuzzy=" + isFuzzy +
+                   ", placeOnTop=" + placeOnTop +
+                   ", range=" + range +
+                   ", rayTraceFluid=" + rayTraceFluid +
+                   '}';
         }
     }
 }

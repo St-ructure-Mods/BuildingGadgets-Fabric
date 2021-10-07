@@ -1,14 +1,16 @@
 package com.direwolf20.buildinggadgets.common.items.modes;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class StairMode extends AbstractMode {
-    public StairMode() { super(false); }
+    public StairMode() {
+        super(false);
+    }
 
     @Override
     List<BlockPos> collect(UseContext context, Player player, BlockPos start) {
@@ -19,14 +21,14 @@ public class StairMode extends AbstractMode {
             side = player.getDirection().getOpposite();
 
         XYZ facingXYZ = XYZ.fromFacing(side);
-        for( int i = 0; i < context.getRange(); i ++ ) {
+        for (int i = 0; i < context.getRange(); i++) {
             // Check to see if we should build up or down from the player
             int tmp = start.getY() > player.getY() + 1 ? (i + 1) * -1 : i;
 
-            if( facingXYZ == XYZ.X )
+            if (facingXYZ == XYZ.X)
                 coordinates.add(new BlockPos(start.getX() + (tmp * (side == Direction.EAST ? -1 : 1)), start.getY() + tmp, start.getZ()));
 
-            if( facingXYZ == XYZ.Z )
+            if (facingXYZ == XYZ.Z)
                 coordinates.add(new BlockPos(start.getX(), start.getY() + tmp, start.getZ() + (tmp * (side == Direction.SOUTH ? -1 : 1))));
         }
 

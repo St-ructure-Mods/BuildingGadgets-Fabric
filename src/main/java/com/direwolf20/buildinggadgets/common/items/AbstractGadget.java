@@ -255,8 +255,8 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     // Todo: tweak and fix.
     public static int getRangeInBlocks(int range, AbstractMode mode) {
         if (mode instanceof StairMode ||
-                mode instanceof VerticalColumnMode ||
-                mode instanceof HorizontalColumnMode) {
+            mode instanceof VerticalColumnMode ||
+            mode instanceof HorizontalColumnMode) {
             return range;
         }
 

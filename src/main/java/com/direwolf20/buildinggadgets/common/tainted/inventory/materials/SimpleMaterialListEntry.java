@@ -20,7 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Comparator;
 import java.util.Objects;
 
-record SimpleMaterialListEntry(ImmutableMultiset<ItemVariant> items) implements MaterialListEntry<SimpleMaterialListEntry> {
+record SimpleMaterialListEntry(
+        ImmutableMultiset<ItemVariant> items) implements MaterialListEntry<SimpleMaterialListEntry> {
     static final MaterialListEntry.Serializer<SimpleMaterialListEntry> SERIALIZER = new Serializer();
 
     SimpleMaterialListEntry(ImmutableMultiset<ItemVariant> items) {

@@ -1,10 +1,10 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials;
 
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.PeekingIterator;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 

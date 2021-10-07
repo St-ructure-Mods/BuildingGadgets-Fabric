@@ -11,6 +11,7 @@ public final class OurItems {
     private static Item itemRegister(String path, Item item) {
         return Registry.register(Registry.ITEM, BuildingGadgets.id(path), item);
     }
+
     // Gadgets
     public static final Item BUILDING_GADGET_ITEM = itemRegister("gadget_building", new GadgetBuilding());
     public static final Item EXCHANGING_GADGET_ITEM = itemRegister("gadget_exchanging", new GadgetExchanger());

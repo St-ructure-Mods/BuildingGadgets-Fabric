@@ -56,27 +56,27 @@ import java.util.stream.Collectors;
 public class GadgetUtils {
     // TODO: migrate to tags
     private static final Tag<Block> DISALLOWED_BLOCKS = Tag.fromSet(
-        ImmutableSet.of(
-                Blocks.END_PORTAL, Blocks.NETHER_PORTAL, Blocks.END_PORTAL_FRAME, Blocks.BEDROCK, Blocks.SPAWNER
-        ));
+            ImmutableSet.of(
+                    Blocks.END_PORTAL, Blocks.NETHER_PORTAL, Blocks.END_PORTAL_FRAME, Blocks.BEDROCK, Blocks.SPAWNER
+            ));
 
-    private static final ImmutableList<String> LINK_STARTS = ImmutableList.of("http","www");
+    private static final ImmutableList<String> LINK_STARTS = ImmutableList.of("http", "www");
 
     public static boolean mightBeLink(final String s) {
         return LINK_STARTS.stream().anyMatch(s::startsWith);
     }
 
     public static void addTooltipNameAndAuthor(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
-            BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(world).ifPresent(provider -> {
+        BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(world).ifPresent(provider -> {
             BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent(key -> {
-            Template template = provider.getTemplateForKey(key);
-                    TemplateHeader header = template.getHeader();
-                    if (header.getName() != null && ! header.getName().isEmpty())
-                        tooltip.add(TooltipTranslation.TEMPLATE_NAME.componentTranslation(header.getName()).setStyle(Styles.AQUA));
-                    if (header.getAuthor() != null && ! header.getAuthor().isEmpty())
-                        tooltip.add(TooltipTranslation.TEMPLATE_AUTHOR.componentTranslation(header.getAuthor()).setStyle(Styles.AQUA));
-                });
-                EventUtil.addTemplatePadding(stack, tooltip);
+                Template template = provider.getTemplateForKey(key);
+                TemplateHeader header = template.getHeader();
+                if (header.getName() != null && !header.getName().isEmpty())
+                    tooltip.add(TooltipTranslation.TEMPLATE_NAME.componentTranslation(header.getName()).setStyle(Styles.AQUA));
+                if (header.getAuthor() != null && !header.getAuthor().isEmpty())
+                    tooltip.add(TooltipTranslation.TEMPLATE_AUTHOR.componentTranslation(header.getAuthor()).setStyle(Styles.AQUA));
+            });
+            EventUtil.addTemplatePadding(stack, tooltip);
         });
     }
 
@@ -181,7 +181,7 @@ public class GadgetUtils {
             return InteractionResultHolder.fail(Blocks.AIR);
 
         BlockState state = world.getBlockState(lookingAt.getBlockPos());
-        if (! ((AbstractGadget) stack.getItem()).isAllowedBlock(state.getBlock()) || state.getBlock() instanceof EffectBlock)
+        if (!((AbstractGadget) stack.getItem()).isAllowedBlock(state.getBlock()) || state.getBlock() instanceof EffectBlock)
             return InteractionResultHolder.fail(state.getBlock());
 
         if (DISALLOWED_BLOCKS.contains(state.getBlock())) {
@@ -215,7 +215,7 @@ public class GadgetUtils {
         //Stores the current visual blocks in NBT on the tool, so the player can look around without moving the visual render
         Optional<List<BlockPos>> anchorCoords = getAnchor(stack);
 
-        if( anchorCoords.isPresent() ) {  //If theres already an anchor, remove it.
+        if (anchorCoords.isPresent()) {  //If theres already an anchor, remove it.
             setAnchor(stack);
             player.displayClientMessage(MessageTranslation.ANCHOR_REMOVED.componentTranslation().setStyle(Styles.AQUA), true);
             return true;
@@ -269,7 +269,7 @@ public class GadgetUtils {
     @Nullable
     public static BlockPos getPOSFromNBT(ItemStack stack, String tagName) {
         CompoundTag stackTag = stack.getOrCreateTag();
-        if (! stackTag.contains(tagName))
+        if (!stackTag.contains(tagName))
             return null;
         CompoundTag posTag = stack.getOrCreateTag().getCompound(tagName);
         if (posTag.isEmpty())

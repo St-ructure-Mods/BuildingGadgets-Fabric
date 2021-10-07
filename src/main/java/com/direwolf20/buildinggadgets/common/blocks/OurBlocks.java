@@ -5,7 +5,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.Block;
 
 public final class OurBlocks {
-    private OurBlocks() {}
+    private OurBlocks() {
+    }
 
     public static void registerBlocks() {
         Registry.register(Registry.BLOCK, BuildingGadgets.id("effect_block"), EFFECT_BLOCK);

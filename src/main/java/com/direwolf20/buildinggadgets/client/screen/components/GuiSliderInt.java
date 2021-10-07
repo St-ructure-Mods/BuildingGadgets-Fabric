@@ -92,7 +92,7 @@ public class GuiSliderInt extends AbstractSliderButton {
     }
 
     private void renderText(PoseStack matrices, Minecraft mc, AbstractWidget component) {
-        int color = ! active ? 10526880 : (isHovered ? 16777120 : - 1);
+        int color = !active ? 10526880 : (isHovered ? 16777120 : -1);
         String buttonText = component.getMessage().getString();
         int strWidth = mc.font.width(buttonText);
         int ellipsisWidth = mc.font.width("...");
@@ -103,7 +103,8 @@ public class GuiSliderInt extends AbstractSliderButton {
     }
 
     @Override
-    public void playDownSound(SoundManager p_playDownSound_1_) { }
+    public void playDownSound(SoundManager p_playDownSound_1_) {
+    }
 
     @Override
     protected void renderBg(PoseStack matrices, Minecraft mc, int mouseX, int mouseY) {
@@ -115,15 +116,15 @@ public class GuiSliderInt extends AbstractSliderButton {
 
     private void drawBorderedRect(PoseStack matrices, int x, int y, int width, int height) {
         fill(matrices, x, y, x + width, y + height, colorSliderBackground);
-        fill(matrices, ++ x, ++ y, x + width - 2, y + height - 2, colorSlider);
+        fill(matrices, ++x, ++y, x + width - 2, y + height - 2, colorSlider);
     }
 
     public Collection<AbstractWidget> getComponents() {
         return ImmutableSet.of(
                 this,
-                new GuiButtonIncrement(this, x - height, y, width, height, new TextComponent("-"), b -> increment.accept(this, - 1)),
+                new GuiButtonIncrement(this, x - height, y, width, height, new TextComponent("-"), b -> increment.accept(this, -1)),
                 new GuiButtonIncrement(this, x + width, y, width, height, new TextComponent("+"), b -> increment.accept(this, 1)
-        ));
+                ));
     }
 
     private static class GuiButtonIncrement extends Button {
@@ -147,6 +148,7 @@ public class GuiSliderInt extends AbstractSliderButton {
         }
 
         @Override
-        public void playDownSound(SoundManager p_playDownSound_1_) { }
+        public void playDownSound(SoundManager p_playDownSound_1_) {
+        }
     }
 }

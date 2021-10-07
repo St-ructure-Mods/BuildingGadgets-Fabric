@@ -26,10 +26,10 @@ public class EntryList<E extends Entry<E>> extends ObjectSelectionList<E> {
         double guiScaleFactor = Minecraft.getInstance().getWindow().getGuiScale();
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int)(x0  * guiScaleFactor),
-                (int)(Minecraft.getInstance().getWindow().getHeight() - (y1 * guiScaleFactor)),
-                (int)(width * guiScaleFactor),
-                (int)(height * guiScaleFactor));
+        GL11.glScissor((int) (x0 * guiScaleFactor),
+                (int) (Minecraft.getInstance().getWindow().getHeight() - (y1 * guiScaleFactor)),
+                (int) (width * guiScaleFactor),
+                (int) (height * guiScaleFactor));
 
         renderParts(matrices, mouseX, mouseY, partialTicks);
         glDisable(GL_SCISSOR_TEST);

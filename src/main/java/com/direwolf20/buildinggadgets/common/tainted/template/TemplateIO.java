@@ -13,14 +13,16 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.io.*;
 import java.util.Base64;
 
 public final class TemplateIO {
     private static final Gson GSON = TemplateHeader.appendHeaderSpecification(new GsonBuilder(), false, true).create();
-    private TemplateIO() {}
+
+    private TemplateIO() {
+    }
 
     public static void writeTemplate(Template template, OutputStream stream) throws TemplateWriteException {
         writeTemplate(template, stream, true);

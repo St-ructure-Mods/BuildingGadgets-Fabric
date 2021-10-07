@@ -1,16 +1,16 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials;
 
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.ref.JsonKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Streams;
 import com.google.gson.*;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -53,10 +53,10 @@ abstract class SubMaterialListEntry implements MaterialListEntry<SubMaterialList
         if (orEntries.isEmpty() && andEntries.isEmpty() && remainder.isEmpty())
             return constantEntry;
         return createFrom(ImmutableList.<MaterialListEntry<?>>builder()
-                .addAll(andEntries)
-                .addAll(orEntries)
-                .addAll(remainder)
-                .build(),
+                        .addAll(andEntries)
+                        .addAll(orEntries)
+                        .addAll(remainder)
+                        .build(),
                 constantEntry.getItems().isEmpty() ? ImmutableList.of() : ImmutableList.of(constantEntry), true);
     }
 
@@ -81,7 +81,7 @@ abstract class SubMaterialListEntry implements MaterialListEntry<SubMaterialList
         if (simpleEntries.size() == 1)
             return simpleEntries.get(0);
         ImmutableMultiset.Builder<ItemVariant> builder = ImmutableMultiset.builder();
-        for (SimpleMaterialListEntry entry:simpleEntries) {
+        for (SimpleMaterialListEntry entry : simpleEntries) {
             builder.addAll(entry.getItems());
         }
         return new SimpleMaterialListEntry(builder.build());

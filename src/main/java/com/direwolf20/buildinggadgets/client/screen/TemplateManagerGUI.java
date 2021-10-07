@@ -16,8 +16,6 @@ import com.direwolf20.buildinggadgets.common.tainted.building.view.IBuildView;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.tainted.template.*;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider.IUpdateListener;
 import com.direwolf20.buildinggadgets.common.tileentities.TemplateManagerTileEntity;
@@ -37,11 +35,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 import com.google.gson.JsonParseException;
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -109,7 +109,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
         int x = (leftPos - 20) + 180;
         buttonSave = addRenderableWidget(new Button(x, topPos + 17, 60, 20, GuiTranslation.BUTTON_SAVE.componentTranslation(), b -> onSave()));
-        buttonLoad = addRenderableWidget(new Button(x,topPos + 39, 60, 20, GuiTranslation.BUTTON_LOAD.componentTranslation(), b -> onLoad()));
+        buttonLoad = addRenderableWidget(new Button(x, topPos + 39, 60, 20, GuiTranslation.BUTTON_LOAD.componentTranslation(), b -> onLoad()));
         buttonCopy = addRenderableWidget(new Button(x, topPos + 66, 60, 20, GuiTranslation.BUTTON_COPY.componentTranslation(), b -> onCopy()));
         buttonPaste = addRenderableWidget(new Button(x, topPos + 89, 60, 20, GuiTranslation.BUTTON_PASTE.componentTranslation(), b -> onPaste()));
 
@@ -139,8 +139,8 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         blit(matrices, leftPos - 20, topPos - 12, 0, 0, imageWidth, imageHeight + 25);
         blit(matrices, (leftPos - 20) + imageWidth, topPos + 8, imageWidth + 3, 30, 71, imageHeight);
 
-        if (! buttonCopy.isHovered() && ! buttonPaste.isHovered()) {
-            if( buttonLoad.isHovered() )
+        if (!buttonCopy.isHovered() && !buttonPaste.isHovered()) {
+            if (buttonLoad.isHovered())
                 blit(matrices, (leftPos + imageWidth) - 44, topPos + 38, imageWidth, 0, 17, 24);
             else
                 blit(matrices, (leftPos + imageWidth) - 44, topPos + 38, imageWidth + 17, 0, 16, 24);
@@ -149,7 +149,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         this.nameField.render(matrices, mouseX, mouseY, partialTicks);
 //        fill(matrices, guiLeft + panel.getX() - 1, guiTop + panel.getY() - 1, guiLeft + panel.getX() + panel.getWidth() + 1, guiTop + panel.getY() + panel.getHeight() + 1, 0xFF8A8A8A);
 
-        if( this.template != null ) {
+        if (this.template != null) {
             renderPanel();
         }
     }
@@ -160,16 +160,16 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         }
 
         // Invalidate the render
-        if( container.getSlot(0).getItem().isEmpty() && template != null ) {
+        if (container.getSlot(0).getItem().isEmpty() && template != null) {
             template = null;
             resetViewport();
             return;
         }
 
         ITemplateKey key = BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(container.getSlot(0).getItem());
-            // Make sure we're not re-creating the same cache.
+        // Make sure we're not re-creating the same cache.
         Template template = templateProvider.get().getTemplateForKey(key);
-        if( this.template == template )
+        if (this.template == template)
             return;
 
         this.template = template;
@@ -252,7 +252,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
     private void renderRequirement(PoseStack matrices, int mouseX, int mouseY) {
         MaterialList requirements = this.template.getHeaderAndForceMaterials(BuildContext.builder().build(getWorld())).getRequiredItems();
-        if( requirements == null )
+        if (requirements == null)
             return;
 
         Lighting.setupForFlatItems();
@@ -279,7 +279,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
                 .reversed(), list.getChosenOption().entrySet());
 
         int index = 0, column = 0;
-        for(Multiset.Entry<ItemVariant> e: sortedEntries) {
+        for (Multiset.Entry<ItemVariant> e : sortedEntries) {
             ItemStack stack = e.getElement().toStack();
             int x = (-20 - (column * 25)), y = (20 + (index * 25));
 
@@ -293,9 +293,9 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
                 renderTooltip(matrices, Lists.transform(stack.getTooltipLines(this.getMinecraft().player, TooltipFlag.Default.NORMAL), Component::getVisualOrderText), x + 15, y + 25);
             }
 
-            index ++;
-            if( index % 8 == 0 ) {
-                column ++;
+            index++;
+            if (index % 8 == 0) {
+                column++;
                 index = 0;
             }
         }
@@ -480,8 +480,8 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         momentumX *= momentumDampening;
         momentumY *= momentumDampening;
 
-        if (! nameField.isFocused() && nameField.getValue().isEmpty())
-            getMinecraft().font.draw(matrices, GuiTranslation.TEMPLATE_PLACEHOLDER.format(), nameField.x - leftPos + 4, (nameField.y + 2) - topPos, - 10197916);
+        if (!nameField.isFocused() && nameField.getValue().isEmpty())
+            getMinecraft().font.draw(matrices, GuiTranslation.TEMPLATE_PLACEHOLDER.format(), nameField.x - leftPos + 4, (nameField.y + 2) - topPos, -10197916);
 
         if (buttonSave.isHovered() || buttonLoad.isHovered() || buttonPaste.isHovered())
             drawSlotOverlay(matrices, buttonLoad.isHovered() ? container.getSlot(0) : container.getSlot(1));
@@ -490,7 +490,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
     private void drawSlotOverlay(PoseStack matrices, Slot slot) {
         matrices.pushPose();
         matrices.translate(0, 0, 1000);
-        fill(matrices, slot.x, slot.y, slot.x + 16, slot.y + 16, - 1660903937);
+        fill(matrices, slot.x, slot.y, slot.x + 16, slot.y + 16, -1660903937);
         matrices.popPose();
     }
 
@@ -508,7 +508,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         super.containerTick();
 
         nameField.tick();
-        if (! panelClicked) {
+        if (!panelClicked) {
             initRotX = rotX;
             initRotY = rotY;
             initZoom = zoom;
@@ -602,7 +602,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
                         .build(getWorld());
                 try {
                     Template template = provider.getTemplateForKey(key);
-                    if (! nameField.getValue().isEmpty())
+                    if (!nameField.getValue().isEmpty())
                         template = template.withName(nameField.getValue());
                     String json = TemplateIO.writeTemplateJson(template, buildContext);
                     getMinecraft().keyboardHandler.setClipboard(json);
@@ -637,13 +637,14 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
                 return;
 
             }
-        } catch (CommandSyntaxException ignored) {}
+        } catch (CommandSyntaxException ignored) {
+        }
 
         // todo: this needs to be put onto some kind of readTemplateFromJson(input stream).onError(e -> error)
         try {
             Template template = TemplateIO.readTemplateFromJson(CBString);
             Template readTemplate = template.clearMaterials();
-            if (! nameField.getValue().isEmpty())
+            if (!nameField.getValue().isEmpty())
                 readTemplate = readTemplate.withName(nameField.getValue());
             boolean replaced = replaceStack();
             ItemStack stack = container.getSlot(1).getItem();

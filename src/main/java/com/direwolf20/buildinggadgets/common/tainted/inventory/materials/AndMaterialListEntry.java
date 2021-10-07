@@ -1,8 +1,8 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory.materials;
 
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.*;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,10 +1,11 @@
 package com.direwolf20.buildinggadgets.common.util.lang;
 
-import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Style;
 
 public final class Styles {
-    private Styles() {}
+    private Styles() {
+    }
 
     public static final Style DK_GREEN = Style.EMPTY.applyFormat(ChatFormatting.DARK_GREEN);
     public static final Style AQUA = Style.EMPTY.applyFormat(ChatFormatting.AQUA);

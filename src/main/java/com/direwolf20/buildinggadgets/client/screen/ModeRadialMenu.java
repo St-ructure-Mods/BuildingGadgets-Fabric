@@ -129,7 +129,7 @@ public class ModeRadialMenu extends Screen {
                 addRenderableWidget(button);
                 conditionalButtons.add(button);
             }
-            if( !isDestruction ) {
+            if (!isDestruction) {
                 Button button = new PositionedIconActionable(RadialTranslation.CONNECTED_SURFACE, "connected_area", right, send -> {
                     if (send)
                         PacketToggleConnectedArea.send();
