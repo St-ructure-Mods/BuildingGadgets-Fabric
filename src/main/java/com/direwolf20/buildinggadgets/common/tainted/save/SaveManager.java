@@ -30,27 +30,30 @@ public enum SaveManager {
     }
 
     public void onServerStarted() {
-        BuildingGadgets.LOG.debug("Loading World Saves.");
         ServerLifecycleEvents.SERVER_STARTED.register((server -> {
+            BuildingGadgets.LOG.debug("Loading World Saves.");
             ServerLevel world = server.getLevel(ServerLevel.OVERWORLD);
+
             for (UndoSaveContainer c : undoSaves) {
                 c.acquire(world);
             }
-            templateSave = getTemplateSave(world, SaveReference.TEMPLATE_SAVE_TEMPLATES);
-        }));
 
-        BuildingGadgets.LOG.debug("Finished Loading saves");
+            templateSave = getTemplateSave(world, SaveReference.TEMPLATE_SAVE_TEMPLATES);
+            BuildingGadgets.LOG.debug("Finished Loading saves");
+        }));
     }
 
     public void onServerStopped() {
-        BuildingGadgets.LOG.debug("Clearing save caches");
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+            BuildingGadgets.LOG.debug("Clearing save caches");
+
             for (UndoSaveContainer c : undoSaves) {
                 c.release();
             }
+
             templateSave = null;
+            BuildingGadgets.LOG.debug("Finished clearing save caches");
         });
-        BuildingGadgets.LOG.debug("Finished clearing save caches");
     }
 
     public static UndoWorldSave getUndoSave(ServerLevel world, int maxLength, String name) {

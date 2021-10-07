@@ -26,7 +26,7 @@ public final class OurItems {
 
 
     public static Item.Properties itemProperties() {
-        return new Item.Properties().tab(BuildingGadgets.creativeTab);
+        return new Item.Properties().tab(BuildingGadgets.CREATIVE_TAB);
     }
 
     public static Item.Properties nonStackableItemProperties() {

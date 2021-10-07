@@ -26,7 +26,7 @@ public class BuildingGadgetsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        KeyBindings.init();
+        KeyBindings.initialize();
         WorldRenderEvents.AFTER_SETUP.register(EventRenderWorldLast::renderWorldLastEvent);
         ScreenRegistry.register(OurContainers.TEMPLATE_MANAGER_CONTAINER_TYPE, TemplateManagerGUI::new);
         ClientTickEvents.END_CLIENT_TICK.register(EventKeyInput::handleEventInput);

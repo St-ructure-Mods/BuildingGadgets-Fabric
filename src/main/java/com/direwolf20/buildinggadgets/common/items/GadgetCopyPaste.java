@@ -110,7 +110,7 @@ public class GadgetCopyPaste extends AbstractGadget {
 
     public GadgetCopyPaste() {
         super(OurItems.nonStackableItemProperties(),
-                BuildingGadgets.config.GADGETS.GADGET_COPY_PASTE.undoSize,
+                BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.undoSize,
                 Reference.SaveReference.UNDO_COPY_PASTE,
                 TagReference.WHITELIST_COPY_PASTE,
                 TagReference.BLACKLIST_COPY_PASTE);
@@ -118,12 +118,12 @@ public class GadgetCopyPaste extends AbstractGadget {
 
     @Override
     public long getEnergyCapacity() {
-        return BuildingGadgets.config.GADGETS.GADGET_COPY_PASTE.maxEnergy;
+        return BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.maxEnergy;
     }
 
     @Override
     public long getEnergyCost(ItemStack tool) {
-        return BuildingGadgets.config.GADGETS.GADGET_COPY_PASTE.energyCost;
+        return BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.energyCost;
     }
 
     @Override
@@ -372,7 +372,7 @@ public class GadgetCopyPaste extends AbstractGadget {
                 return false;
             }
         }
-        int maxDimension = BuildingGadgets.config.GADGETS.GADGET_COPY_PASTE.maxCopySize;
+        int maxDimension = BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.maxCopySize;
         if (region.getXSize() > 0xFFFF || region.getYSize() > 255 || region.getZSize() > 0xFFFF ||  //these are the max dimensions of a Template
             ((region.getXSize() > maxDimension || region.getYSize() > maxDimension || region.getZSize() > maxDimension) && !OverrideCopySizeCommand.mayPerformLargeCopy(player))) {
             BlockPos sizeVec = region.getMax().subtract(region.getMin());
@@ -395,7 +395,7 @@ public class GadgetCopyPaste extends AbstractGadget {
                             .author(player.getName().getContents())
                             .build());
             onCopyFinished(newTemplate.normalize(), stack, player);
-        }, buildView, BuildingGadgets.config.GADGETS.GADGET_COPY_PASTE.copySteps);
+        }, buildView, BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.copySteps);
     }
 
     private void onCopyFinished(Template newTemplate, ItemStack stack, Player player) {
@@ -431,7 +431,7 @@ public class GadgetCopyPaste extends AbstractGadget {
                 return false;
             }
         }
-        int maxDimension = BuildingGadgets.config.GADGETS.GADGET_COPY_PASTE.maxBuildSize;
+        int maxDimension = BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.maxBuildSize;
         if ((region.getXSize() > maxDimension || region.getYSize() > maxDimension || region.getZSize() > maxDimension) &&
             !OverrideBuildSizeCommand.mayPerformLargeBuild(player)) {
             BlockPos sizeVec = region.getMax().subtract(region.getMin());
@@ -446,14 +446,14 @@ public class GadgetCopyPaste extends AbstractGadget {
     private void schedulePlacement(ItemStack stack, IBuildView view, Player player) {
         IItemIndex index = InventoryHelper.index(stack, player);
         long energyCost = getEnergyCost(stack);
-        boolean overwrite = BuildingGadgets.config.GENERAL.allowOverwriteBlocks;
+        boolean overwrite = BuildingGadgets.getConfig().GENERAL.allowOverwriteBlocks;
         BlockPlaceContext useContext = new BlockPlaceContext(new UseOnContext(player, InteractionHand.MAIN_HAND, VectorHelper.getLookingAt(player, stack)));
         PlacementChecker checker = new PlacementChecker(
                 EnergyStorage.ITEM.find(stack, ContainerItemContext.withInitial(stack)),
                 t -> energyCost,
                 index,
                 (c, t) -> overwrite ? c.getWorld().getBlockState(t.getPos()).canBeReplaced(useContext) : c.getWorld().isEmptyBlock(t.getPos()));
-        PlacementScheduler.schedulePlacement(view, checker, BuildingGadgets.config.GADGETS.placeSteps)
+        PlacementScheduler.schedulePlacement(view, checker, BuildingGadgets.getConfig().GADGETS.placeSteps)
                 .withFinisher(p -> {
                     pushUndo(stack, p.getUndoBuilder().build(view.getContext().getServerWorld()));
                     onBuildFinished(stack, player, view.getBoundingBox());

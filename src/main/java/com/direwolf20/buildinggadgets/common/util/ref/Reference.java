@@ -15,9 +15,6 @@ public final class Reference {
     public static final String MARKER_AFTER = MODID + ":after";
     public static final ResourceLocation MARKER_AFTER_RL = new ResourceLocation(MARKER_AFTER);
 
-    public static final ResourceLocation NETWORK_CHANNEL_ID_MAIN = new ResourceLocation(Reference.MODID, "main_network_channel");
-    public static final ResourceLocation WORLD_TEMPLATE_PROVIDER_ID = new ResourceLocation(MODID, "template_provider");
-
     private Reference() {
     }
 
@@ -71,18 +68,7 @@ public final class Reference {
         public static final ResourceLocation NBT_TILE_ENTITY_DATA_SERIALIZER_RL = new ResourceLocation(NBT_TILE_ENTITY_DATA_SERIALIZER);
     }
 
-    public static final class UniqueObjectSerializerReference {
-        public static final ResourceLocation REGISTRY_ID_UNIQUE_OBJECT_SERIALIZER = new ResourceLocation(MODID, "unique_object/serializer");
-
-        private UniqueObjectSerializerReference() {
-        }
-
-        public static final String SIMPLE_UNIQUE_ITEM_ID = MODID + ":simple_item";
-        public static final ResourceLocation SIMPLE_UNIQUE_ITEM_ID_RL = new ResourceLocation(SIMPLE_UNIQUE_ITEM_ID);
-    }
-
     public static final class TileDataFactoryReference {
-        public static final String IMC_METHOD_TILEDATA_FACTORY = "imc_tile_data_factory";
 
         private TileDataFactoryReference() {
         }

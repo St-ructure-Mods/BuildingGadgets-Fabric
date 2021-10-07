@@ -119,7 +119,7 @@ public class ModeRadialMenu extends Screen {
             }));
         }
         if (!(tool.getItem() instanceof GadgetCopyPaste)) {
-            if (!isDestruction || BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled) {
+            if (!isDestruction || BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled) {
                 Button button = new PositionedIconActionable(RadialTranslation.FUZZY, "fuzzy", right, send -> {
                     if (send)
                         PacketToggleFuzzy.send();
@@ -141,11 +141,11 @@ public class ModeRadialMenu extends Screen {
             }
             if (!isDestruction) {
                 int widthSlider = 82;
-                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), 1, BuildingGadgets.config.GADGETS.maxRange,
+                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), 1, BuildingGadgets.getConfig().GADGETS.maxRange,
                         GadgetUtils.getToolRange(tool), Color.DARK_GRAY, (slider, integer) -> {
                     sendRangeUpdate(slider.getValueInt());
                     int value = slider.getValueInt();
-                    int valueNew = Mth.clamp(value + integer, 1, BuildingGadgets.config.GADGETS.maxRange);
+                    int valueNew = Mth.clamp(value + integer, 1, BuildingGadgets.getConfig().GADGETS.maxRange);
                     sendRangeUpdate(valueNew);
                     slider.setValue(valueNew);
                     slider.applyValue();

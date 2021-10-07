@@ -8,30 +8,21 @@ import org.lwjgl.glfw.GLFW;
 
 public class KeyBindings {
 
-    public static KeyMapping menuSettings;
-    public static KeyMapping range;
-    public static KeyMapping rotateMirror;
-    public static KeyMapping undo;
-    public static KeyMapping anchor;
-    public static KeyMapping fuzzy;
-    public static KeyMapping connectedArea;
-    public static KeyMapping materialList;
+    public static final KeyMapping menuSettings = createBinding("settings_menu", GLFW.GLFW_KEY_G);
+    public static final KeyMapping range = createBinding("range", GLFW.GLFW_KEY_R);
+    public static final KeyMapping undo = createBinding("undo", GLFW.GLFW_KEY_U);
+    public static final KeyMapping anchor = createBinding("anchor", GLFW.GLFW_KEY_H);
+    public static final KeyMapping fuzzy = createBinding("fuzzy", GLFW.GLFW_KEY_UNKNOWN);
+    public static final KeyMapping connectedArea = createBinding("connected_area", GLFW.GLFW_KEY_UNKNOWN);
+    public static final KeyMapping rotateMirror = createBinding("rotate_mirror", GLFW.GLFW_KEY_UNKNOWN);
+    public static final KeyMapping materialList = createBinding("material_list", GLFW.GLFW_KEY_M);
 
-    public static void init() {
-        menuSettings = createBinding("settings_menu", GLFW.GLFW_KEY_G);
-        range = createBinding("range", GLFW.GLFW_KEY_R);
-        undo = createBinding("undo", GLFW.GLFW_KEY_U);
-        anchor = createBinding("anchor", GLFW.GLFW_KEY_H);
-        fuzzy = createBinding("fuzzy", GLFW.GLFW_KEY_UNKNOWN);
-        connectedArea = createBinding("connected_area", GLFW.GLFW_KEY_UNKNOWN);
-        rotateMirror = createBinding("rotate_mirror", GLFW.GLFW_KEY_UNKNOWN);
-        materialList = createBinding("material_list", GLFW.GLFW_KEY_M);
+    public static void initialize() {
+        // Done in class init
     }
 
     private static KeyMapping createBinding(String name, int key) {
-        KeyMapping keyBinding = new KeyMapping(getKey(name), InputConstants.Type.KEYSYM, key, getKey("category"));
-        KeyBindingHelper.registerKeyBinding(keyBinding);
-        return keyBinding;
+        return KeyBindingHelper.registerKeyBinding(new KeyMapping(getKey(name), InputConstants.Type.KEYSYM, key, getKey("category")));
     }
 
     private static String getKey(String name) {

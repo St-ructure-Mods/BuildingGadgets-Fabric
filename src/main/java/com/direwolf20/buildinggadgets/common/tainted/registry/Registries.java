@@ -33,11 +33,6 @@ public final class Registries {
         BuildingGadgets.LOG.trace("Finished Registering TemplateItem Serializers");
     }
 
-    public static void registerUniqueObjectSerializers() {
-        BuildingGadgets.LOG.trace("Registering UniqueObject Serializers");
-        BuildingGadgets.LOG.trace("Finished Registering UniqueObject Serializers");
-    }
-
     public static void createOrderedRegistries() {
         BuildingGadgets.LOG.trace("Creating Ordered Registries");
         Preconditions.checkState(tileDataFactoryBuilder != null, "Cannot create Ordered Registries twice!");

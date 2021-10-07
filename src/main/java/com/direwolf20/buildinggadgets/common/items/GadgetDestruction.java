@@ -46,7 +46,7 @@ public class GadgetDestruction extends AbstractGadget {
 
     public GadgetDestruction() {
         super(OurItems.nonStackableItemProperties(),
-                BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.undoSize,
+                BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.undoSize,
                 Reference.SaveReference.UNDO_DESTRUCTION,
                 TagReference.WHITELIST_DESTRUCTION,
                 TagReference.BLACKLIST_DESTRUCTION);
@@ -54,12 +54,12 @@ public class GadgetDestruction extends AbstractGadget {
 
     @Override
     public long getEnergyCapacity() {
-        return BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.maxEnergy;
+        return BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.maxEnergy;
     }
 
     @Override
     public long getEnergyCost(ItemStack tool) {
-        return BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.energyCost * getCostMultiplier(tool);
+        return BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.energyCost * getCostMultiplier(tool);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class GadgetDestruction extends AbstractGadget {
     }
 
     private int getCostMultiplier(ItemStack tool) {
-        return (int) (!getFuzzy(tool) ? BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyMultiplier : 1);
+        return (int) (!getFuzzy(tool) ? BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.nonFuzzyMultiplier : 1);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class GadgetDestruction extends AbstractGadget {
                 .componentTranslation(String.valueOf(getConnectedArea(stack)))
                 .setStyle(Styles.YELLOW));
 
-        if (BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled)
+        if (BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled)
             tooltip.add(TooltipTranslation.GADGET_FUZZY
                     .componentTranslation(String.valueOf(getFuzzy(stack)))
                     .setStyle(Styles.GOLD));

@@ -22,7 +22,7 @@ public class BuildToMeMode extends AbstractMode {
         int playerCoord = XYZ.posToXYZ(player.blockPosition(), facingXYZ);
 
         // Clamp the value to the max range of the gadgets raytrace
-        double difference = Math.max(0, Math.min(BuildingGadgets.config.GENERAL.rayTraceRange, Math.abs(startCoord - playerCoord)));
+        double difference = Math.max(0, Math.min(BuildingGadgets.getConfig().GENERAL.rayTraceRange, Math.abs(startCoord - playerCoord)));
         for (int i = 0; i < difference; i++)
             coordinates.add(XYZ.extendPosSingle(i, start, context.getHitSide(), facingXYZ));
 

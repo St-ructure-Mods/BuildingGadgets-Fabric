@@ -51,7 +51,5 @@ public class PacketHandler {
         ServerPlayNetworking.registerGlobalReceiver(PacketSetRemoteInventoryCache, new PacketSetRemoteInventoryCache());
 
         ServerPlayNetworking.registerGlobalReceiver(PacketRequestTemplate, new PacketRequestTemplate());
-
     }
-
 }

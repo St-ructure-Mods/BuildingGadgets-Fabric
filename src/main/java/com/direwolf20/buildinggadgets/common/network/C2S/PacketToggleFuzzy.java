@@ -26,7 +26,7 @@ public class PacketToggleFuzzy implements ServerPlayNetworking.PlayChannelHandle
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         server.execute(() -> {
             ItemStack stack = AbstractGadget.getGadget(player);
-            if (stack.getItem() instanceof GadgetExchanger || stack.getItem() instanceof GadgetBuilding || (stack.getItem() instanceof GadgetDestruction && BuildingGadgets.config.GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled)) {
+            if (stack.getItem() instanceof GadgetExchanger || stack.getItem() instanceof GadgetBuilding || (stack.getItem() instanceof GadgetDestruction && BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled)) {
                 AbstractGadget.toggleFuzzy(player, stack);
             }
         });

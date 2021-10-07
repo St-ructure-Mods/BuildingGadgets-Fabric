@@ -59,7 +59,7 @@ public class GadgetBuilding extends AbstractGadget {
 
     public GadgetBuilding() {
         super(OurItems.nonStackableItemProperties(),
-                BuildingGadgets.config.GADGETS.GADGET_BUILDING.undoSize,
+                BuildingGadgets.getConfig().GADGETS.GADGET_BUILDING.undoSize,
                 Reference.SaveReference.UNDO_BUILDING,
                 TagReference.WHITELIST_BUILDING,
                 TagReference.BLACKLIST_BUILDING);
@@ -67,12 +67,12 @@ public class GadgetBuilding extends AbstractGadget {
 
     @Override
     public long getEnergyCapacity() {
-        return BuildingGadgets.config.GADGETS.GADGET_BUILDING.maxEnergy;
+        return BuildingGadgets.getConfig().GADGETS.GADGET_BUILDING.maxEnergy;
     }
 
     @Override
     public long getEnergyCost(ItemStack tool) {
-        return BuildingGadgets.config.GADGETS.GADGET_BUILDING.energyCost;
+        return BuildingGadgets.getConfig().GADGETS.GADGET_BUILDING.energyCost;
     }
 
     @Override
@@ -180,9 +180,9 @@ public class GadgetBuilding extends AbstractGadget {
         int range = getToolRange(heldItem);
         int changeAmount = (getToolMode(heldItem) != BuildingModes.SURFACE || (range % 2 == 0)) ? 1 : 2;
         if (player.isShiftKeyDown())
-            range = (range == 1) ? BuildingGadgets.config.GADGETS.maxRange : range - changeAmount;
+            range = (range == 1) ? BuildingGadgets.getConfig().GADGETS.maxRange : range - changeAmount;
         else
-            range = (range >= BuildingGadgets.config.GADGETS.maxRange) ? 1 : range + changeAmount;
+            range = (range >= BuildingGadgets.getConfig().GADGETS.maxRange) ? 1 : range + changeAmount;
 
         setToolRange(heldItem, range);
         player.displayClientMessage(MessageTranslation.RANGE_SET.componentTranslation(range).setStyle(Styles.AQUA), true);
