@@ -365,7 +365,7 @@ public class ModeRadialMenu extends Screen {
                 r = g = b = 1F;
             }
 
-//            RenderSystem.setShaderColor(r, g, b, a);
+            RenderSystem.setShaderColor(r, g, b, a);
 
 
             for (float i = degPer; i >= 0; i--) {

@@ -245,7 +245,6 @@ public class GadgetExchanger extends AbstractGadget {
         BlockState currentBlock = world.getBlockState(pos);
         ITileEntityData data;
 
-        BlockEntity be = world.getBlockEntity(pos);
         data = TileSupport.createTileData(world, pos);
 
         ItemStack tool = getGadget(player);
@@ -260,15 +259,11 @@ public class GadgetExchanger extends AbstractGadget {
         MaterialList requiredItems = setBlock.getRequiredItems(buildContext, null, pos);
         MatchResult match = index.match(requiredItems, transaction);
 
-        if (!match.isSuccess() && setBlock.getState().hasBlockEntity()) {
+        if (!match.isSuccess()) {
             return;
         }
 
         if (!player.mayBuild() || !world.mayInteract(player, pos)) {
-            return;
-        }
-
-        if (!world.mayInteract(player, pos)) {
             return;
         }
 
