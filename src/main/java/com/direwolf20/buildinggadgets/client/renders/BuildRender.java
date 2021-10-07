@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.client.renders;
 
-import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.items.GadgetBuilding;
@@ -21,6 +20,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -88,6 +88,7 @@ public class BuildRender extends BaseRenderer {
 
         BlockRenderDispatcher dispatcher = getMc().getBlockRenderer();
 
+        RenderSystem.enableDepthTest();
         for (BlockPos coordinate : coordinates) {
             matrix.pushPose();
             matrix.translate(coordinate.getX(), coordinate.getY(), coordinate.getZ());
@@ -97,13 +98,13 @@ public class BuildRender extends BaseRenderer {
                 matrix.scale(1.001f, 1.001f, 1.001f);
             }
 
-            OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
-            dispatcher.renderSingleBlock(renderBlockState, matrix, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY);
+//            OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
+            dispatcher.renderSingleBlock(renderBlockState, matrix, Minecraft.getInstance().renderBuffers().bufferSource(), 0xff0000, OverlayTexture.NO_OVERLAY);
 
             matrix.popPose();
-            RenderSystem.disableDepthTest();
             buffer.endBatch();
         }
+        RenderSystem.disableDepthTest();
 
         // Don't even waste the time checking to see if we have the right energy, items, etc for creative mode
         if (!player.isCreative()) {
@@ -122,7 +123,7 @@ public class BuildRender extends BaseRenderer {
                     boolean renderFree = false;
                     hasEnergy -= ((AbstractGadget) heldItem.getItem()).getEnergyCost(heldItem);
 
-                    VertexConsumer builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
+                    VertexConsumer builder = buffer.getBuffer(RenderType.solid());
                     MatchResult match = index.match(materials, transaction);
 
                     if (!match.isSuccess() || hasEnergy < 0) {

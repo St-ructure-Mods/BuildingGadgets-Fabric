@@ -1,8 +1,5 @@
 package com.direwolf20.buildinggadgets.client.renders;
 
-import com.direwolf20.buildinggadgets.client.renderer.DireBufferBuilder;
-import com.direwolf20.buildinggadgets.client.renderer.DireVertexBuffer;
-import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
@@ -17,9 +14,8 @@ import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.world.MockDelegationWorld;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Minecraft;
@@ -102,7 +98,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         int R = 255, G = 223, B = 127;
 
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer builder = buffer.getBuffer(OurRenderTypes.CopyGadgetLines);
+        VertexConsumer builder = buffer.getBuffer(RenderType.LINES);
 
         Matrix4f matrix4f = matrix.last().pose();
         builder.vertex(matrix4f, x, y, z).color(G, G, G, 0.0F).endVertex();
@@ -183,8 +179,8 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
             renderBuffer.close();
 
         renderBuffer = MultiVBORenderer.of((buffer) -> {
-            VertexConsumer builder = buffer.getBuffer(OurRenderTypes.RenderBlock);
-            VertexConsumer noDepthbuilder = buffer.getBuffer(OurRenderTypes.CopyPasteRenderBlock);
+            VertexConsumer builder = buffer.getBuffer(RenderType.solid());
+            VertexConsumer noDepthbuilder = buffer.getBuffer(RenderType.solid());
 
             BlockRenderDispatcher dispatcher = getMc().getBlockRenderer();
 
@@ -254,71 +250,70 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         private static final int BUFFER_SIZE = 2 * 1024 * 1024 * 3;
 
         public static MultiVBORenderer of(Consumer<MultiBufferSource> vertexProducer) {
-            final Map<RenderType, DireBufferBuilder> builders = Maps.newHashMap();
+            final Map<RenderType, BufferBuilder> builders = Maps.newHashMap();
 
             vertexProducer.accept(rt -> builders.computeIfAbsent(rt, (_rt) -> {
-                DireBufferBuilder builder = new DireBufferBuilder(BUFFER_SIZE);
-                builder.begin(_rt.mode().asGLMode, _rt.format());
+                BufferBuilder builder = new BufferBuilder(BUFFER_SIZE);
+                builder.begin(_rt.mode(), _rt.format());
 
                 return builder;
             }));
 
-            Map<RenderType, DireBufferBuilder.State> sortCaches = Maps.newHashMap();
-            Map<RenderType, DireVertexBuffer> buffers = Maps.transformEntries(builders, (rt, builder) -> {
+            Map<RenderType, VertexBuffer> buffers = Maps.transformEntries(builders, (rt, builder) -> {
                 Objects.requireNonNull(rt);
                 Objects.requireNonNull(builder);
-                sortCaches.put(rt, builder.getVertexState());
 
-                builder.finishDrawing();
-                VertexFormat fmt = rt.format();
-                DireVertexBuffer vbo = new DireVertexBuffer(fmt);
+                builder.end();
+                VertexBuffer vbo = new VertexBuffer();
 
                 vbo.upload(builder);
                 return vbo;
             });
 
-            return new MultiVBORenderer(buffers, sortCaches);
+            return new MultiVBORenderer(buffers);
         }
 
-        private final ImmutableMap<RenderType, DireVertexBuffer> buffers;
-        private final ImmutableMap<RenderType, DireBufferBuilder.State> sortCaches;
+        private final ImmutableMap<RenderType, VertexBuffer> buffers;
 
-        protected MultiVBORenderer(Map<RenderType, DireVertexBuffer> buffers, Map<RenderType, DireBufferBuilder.State> sortCaches) {
+        protected MultiVBORenderer(Map<RenderType, VertexBuffer> buffers) {
             this.buffers = ImmutableMap.copyOf(buffers);
-            this.sortCaches = ImmutableMap.copyOf(sortCaches);
         }
 
         public void sort(float x, float y, float z) {
-            for (Map.Entry<RenderType, DireBufferBuilder.State> kv : sortCaches.entrySet()) {
-                RenderType rt = kv.getKey();
-                DireBufferBuilder.State state = kv.getValue();
-                DireBufferBuilder builder = new DireBufferBuilder(BUFFER_SIZE);
-                builder.begin(rt.mode().asGLMode, rt.format());
-                builder.setVertexState(state);
-                builder.sortVertexData(x, y, z);
-                builder.finishDrawing();
+            // Dire the fucking depth buffer. WHAT THE FUCK
+            // Fuck you for putting me through this pain
 
-                DireVertexBuffer vbo = buffers.get(rt);
-                vbo.upload(builder);
-            }
+
+//            for (Map.Entry<RenderType, DireBufferBuilder.State> kv : sortCaches.entrySet()) {
+//                RenderType rt = kv.getKey();
+//                DireBufferBuilder.State state = kv.getValue();
+//                DireBufferBuilder builder = new DireBufferBuilder(BUFFER_SIZE);
+//                builder.begin(rt.mode().asGLMode, rt.format());
+//                builder.setVertexState(state);
+//                builder.sortVertexData(x, y, z);
+//                builder.finishDrawing();
+//
+//                DireVertexBuffer vbo = buffers.get(rt);
+//                vbo.upload(builder);
+//            }
         }
 
-        public void render(Matrix4f matrix) {
+        public void render(Matrix4f modelViewMatrix) {
             buffers.forEach((rt, vbo) -> {
                 VertexFormat fmt = rt.format();
 
                 rt.setupRenderState();
-                vbo.bindBuffer();
                 fmt.setupBufferState();
-                vbo.draw(matrix, rt.mode().asGLMode);
-                DireVertexBuffer.unbindBuffer();
+                vbo.drawWithShader(modelViewMatrix, RenderSystem.getProjectionMatrix(), RenderSystem.getShader());
                 fmt.clearBufferState();
                 rt.clearRenderState();
             });
         }
 
         public void close() {
-            buffers.values().forEach(DireVertexBuffer::close);
+            for (VertexBuffer value : buffers.values()) {
+                value.close();
+            }
         }
     }
 }

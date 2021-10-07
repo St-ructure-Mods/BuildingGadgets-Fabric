@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.client.renders;
 
-import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.items.GadgetDestruction;
@@ -45,13 +44,14 @@ public class DestructionRender extends BaseRenderer {
         stack.translate(-playerPos.x(), -playerPos.y(), -playerPos.z());
 
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
+        throw new RuntimeException("No.");
+/*        VertexConsumer builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
 
         GadgetDestruction.getArea(world, startBlock, facing, player, heldItem)
                 .forEach(pos -> renderMissingBlock(stack.last().pose(), builder, pos));
 
         stack.popPose();
         RenderSystem.disableDepthTest();
-        buffer.endBatch(); // @mcp: draw = finish
+        buffer.endBatch(); // @mcp: draw = finish*/
     }
 }

@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -49,10 +50,10 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
 
         BlockState renderBlockState = renderData.getState();
 
-        OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
+//        OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
         try {
             dispatcher.renderSingleBlock(
-                    renderBlockState, stack, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY
+                    renderBlockState, stack, Minecraft.getInstance().renderBuffers().bufferSource(), 0xff0000, OverlayTexture.NO_OVERLAY
             );
         } catch (Exception ignored) {
         } // if it fails to render then we'll get a bug report I'm sure.
@@ -60,7 +61,7 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
         stack.popPose();
         stack.pushPose();
 
-        builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
+        builder = buffer.getBuffer(RenderType.solid());
 
         float x = 0,
                 y = 0,
