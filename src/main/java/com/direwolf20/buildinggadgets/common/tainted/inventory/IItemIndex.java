@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.tainted.inventory;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import com.google.common.collect.Multiset;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 
 /**
@@ -19,7 +20,13 @@ public interface IItemIndex {
     //returns the remaining items
     void insert(Multiset<ItemVariant> items, TransactionContext transaction);
 
-    MatchResult tryMatch(MaterialList list);
+    MatchResult tryMatch(MaterialList list, TransactionContext transaction);
+
+    default MatchResult tryMatch(MaterialList list) {
+        try (Transaction transaction = Transaction.openOuter()) {
+            return tryMatch(list, transaction);
+        }
+    }
 
     default MatchResult tryMatch(Multiset<ItemVariant> items) {
         return tryMatch(MaterialList.of(items));

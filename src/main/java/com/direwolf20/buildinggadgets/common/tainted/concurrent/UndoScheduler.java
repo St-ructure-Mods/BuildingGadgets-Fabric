@@ -70,11 +70,12 @@ public final class UndoScheduler extends SteppedScheduler {
             lastWasSuccess = false;
             return;
         }
-        MatchResult matchResult = index.tryMatch(entry.getValue().getProducedItems());
-        lastWasSuccess = matchResult.isSuccess();
 
-        if (lastWasSuccess) {
-            try (Transaction transaction = Transaction.openOuter()) {
+        try (Transaction transaction = Transaction.openOuter()) {
+            MatchResult matchResult = index.tryMatch(entry.getValue().getProducedItems());
+            lastWasSuccess = matchResult.isSuccess();
+
+            if (lastWasSuccess) {
                 index.applyMatch(matchResult, transaction);
                 index.insert(entry.getValue().getUsedItems(), transaction);
 

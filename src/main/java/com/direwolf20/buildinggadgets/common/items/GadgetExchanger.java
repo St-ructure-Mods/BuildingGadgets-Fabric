@@ -258,7 +258,7 @@ public class GadgetExchanger extends AbstractGadget {
                 .build(world);
 
         MaterialList requiredItems = setBlock.getRequiredItems(buildContext, null, pos);
-        MatchResult match = index.tryMatch(requiredItems);
+        MatchResult match = index.tryMatch(requiredItems, transaction);
         if (!match.isSuccess()) {
             if (setBlock.getState().hasBlockEntity())
                 return;

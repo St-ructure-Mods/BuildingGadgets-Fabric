@@ -3,14 +3,10 @@ package com.direwolf20.buildinggadgets.client.cache;
 import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketSetRemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Multiset;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceKey;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -37,8 +33,10 @@ public class RemoteInventoryCache {
 
     public boolean maintainCache(ItemStack gadget) {
         Location loc = InventoryLinker.getDataFromStack(gadget);
-        if (isCacheOld(loc))
+
+        if (isCacheOld(loc)) {
             updateCache(loc);
+        }
 
         return loc != null;
     }
@@ -49,9 +47,10 @@ public class RemoteInventoryCache {
 
     private void updateCache(Location loc) {
         locCached = loc;
-        if (loc == null)
+
+        if (loc == null) {
             cache = null;
-        else {
+        } else {
             PacketSetRemoteInventoryCache.send(isCopyPaste, loc.level(), loc.blockPos());
         }
     }
@@ -61,15 +60,19 @@ public class RemoteInventoryCache {
             timer = loc == null ? null : Stopwatch.createStarted();
             return true;
         }
+
         if (timer != null) {
             boolean overtime = forceUpdate || timer.elapsed(TimeUnit.MILLISECONDS) >= 5000;
+
             if (overtime) {
                 timer.reset();
                 timer.start();
                 forceUpdate = false;
             }
+
             return overtime;
         }
+
         return false;
     }
 }

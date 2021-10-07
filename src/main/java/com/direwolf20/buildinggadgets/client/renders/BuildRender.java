@@ -13,12 +13,13 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.RecordingItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -49,18 +50,19 @@ public class BuildRender extends BaseRenderer {
         super.render(evt, player, heldItem);
 
         BlockHitResult lookingAt = VectorHelper.getLookingAt(player, heldItem);
-
-        BlockState state;
+        BlockState startBlock = player.level.getBlockState(lookingAt.getBlockPos());
         Optional<List<BlockPos>> anchor = getAnchor(heldItem);
 
-        BlockState startBlock = player.level.getBlockState(lookingAt.getBlockPos());
-        if ((player.level.isEmptyBlock(lookingAt.getBlockPos()) && !anchor.isPresent()) || startBlock == DEFAULT_EFFECT_BLOCK)
+        if ((player.level.isEmptyBlock(lookingAt.getBlockPos()) && anchor.isEmpty()) || startBlock == DEFAULT_EFFECT_BLOCK) {
             return;
+        }
 
         BlockData data = getToolBlock(heldItem);
         BlockState renderBlockState = data.getState();
-        if (renderBlockState == BaseRenderer.AIR)
+
+        if (renderBlockState == BaseRenderer.AIR) {
             return;
+        }
 
         // Get the coordinates from the anchor. If the anchor isn't present then build the collector.
         List<BlockPos> coordinates = anchor.orElseGet(() -> {
@@ -90,36 +92,22 @@ public class BuildRender extends BaseRenderer {
         for (BlockPos coordinate : coordinates) {
             matrix.pushPose();
             matrix.translate(coordinate.getX(), coordinate.getY(), coordinate.getZ());
+
             if (this.isExchanger) {
                 matrix.translate(-0.0005f, -0.0005f, -0.0005f);
                 matrix.scale(1.001f, 1.001f, 1.001f);
             }
 
-            // todo: add back from 1.16 port
-//            if (getBuilderWorld().getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) { //Get the block state in the fake world
-//                try {
-            state = renderBlockState;
-//                } catch (Exception ignored) {}
-//            }
-
             OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
-            try {
-                dispatcher.renderSingleBlock(
-                        state, matrix, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY
-                );
-            } catch (Exception ignored) {
-            } // I'm sure if this is an issue someone will report it
+            dispatcher.renderSingleBlock(renderBlockState, matrix, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY);
 
-            //Move the render position back to where it was
             matrix.popPose();
             RenderSystem.disableDepthTest();
-            buffer.endBatch(); // @mcp: finish (mcp) = draw (yarn)
+            buffer.endBatch();
         }
 
         // Don't even waste the time checking to see if we have the right energy, items, etc for creative mode
         if (!player.isCreative()) {
-            VertexConsumer builder;
-
             boolean hasLinkedInventory = getCacheInventory().maintainCache(heldItem);
             int remainingCached = getCacheInventory().getCache() == null ? -1 : getCacheInventory().getCache().count(ItemVariant.of(data.getState().getBlock().asItem()));
 
@@ -130,27 +118,29 @@ public class BuildRender extends BaseRenderer {
             MaterialList materials = data.getRequiredItems(context, null, null);
             long hasEnergy = getEnergy(player, heldItem);
 
-            for (BlockPos coordinate : coordinates) { //Now run through the UNSORTED list of coords, to show which blocks won't place if you don't have enough of them.
-                boolean renderFree = false;
-                hasEnergy -= ((AbstractGadget) heldItem.getItem()).getEnergyCost(heldItem);
+            try (Transaction transaction = Transaction.openOuter()) {
+                for (BlockPos coordinate : coordinates) { //Now run through the UNSORTED list of coords, to show which blocks won't place if you don't have enough of them.
+                    boolean renderFree = false;
+                    hasEnergy -= ((AbstractGadget) heldItem.getItem()).getEnergyCost(heldItem);
 
-                builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
-                MatchResult match = index.tryMatch(materials);
-                if (!match.isSuccess() || hasEnergy < 0) {
-                    if (hasLinkedInventory && remainingCached > 0) {
-                        renderFree = true;
-                        remainingCached--;
+                    VertexConsumer builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
+                    MatchResult match = index.tryMatch(materials, transaction);
+
+                    if (!match.isSuccess() || hasEnergy < 0) {
+                        if (hasLinkedInventory && remainingCached > 0) {
+                            renderFree = true;
+                            remainingCached--;
+                        } else {
+                            renderMissingBlock(matrix.last().pose(), builder, coordinate);
+                        }
                     } else {
-                        renderMissingBlock(matrix.last().pose(), builder, coordinate);
+                        index.applyMatch(match, transaction); // Notify the recording index that this counts
+                        renderBoxSolid(matrix.last().pose(), builder, coordinate, .97f, 1f, .99f, .1f);
                     }
-                } else {
-                    // TODO: What?
-                    // index.applyMatch(match, ); // notify the recording index that this counts
-                    renderBoxSolid(matrix.last().pose(), builder, coordinate, .97f, 1f, .99f, .1f);
-                }
 
-                if (renderFree) {
-                    renderBoxSolid(matrix.last().pose(), builder, coordinate, .97f, 1f, .99f, .1f);
+                    if (renderFree) {
+                        renderBoxSolid(matrix.last().pose(), builder, coordinate, .97f, 1f, .99f, .1f);
+                    }
                 }
             }
         }

@@ -49,23 +49,21 @@ public final class PlayerItemIndex implements IItemIndex {
     }
 
     @Override
-    public MatchResult tryMatch(MaterialList list) {
-        try (Transaction transaction = Transaction.openOuter()) {
-            MatchResult result = null;
+    public MatchResult tryMatch(MaterialList list, TransactionContext transaction) {
+        MatchResult result = null;
 
-            for (ImmutableMultiset<ItemVariant> multiset : list) {
-                result = match(list, multiset, transaction);
+        for (ImmutableMultiset<ItemVariant> multiset : list) {
+            result = match(list, multiset, transaction);
 
-                if (result.isSuccess()) {
-                    return MatchResult.success(list, result.getFoundItems(), multiset);
-                }
+            if (result.isSuccess()) {
+                return MatchResult.success(list, result.getFoundItems(), multiset);
             }
+        }
 
-            if (result == null) {
-                return MatchResult.success(list, ImmutableMultiset.of(), ImmutableMultiset.of());
-            } else {
-                return evaluateFailingOptionFoundItems(list, transaction);
-            }
+        if (result == null) {
+            return MatchResult.success(list, ImmutableMultiset.of(), ImmutableMultiset.of());
+        } else {
+            return evaluateFailingOptionFoundItems(list, transaction);
         }
     }
 
@@ -88,19 +86,19 @@ public final class PlayerItemIndex implements IItemIndex {
 
     private MatchResult match(MaterialList list, Multiset<ItemVariant> multiset, TransactionContext transaction) {
         ImmutableMultiset.Builder<ItemVariant> availableBuilder = ImmutableMultiset.builder();
-        boolean failure = false;
+        boolean success = false;
 
         for (Entry<ItemVariant> entry : multiset.entrySet()) {
             int remainingCount = entry.getCount();
-            long extracted = storage.extract(entry.getElement(), remainingCount, transaction);
-            failure |= extracted != remainingCount;
-            availableBuilder.addCopies(entry.getElement(), (int) extracted);
+            int extracted = (int) storage.extract(entry.getElement(), remainingCount, transaction);
+            success |= extracted == remainingCount;
+            availableBuilder.addCopies(entry.getElement(), extracted);
         }
 
-        if (failure) {
-            return MatchResult.failure(list, availableBuilder.build(), ImmutableMultiset.of());
-        } else {
+        if (success) {
             return MatchResult.success(list, availableBuilder.build(), ImmutableMultiset.of());
+        } else {
+            return MatchResult.failure(list, availableBuilder.build(), ImmutableMultiset.of());
         }
     }
 

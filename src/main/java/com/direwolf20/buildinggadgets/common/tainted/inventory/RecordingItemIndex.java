@@ -31,8 +31,8 @@ public final class RecordingItemIndex implements IItemIndex {
     }
 
     @Override
-    public MatchResult tryMatch(MaterialList list) {
-        return other.tryMatch(MaterialList.and(list, MaterialList.of(extractedItems)));
+    public MatchResult tryMatch(MaterialList list, TransactionContext transaction) {
+        return other.tryMatch(MaterialList.and(list, MaterialList.of(extractedItems)), transaction);
     }
 
     @Override
@@ -49,6 +49,7 @@ public final class RecordingItemIndex implements IItemIndex {
             extractedItems.addAll(Multisets.difference(result.getChosenOption(), extractedItems));
             return true;
         }
+
         return false;
     }
 }

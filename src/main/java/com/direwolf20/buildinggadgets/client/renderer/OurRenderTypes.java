@@ -96,7 +96,7 @@ public class OurRenderTypes extends RenderType {
      * This is used for rendering blocks with an alpha value as the alpha currently isn't
      * supported by minecraft.
      *
-     * Literally just raps the buffer so we can render a different RenderType
+     * Literally just wraps the buffer so we can render a different RenderType
      */
     public static class MultiplyAlphaRenderTypeBuffer implements MultiBufferSource
     {
