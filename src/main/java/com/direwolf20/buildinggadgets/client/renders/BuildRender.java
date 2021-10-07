@@ -11,7 +11,6 @@ import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.MatchResult;
-import com.direwolf20.buildinggadgets.common.tainted.inventory.RecordingItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -112,7 +111,7 @@ public class BuildRender extends BaseRenderer {
             int remainingCached = getCacheInventory().getCache() == null ? -1 : getCacheInventory().getCache().count(ItemVariant.of(data.getState().getBlock().asItem()));
 
             // Figure out how many of the block we're rendering we have in the inventory of the player.
-            IItemIndex index = new RecordingItemIndex(InventoryHelper.index(heldItem, player));
+            IItemIndex index = InventoryHelper.index(heldItem, player);
             BuildContext context = new BuildContext(player.level, player, heldItem);
 
             MaterialList materials = data.getRequiredItems(context, null, null);
