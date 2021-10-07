@@ -5,7 +5,6 @@ import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideBuildSizeCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
 import com.direwolf20.buildinggadgets.common.config.Config;
-import com.direwolf20.buildinggadgets.common.events.BlockPlaceCallback;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
@@ -75,11 +74,6 @@ public final class BuildingGadgets implements ModInitializer {
 
         Registries.registerTileDataSerializers();
         Registries.registerUniqueObjectSerializers();
-
-        BlockPlaceCallback.ON_PLACE.register((serverPlayer, level, itemStack, interactionHand, blockHitResult) -> {
-
-        });
-
         PacketHandler.registerMessages();
     }
 }

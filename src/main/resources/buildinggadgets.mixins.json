@@ -1,8 +1,6 @@
 {
   "package": "com.direwolf20.buildinggadgets.common.mixins",
   "mixins": [
-    "BlockPlaceEventMixin",
-    "ItemEntityMixin"
   ],
   "client": [
     "client.ScreenRenderTooltip"
