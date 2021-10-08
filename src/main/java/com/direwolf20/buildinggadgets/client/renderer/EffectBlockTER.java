@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.client.renderer;
 
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
@@ -18,7 +19,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity> {
 
-    public EffectBlockTER(BlockEntityRendererProvider.Context p_173540_) {
+    BlockRenderDispatcher dispatcher;
+
+    public EffectBlockTER(BlockEntityRendererProvider.Context ctx) {
+        dispatcher = ctx.getBlockRenderDispatcher();
     }
 
     @Override
@@ -30,7 +34,6 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
 
         MultiBufferSource.BufferSource buffer2 = Minecraft.getInstance().renderBuffers().bufferSource();
         EffectBlock.Mode toolMode = tile.getReplacementMode();
-        BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 
         int teCounter = tile.getTicksExisted();
         int maxLife = tile.getLifespan();
@@ -56,12 +59,13 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
                     renderBlockState, stack, Minecraft.getInstance().renderBuffers().bufferSource(), 0xff0000, OverlayTexture.NO_OVERLAY
             );
         } catch (Exception ignored) {
+            BuildingGadgets.LOG.error("Failed to render block.");
         } // if it fails to render then we'll get a bug report I'm sure.
 
         stack.popPose();
         stack.pushPose();
 
-        builder = buffer.getBuffer(RenderType.solid());
+        builder = buffer.getBuffer(OurRenderTypes.RenderBlock);
 
         float x = 0,
                 y = 0,

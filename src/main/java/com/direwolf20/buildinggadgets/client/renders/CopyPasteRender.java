@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.client.renders;
 
+import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
@@ -98,7 +99,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         int R = 255, G = 223, B = 127;
 
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer builder = buffer.getBuffer(RenderType.LINES);
+        VertexConsumer builder = buffer.getBuffer(OurRenderTypes.CopyGadgetLines);
 
         Matrix4f matrix4f = matrix.last().pose();
         builder.vertex(matrix4f, x, y, z).color(G, G, G, 0.0F).endVertex();
@@ -177,7 +178,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         tickTrack = 0;
         if (renderBuffer != null) //Reset Render Buffer before rebuilding
             renderBuffer.close();
-
+        //TODO: FIX GL_INVALID_OPERATION, Invalid VBO usage
         renderBuffer = MultiVBORenderer.of((buffer) -> {
             VertexConsumer builder = buffer.getBuffer(RenderType.solid());
             VertexConsumer noDepthbuilder = buffer.getBuffer(RenderType.solid());

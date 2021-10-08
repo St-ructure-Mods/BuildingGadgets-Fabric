@@ -141,7 +141,7 @@ public class ModeRadialMenu extends Screen {
             }
             if (!isDestruction) {
                 int widthSlider = 82;
-                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), 1, BuildingGadgets.getConfig().GADGETS.maxRange,
+                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), BuildingGadgets.getConfig().GADGETS.maxRange,
                         GadgetUtils.getToolRange(tool), Color.DARK_GRAY, (slider, integer) -> {
                     sendRangeUpdate(slider.getValueInt());
                     int value = slider.getValueInt();
@@ -513,17 +513,17 @@ public class ModeRadialMenu extends Screen {
         if (!builder && !(tool.getItem() instanceof GadgetExchanger))
             return;
 
-        boolean curent;
+        boolean current;
         boolean changed = false;
         for (int i = 0; i < conditionalButtons.size(); i++) {
             Button button = conditionalButtons.get(i);
             if (builder)
-                curent = GadgetBuilding.getToolMode(tool) == BuildingModes.SURFACE;
+                current = GadgetBuilding.getToolMode(tool) == BuildingModes.SURFACE;
             else
-                curent = i == 0 || GadgetExchanger.getToolMode(tool) == ExchangingModes.SURFACE;
+                current = i == 0 || GadgetExchanger.getToolMode(tool) == ExchangingModes.SURFACE;
 
-            if (button.visible != curent) {
-                button.visible = curent;
+            if (button.visible != current) {
+                button.visible = current;
                 changed = true;
             }
         }

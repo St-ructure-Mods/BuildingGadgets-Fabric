@@ -219,7 +219,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 //                            renderer.render(be, targetPos.getX(), targetPos.getY(), targetPos.getZ(), partialTicks, - 1);
                     }
                     //remember vanilla Tiles rebinding the TextureAtlas
-                    getMinecraft().getTextureManager().bindForSetup(InventoryMenu.BLOCK_ATLAS);
+                    RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
                 } catch (Exception e) {
                     BuildingGadgets.LOG.error("Error rendering TileEntity", e);
                 }
@@ -306,7 +306,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
     private void pasteTemplateToStack(Level world, ItemStack stack, Template newTemplate, boolean replaced) {
         BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(world).ifPresent((ITemplateProvider provider) ->
-                pasteTemplateToStack(provider, stack, newTemplate, replaced && world.isClientSide()));
+                pasteTemplateToStack(provider, stack, newTemplate, replaced && !world.isClientSide()));
     }
 
     private void pasteTemplateToStack(ITemplateProvider provider, ItemStack stack, Template newTemplate, boolean replaced) {
@@ -315,7 +315,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
             if (replaced) {
                 PacketTemplateManagerTemplateCreated.send(provider.getId(key), be.getBlockPos());
             } else
-                provider.requestRemoteUpdate(key);
+                provider.requestRemoteUpdate(key, be.getLevel());
         });
     }
 
@@ -343,7 +343,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
             Template template = provider.getTemplateForKey(key);
             template = template.withName(nameField.getValue());
             provider.setTemplate(key, template);
-            provider.requestRemoteUpdate(key);
+            provider.requestRemoteUpdate(key, getWorld());
         }));
     }
 

@@ -19,6 +19,7 @@ import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
@@ -51,7 +52,7 @@ public class PacketRequestTemplate implements ClientPlayNetworking.PlayChannelHa
     public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUUID();
 
-        client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.requestRemoteUpdate(new TemplateKey(id)));
+        client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.requestRemoteUpdate(new TemplateKey(id), client.level));
     }
 
     // C2S
@@ -59,6 +60,6 @@ public class PacketRequestTemplate implements ClientPlayNetworking.PlayChannelHa
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUUID();
 
-        server.execute(() -> SaveManager.INSTANCE.getTemplateProvider().requestRemoteUpdate(new TemplateKey(id)));
+        server.execute(() -> SaveManager.INSTANCE.getTemplateProvider().requestRemoteUpdate(new TemplateKey(id), player.level));
     }
 }

@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.client.renders;
 
+import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.items.GadgetBuilding;
@@ -119,11 +120,10 @@ public class BuildRender extends BaseRenderer {
             long hasEnergy = getEnergy(player, heldItem);
 
             try (Transaction transaction = Transaction.openOuter()) {
+                VertexConsumer builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
                 for (BlockPos coordinate : coordinates) { //Now run through the UNSORTED list of coords, to show which blocks won't place if you don't have enough of them.
                     boolean renderFree = false;
                     hasEnergy -= ((AbstractGadget) heldItem.getItem()).getEnergyCost(heldItem);
-
-                    VertexConsumer builder = buffer.getBuffer(RenderType.solid());
                     MatchResult match = index.match(materials, transaction);
 
                     if (!match.isSuccess() || hasEnergy < 0) {

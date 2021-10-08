@@ -54,7 +54,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GadgetUtils {
-    // TODO: migrate to tags
     private static final Tag<Block> DISALLOWED_BLOCKS = Tag.fromSet(
             ImmutableSet.of(
                     Blocks.END_PORTAL, Blocks.NETHER_PORTAL, Blocks.END_PORTAL_FRAME, Blocks.BEDROCK, Blocks.SPAWNER

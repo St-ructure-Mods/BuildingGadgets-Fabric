@@ -9,7 +9,9 @@ import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.Collections;
@@ -54,13 +56,13 @@ public final class SaveTemplateProvider implements ITemplateProvider {
     }
 
     @Override
-    public boolean requestRemoteUpdate(ITemplateKey key) {
+    public boolean requestRemoteUpdate(ITemplateKey key, Level level) {
         UUID id = getId(key);
         Template template = getSave().getTemplate(id);
         notifyListeners(key, template, l -> l::onTemplateUpdateSend);
-
-        // TODO: Get all players in world to send packet to
-        SplitPacketUpdateTemplate.sendToClient(id, template, null);
+        for (ServerPlayer player: level.getServer().getPlayerList().getPlayers()) {
+            SplitPacketUpdateTemplate.sendToClient(id, template, player);
+        }
 
         return true;
     }

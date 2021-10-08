@@ -12,6 +12,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-//TODO: Replace PacketDistributor with a fabric equivalent
+//TODO: Fix Client only set stack
 
 @Tainted(reason = "Uses template system")
 public final class CacheTemplateProvider implements ITemplateProvider {
@@ -86,8 +87,7 @@ public final class CacheTemplateProvider implements ITemplateProvider {
         return template != null;
     }
 
-    @Override
-    public boolean requestRemoteUpdate(ITemplateKey key) {
+    public boolean requestRemoteUpdate(ITemplateKey key, Level level) {
         return requestRemoteUpdate(key, new Target(PacketFlow.SERVERBOUND, null));
     }
 

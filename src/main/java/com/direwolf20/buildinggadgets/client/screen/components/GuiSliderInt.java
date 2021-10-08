@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.client.screen.components;
 
 import com.direwolf20.buildinggadgets.client.BuildingGadgetsClient;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketChangeRange;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -25,10 +26,9 @@ public class GuiSliderInt extends AbstractSliderButton {
     private final int colorSlider;
     private final BiConsumer<GuiSliderInt, Integer> increment;
     private double value;
-    private final double minVal;
     private final double maxVal;
 
-    public GuiSliderInt(int xPos, int yPos, int width, int height, Component prefix, double minVal, double maxVal,
+    public GuiSliderInt(int xPos, int yPos, int width, int height, Component prefix, double maxVal,
                         double currentVal, Color color,
                         BiConsumer<GuiSliderInt, Integer> increment) {
 
@@ -37,31 +37,27 @@ public class GuiSliderInt extends AbstractSliderButton {
         colorBackground = GuiMod.getColor(color, 200).getRGB();
         colorSliderBackground = GuiMod.getColor(color.darker(), 200).getRGB();
         colorSlider = GuiMod.getColor(color.brighter().brighter(), 200).getRGB();
-        this.minVal = minVal;
         this.maxVal = maxVal;
-
+        this.value = currentVal / maxVal;
         this.increment = increment;
     }
 
-    //copied from AbstractSliderButton because it was private and i couldnt be bother accesswidening it
-    public void setValue(int value) {
+    public int getValueInt() {
+        return (int) (value * maxVal);
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double d) {
         double e = this.value;
-        this.value = Mth.clamp(value, minVal, maxVal);
+        this.value = Mth.clamp(d / maxVal, 1 / maxVal, 1.0D);
         if (e != this.value) {
             this.applyValue();
         }
 
         this.updateMessage();
-    }
-
-    @Override
-    public void onRelease(double mouseX, double mouseY) {
-        super.onRelease(mouseX, mouseY);
-        setValue(getValueInt());
-    }
-
-    public int getValueInt() {
-        return (int) value;
     }
 
     @Override
@@ -122,8 +118,8 @@ public class GuiSliderInt extends AbstractSliderButton {
     public Collection<AbstractWidget> getComponents() {
         return ImmutableSet.of(
                 this,
-                new GuiButtonIncrement(this, x - height, y, width, height, new TextComponent("-"), b -> increment.accept(this, -1)),
-                new GuiButtonIncrement(this, x + width, y, width, height, new TextComponent("+"), b -> increment.accept(this, 1)
+                new GuiButtonIncrement(this, x - height, y, height, height, new TextComponent("-"), b -> increment.accept(this, -1)),
+                new GuiButtonIncrement(this, x + width, y, height, height, new TextComponent("+"), b -> increment.accept(this, 1)
                 ));
     }
 

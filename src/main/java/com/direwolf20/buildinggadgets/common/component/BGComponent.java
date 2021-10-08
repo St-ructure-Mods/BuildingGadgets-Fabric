@@ -26,7 +26,6 @@ public class BGComponent implements ItemComponentInitializer, WorldComponentInit
 
     @Override
     public void registerWorldComponentFactories(WorldComponentFactoryRegistry registry) {
-        registry.register(TEMPLATE_PROVIDER_COMPONENT, world -> new CacheTemplateProvider());
-        registry.register(TEMPLATE_PROVIDER_COMPONENT, world -> new SaveTemplateProvider());
+        registry.register(TEMPLATE_PROVIDER_COMPONENT, ITemplateProvider::forWorldType);
     }
 }

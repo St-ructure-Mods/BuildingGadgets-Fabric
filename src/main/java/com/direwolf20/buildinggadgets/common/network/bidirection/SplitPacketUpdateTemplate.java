@@ -50,6 +50,7 @@ public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChann
         } catch (TemplateWriteException e) {
             e.printStackTrace();
         }
+
         ServerPlayNetworking.send(player, PacketHandler.SplitPacketUpdateTemplate, buf);
     }
 
