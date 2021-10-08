@@ -2,7 +2,6 @@ package com.direwolf20.buildinggadgets.client.screen.components;
 
 import com.direwolf20.buildinggadgets.client.BuildingGadgetsClient;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketChangeRange;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -27,6 +26,7 @@ public class GuiSliderInt extends AbstractSliderButton {
     private final BiConsumer<GuiSliderInt, Integer> increment;
     private double value;
     private final double maxVal;
+    private Component prefix;
 
     public GuiSliderInt(int xPos, int yPos, int width, int height, Component prefix, double maxVal,
                         double currentVal, Color color,
@@ -40,6 +40,8 @@ public class GuiSliderInt extends AbstractSliderButton {
         this.maxVal = maxVal;
         this.value = currentVal / maxVal;
         this.increment = increment;
+        this.prefix = prefix;
+        this.updateMessage();
     }
 
     public int getValueInt() {
@@ -50,10 +52,11 @@ public class GuiSliderInt extends AbstractSliderButton {
         return value;
     }
 
-    public void setValue(double d) {
+    public void setValueInt(int i) {
         double e = this.value;
-        this.value = Mth.clamp(d / maxVal, 1 / maxVal, 1.0D);
+        this.value = Mth.clamp(i / maxVal, 0D, 1.0D);
         if (e != this.value) {
+            playSound();
             this.applyValue();
         }
 
@@ -61,14 +64,39 @@ public class GuiSliderInt extends AbstractSliderButton {
     }
 
     @Override
-    protected void updateMessage() {
+    public void onRelease(double d, double e) {}
 
+    @Override
+    protected void updateMessage() {
+        this.setMessage(this.prefix.copy().append(String.valueOf(getValueInt())));
+    }
+
+    private void setValue(double d) {
+        double e = this.value;
+        int pv = getValueInt();
+        this.value = Mth.clamp(d, 0.0D, 1.0D);
+        if (e != this.value) {
+            if(pv != getValueInt()) {
+                playSound();
+            }
+            this.applyValue();
+        }
+
+        this.updateMessage();
+    }
+
+    private void setValueFromMouse(double d) {
+        this.setValue((d - (double)(this.x + 4)) / (double)(this.width - 8));
+    }
+
+    @Override
+    protected void onDrag(double d, double e, double f, double g) {
+        setValueFromMouse(d);
     }
 
     @Override
     public void applyValue() {
-        playSound();
-        PacketChangeRange.send((int) value);
+        PacketChangeRange.send(getValueInt());
     }
 
     private void playSound() {

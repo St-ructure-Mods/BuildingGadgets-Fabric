@@ -38,7 +38,7 @@ public class OurRenderTypes extends RenderType {
             DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
             RenderType.CompositeState.builder()
                     .setShaderState(RenderStateShard.BLOCK_SHADER)
-                    .setLayeringState(POLYGON_OFFSET_LAYERING) // view_offset_z_layering
+                    .setLayeringState(VIEW_OFFSET_Z_LAYERING) // view_offset_z_layering
                     .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
                     .setDepthTestState(LEQUAL_DEPTH_TEST)
                     .setCullState(NO_CULL)

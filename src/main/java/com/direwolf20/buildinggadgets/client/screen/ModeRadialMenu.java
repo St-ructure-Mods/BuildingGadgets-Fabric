@@ -145,9 +145,9 @@ public class ModeRadialMenu extends Screen {
                         GadgetUtils.getToolRange(tool), Color.DARK_GRAY, (slider, integer) -> {
                     sendRangeUpdate(slider.getValueInt());
                     int value = slider.getValueInt();
-                    int valueNew = Mth.clamp(value + integer, 1, BuildingGadgets.getConfig().GADGETS.maxRange);
+                    int valueNew = Mth.clamp(value + integer, 0, BuildingGadgets.getConfig().GADGETS.maxRange);
                     sendRangeUpdate(valueNew);
-                    slider.setValue(valueNew);
+                    slider.setValueInt(valueNew);
                     slider.applyValue();
                 });
                 //sliderRange.precision = 1;
