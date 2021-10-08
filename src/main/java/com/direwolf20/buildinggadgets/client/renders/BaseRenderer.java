@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.client.renders;
 
 import com.direwolf20.buildinggadgets.client.cache.RemoteInventoryCache;
+import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
 import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
@@ -14,7 +15,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -66,7 +66,7 @@ public abstract class BaseRenderer {
         stack.translate(-renderPos.x(), -renderPos.y(), -renderPos.z());
         stack.scale(1.01f, 1.01f, 1.01f);
 
-        renderBoxSolid(stack.last().pose(), buffer.getBuffer(RenderType.solid()), BlockPos.ZERO, 0, 1, 0, .35f);
+        renderBoxSolid(stack.last().pose(), buffer.getBuffer(OurRenderTypes.BlockOverlay), BlockPos.ZERO, 0, 1, 0, .35f);
 
         stack.popPose();
         RenderSystem.disableDepthTest();

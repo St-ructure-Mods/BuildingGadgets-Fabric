@@ -2,16 +2,9 @@ package com.direwolf20.buildinggadgets.client.renderer;
 
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
 
 import java.util.OptionalDouble;
 
@@ -24,11 +17,11 @@ public class OurRenderTypes extends RenderType {
             DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, false,
             RenderType.CompositeState.builder()
 //                    .setShadeModelState(SMOOTH_SHADE)
-                    .setShaderState(RenderStateShard.BLOCK_SHADER)
+                    .setShaderState(RenderStateShard.RENDERTYPE_SOLID_SHADER)
                     .setLightmapState(LIGHTMAP)
                     .setTextureState(BLOCK_SHEET_MIPPED) //BLOCK_SHEET_MIPPED (mcp) = BLOCK_SHEET_MIPPED (yarn)
                     .setLayeringState(VIEW_OFFSET_Z_LAYERING) // view_offset_z_layering
-                    .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
+                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                     .setDepthTestState(LEQUAL_DEPTH_TEST)
                     .setCullState(NO_CULL)
                     .setWriteMaskState(COLOR_DEPTH_WRITE)
@@ -37,13 +30,13 @@ public class OurRenderTypes extends RenderType {
     public static final RenderType MissingBlockOverlay = create("GadgetMissingBlockOverlay",
             DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
             RenderType.CompositeState.builder()
-                    .setShaderState(RenderStateShard.BLOCK_SHADER)
-                    .setLayeringState(VIEW_OFFSET_Z_LAYERING) // view_offset_z_layering
-                    .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
+                    .setShaderState(POSITION_COLOR_SHADER)
+                    .setLayeringState(POLYGON_OFFSET_LAYERING) // view_offset_z_layering
+                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                     .setDepthTestState(LEQUAL_DEPTH_TEST)
                     .setCullState(NO_CULL)
-                    .setLightmapState(LIGHTMAP)
-                    .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
+                    .setLightmapState(NO_LIGHTMAP)
+                    .setWriteMaskState(RenderStateShard.COLOR_WRITE)
                     .createCompositeState(false));
 
     public static final RenderType CopyGadgetLines = create("GadgetCopyLines",
@@ -77,9 +70,9 @@ public class OurRenderTypes extends RenderType {
     public static final RenderType BlockOverlay = create("BGBlockOverlay",
             DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
             RenderType.CompositeState.builder()
-                    .setShaderState(RenderStateShard.BLOCK_SHADER)
+                    .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
                     .setLayeringState(VIEW_OFFSET_Z_LAYERING) // view_offset_z_layering
-                    .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
+                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                     .setTextureState(NO_TEXTURE)
                     .setDepthTestState(LEQUAL_DEPTH_TEST)
                     .setCullState(CULL)
