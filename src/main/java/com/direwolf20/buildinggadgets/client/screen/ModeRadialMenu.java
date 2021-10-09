@@ -23,6 +23,7 @@ import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -368,40 +369,22 @@ public class ModeRadialMenu extends Screen {
 
             for (float i = degPer; i >= 0; i--) {
                 float rad = (float) ((i + totalDeg) / 180F * Math.PI);
+
+
                 double xp = x + Math.cos(rad) * radius;
                 double yp = y + Math.sin(rad) * radius;
                 if ((int) i == (int) (degPer / 2))
                     nameData.add(new NameDisplayData((int) xp, (int) yp, mouseInSector, shouldCenter && (seg == indexBottom || seg == indexTop)));
 
-                //TODO: `startangle` idk what that is so init to 0
-
-                float angle1 = 0 + (i / (float) segments) * angle;
-                float angle2 = 0 + ((i + 1) / (float) segments) * angle;
-
-                float z = 1;
-                float pos1InX = x + radiusMin * (float) Math.cos(angle1);
-                float pos1InY = y + radiusMin * (float) Math.sin(angle1);
-                float pos1OutX = x + radiusMax * (float) Math.cos(angle1);
-                float pos1OutY = y + radiusMax * (float) Math.sin(angle1);
-                float pos2OutX = x + radiusMax * (float) Math.cos(angle2);
-                float pos2OutY = y + radiusMax * (float) Math.sin(angle2);
-                float pos2InX = x + radiusMin * (float) Math.cos(angle2);
-                float pos2InY = y + radiusMin * (float) Math.sin(angle2);
-
-                bufferBuilder.vertex(pos1OutX, pos1OutY, z).color(r, g, b, a).endVertex();
-                bufferBuilder.vertex(pos1InX, pos1InY, z).color(r, g, b, a).endVertex();
-                bufferBuilder.vertex(pos2InX, pos2InY, z).color(r, g, b, a).endVertex();
-                bufferBuilder.vertex(pos2OutX, pos2OutY, z).color(r, g, b, a).endVertex();
-
                 bufferBuilder.vertex(x + Math.cos(rad) * radius / 2.3F, y + Math.sin(rad) * radius / 2.3F, 0).color(r, g, b, a).endVertex();
                 bufferBuilder.vertex(xp, yp, 0).color(r, g, b, a).endVertex();
 
 //                GL11.glVertex2d(x + Math.cos(rad) * radius / 2.3F, y + Math.sin(rad) * radius / 2.3F);
-//                GL11.glVertex2d(xp, yp);
+//                GL11.glVertex2d(xp, yp);*/
             }
 
             totalDeg += degPer;
-//            RenderSystem.setShaderColor(1, 1, 1, 1);
+            RenderSystem.setShaderColor(1, 1, 1, 1);
         }
 
         tessellator.end();
