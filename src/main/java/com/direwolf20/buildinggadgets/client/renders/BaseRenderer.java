@@ -30,6 +30,9 @@ public abstract class BaseRenderer {
     private static final MockBuilderWorld builderWorld = new MockBuilderWorld();
     private static final RemoteInventoryCache cacheInventory = new RemoteInventoryCache(false);
 
+    public void renderAfterSetup(WorldRenderContext context, Player player, ItemStack heldItem) {
+    }
+
     public void render(WorldRenderContext evt, Player player, ItemStack heldItem) {
         // This is necessary to prevent issues with not rendering the overlay's at all (when Botania being present) - See #329 for more information
         bindBlocks();
@@ -71,7 +74,6 @@ public abstract class BaseRenderer {
         RenderSystem.disableDepthTest();
         buffer.endBatch(); // @mcp: finish (mcp) = draw (yarn)
     }
-
 
     long getEnergy(Player player, ItemStack heldItem) {
         if (player.isCreative() || !(heldItem.getItem() instanceof AbstractGadget))

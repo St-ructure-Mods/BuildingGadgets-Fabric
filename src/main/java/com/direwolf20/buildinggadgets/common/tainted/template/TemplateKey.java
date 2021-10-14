@@ -41,9 +41,11 @@ public final class TemplateKey implements ITemplateKey {
 
     @Override
     public void readFromNbt(CompoundTag tag) {
+        id = tag.getUUID("id");
     }
 
     @Override
     public void writeToNbt(CompoundTag tag) {
+        tag.putUUID("id", id);
     }
 }

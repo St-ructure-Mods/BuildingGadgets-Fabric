@@ -9,14 +9,34 @@ import net.minecraft.world.item.ItemStack;
 
 public class EventRenderWorldLast {
 
-    public static void renderWorldLastEvent(WorldRenderContext evt) {
+    public static void renderAfterSetup(WorldRenderContext evt) {
         Player player = Minecraft.getInstance().player;
-        if (player == null)
+
+        if (player == null) {
             return;
+        }
 
         ItemStack heldItem = AbstractGadget.getGadget(player);
-        if (heldItem.isEmpty())
+
+        if (heldItem.isEmpty()) {
             return;
+        }
+
+        BGRenderers.find(heldItem.getItem()).renderAfterSetup(evt, player, heldItem);
+    }
+
+    public static void renderWorldLastEvent(WorldRenderContext evt) {
+        Player player = Minecraft.getInstance().player;
+
+        if (player == null) {
+            return;
+        }
+
+        ItemStack heldItem = AbstractGadget.getGadget(player);
+
+        if (heldItem.isEmpty()) {
+            return;
+        }
 
         BGRenderers.find(heldItem.getItem()).render(evt, player, heldItem);
     }
