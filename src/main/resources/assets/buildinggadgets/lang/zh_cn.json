@@ -1,6 +1,6 @@
 {
   "_comment": "itemGroup:",
-  "itemGroup.buildinggadgets": "建筑小帮手",
+  "itemGroup.buildinggadgets.tab": "建筑小帮手",
   "_comment": "item:",
   "item.buildinggadgets.gadget_building": "建筑小帮手",
   "item.buildinggadgets.gadget_copy_paste": "复制粘贴小帮手",
