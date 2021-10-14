@@ -94,8 +94,9 @@ public final class NBTKeys {
     public static final String WORLD_SAVE_UNDO_ITEMS_PRODUCED = "produced_items";
     public static final String WORLD_SAVE_UNDO_BOUNDS = "bounding_box";
 
-    public static final String REMOTE_INVENTORY_POS = "bound_te_pos";
-    public static final String REMOTE_INVENTORY_DIM = "bound_te_dim";
+    public static final String REMOTE_INVENTORY_POS = "bound_be_pos";
+    public static final String REMOTE_INVENTORY_DIM = "bound_be_dim";
+    public static final String REMOTE_INVENTORY_FACE = "bound_be_face";
 
     public static final String ENERGY = "energy";
 

@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
-import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -44,6 +43,7 @@ public class InventoryLinker {
         CompoundTag compound = stack.getOrCreateTag();
         compound.putString(NBTKeys.REMOTE_INVENTORY_DIM, world.dimension().location().toString());
         compound.put(NBTKeys.REMOTE_INVENTORY_POS, NbtUtils.writeBlockPos(trace.getBlockPos()));
+        compound.putString(NBTKeys.REMOTE_INVENTORY_FACE, trace.getDirection().name());
         return Result.success();
     }
 
@@ -51,12 +51,12 @@ public class InventoryLinker {
      * Directly fetch the linked inventory if the tile exists (removes if not) and if the tile holds
      * a capability.
      */
-    public static Optional<Storage<ItemVariant>> getLinkedInventory(Level world, BlockPos pos, ResourceKey<Level> registry, @Nullable ItemStack stack) {
-        if (!world.dimension().equals(registry)) {
+    public static Optional<Storage<ItemVariant>> getLinkedInventory(Level world, InventoryLink link, @Nullable ItemStack stack) {
+        if (!world.dimension().equals(link.level())) {
             return Optional.empty();
         }
 
-        Storage<ItemVariant> storage = ItemStorage.SIDED.find(world, pos, Direction.UP);
+        Storage<ItemVariant> storage = ItemStorage.SIDED.find(world, link.blockPos(), link.face());
 
         if (storage == null) {
             // Unlink if the storage no longer exists
@@ -71,12 +71,12 @@ public class InventoryLinker {
     }
 
     public static Optional<Storage<ItemVariant>> getLinkedInventory(Level world, ItemStack stack) {
-        Location dataFromStack = getDataFromStack(stack);
+        InventoryLink dataFromStack = getDataFromStack(stack);
         if (dataFromStack == null) {
             return Optional.empty();
         }
 
-        return getLinkedInventory(world, dataFromStack.blockPos(), dataFromStack.level(), stack);
+        return getLinkedInventory(world, dataFromStack, stack);
     }
 
     /**
@@ -86,7 +86,7 @@ public class InventoryLinker {
      */
     private static boolean removeIfSame(ItemStack stack, BlockPos pos) {
         // This isn't ideal that we have to do this twice
-        Location dataFromStack = getDataFromStack(stack);
+        InventoryLink dataFromStack = getDataFromStack(stack);
         if (dataFromStack == null) {
             return false;
         }
@@ -106,23 +106,30 @@ public class InventoryLinker {
         CompoundTag compound = stack.getOrCreateTag();
         compound.remove(NBTKeys.REMOTE_INVENTORY_POS);
         compound.remove(NBTKeys.REMOTE_INVENTORY_DIM);
+        compound.remove(NBTKeys.REMOTE_INVENTORY_FACE);
     }
 
     /**
      * Retrieves the link data from the ItemStack
      */
     @Nullable
-    public static Location getDataFromStack(ItemStack stack) {
+    public static InventoryLink getDataFromStack(ItemStack stack) {
         CompoundTag compound = stack.getOrCreateTag();
-        if (!compound.contains(NBTKeys.REMOTE_INVENTORY_POS) || !compound.contains(NBTKeys.REMOTE_INVENTORY_DIM)) {
+        if (!(compound.contains(NBTKeys.REMOTE_INVENTORY_POS) && compound.contains(NBTKeys.REMOTE_INVENTORY_DIM) && compound.contains(NBTKeys.REMOTE_INVENTORY_FACE))) {
             return null;
         }
 
         ResourceKey<Level> dimKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(compound.getString(NBTKeys.REMOTE_INVENTORY_DIM)));
-        return new Location(
-                dimKey,
-                NbtUtils.readBlockPos(compound.getCompound(NBTKeys.REMOTE_INVENTORY_POS))
-        );
+        Direction face;
+
+        try {
+            face = Direction.valueOf(compound.getString(NBTKeys.REMOTE_INVENTORY_FACE));
+        } catch (Throwable ignored) {
+            // smh why does valueOf die but not return null
+            return null;
+        }
+
+        return new InventoryLink(dimKey, NbtUtils.readBlockPos(compound.getCompound(NBTKeys.REMOTE_INVENTORY_POS)), face);
     }
 
     /**
@@ -141,5 +148,8 @@ public class InventoryLinker {
         public static Result removed() {
             return new Result(MessageTranslation.UNBOUND_TO_TILE, true);
         }
+    }
+
+    public record InventoryLink(ResourceKey<Level> level, BlockPos blockPos, Direction face) {
     }
 }

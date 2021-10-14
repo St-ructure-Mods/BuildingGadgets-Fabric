@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.client.cache;
 
-import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketSetRemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import com.google.common.base.Stopwatch;
@@ -15,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class RemoteInventoryCache {
     private final boolean isCopyPaste;
     private boolean forceUpdate;
-    private Location locCached;
+    private InventoryLinker.InventoryLink locCached;
     private Multiset<ItemVariant> cache;
     private Stopwatch timer;
 
@@ -32,7 +31,7 @@ public class RemoteInventoryCache {
     }
 
     public boolean maintainCache(ItemStack gadget) {
-        Location loc = InventoryLinker.getDataFromStack(gadget);
+        InventoryLinker.InventoryLink loc = InventoryLinker.getDataFromStack(gadget);
 
         if (isCacheOld(loc)) {
             updateCache(loc);
@@ -45,17 +44,17 @@ public class RemoteInventoryCache {
         return cache;
     }
 
-    private void updateCache(Location loc) {
+    private void updateCache(InventoryLinker.InventoryLink loc) {
         locCached = loc;
 
         if (loc == null) {
             cache = null;
         } else {
-            PacketSetRemoteInventoryCache.send(isCopyPaste, loc.level(), loc.blockPos());
+            PacketSetRemoteInventoryCache.send(isCopyPaste, loc);
         }
     }
 
-    private boolean isCacheOld(@Nullable Location loc) {
+    private boolean isCacheOld(@Nullable InventoryLinker.InventoryLink loc) {
         if (!Objects.equals(locCached, loc)) {
             timer = loc == null ? null : Stopwatch.createStarted();
             return true;

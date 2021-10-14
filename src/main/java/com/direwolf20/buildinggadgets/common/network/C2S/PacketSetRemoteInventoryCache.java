@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.common.network.C2S;
 
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
-import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import com.google.common.collect.HashMultiset;
@@ -22,7 +21,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -30,7 +29,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.Level;
 
 @EnvironmentInterface(value = EnvType.CLIENT, itf = ClientPlayNetworking.PlayChannelHandler.class)
 public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayChannelHandler, ClientPlayNetworking.PlayChannelHandler {
@@ -51,10 +49,10 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         Data data = Data.read(buf);
 
-        server.execute(() -> data.either.ifRight(location -> {
+        server.execute(() -> data.either.ifRight(link -> {
             Multiset<ItemVariant> items = HashMultiset.create();
 
-            InventoryLinker.getLinkedInventory(player.level, location.blockPos(), location.level(), null).ifPresent(inventory -> {
+            InventoryLinker.getLinkedInventory(player.level, link, null).ifPresent(inventory -> {
                 try (Transaction transaction = Transaction.openOuter()) {
                     Object2IntMap<Item> counts = new Object2IntOpenHashMap<>();
 
@@ -89,15 +87,13 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
     }
 
     @Environment(EnvType.CLIENT)
-    public static void send(boolean isCopyPaste, ResourceKey<Level> level, BlockPos blockPos) {
+    public static void send(boolean isCopyPaste, InventoryLinker.InventoryLink link) {
         FriendlyByteBuf buf = PacketByteBufs.create();
-        buf.writeBoolean(isCopyPaste);
-        buf.writeBoolean(false);
-        buf.writeResourceLocation(level.location());
-        buf.writeBlockPos(blockPos);
+        new Data(isCopyPaste, Either.right(link)).write(buf);
+        ClientPlayNetworking.send(PacketHandler.PacketSetRemoteInventoryCache, buf);
     }
 
-    private record Data(boolean isCopyPaste, Either<Cache, Location> either) {
+    private record Data(boolean isCopyPaste, Either<Cache, InventoryLinker.InventoryLink> either) {
         private static Data read(FriendlyByteBuf buf) {
             boolean isCopyPaste = buf.readBoolean();
 
@@ -111,7 +107,7 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
 
                 return new Data(isCopyPaste, Either.left(new Cache(builder.build())));
             } else {
-                return new Data(isCopyPaste, Either.right(new Location(ResourceKey.create(Registry.DIMENSION_REGISTRY, buf.readResourceLocation()), buf.readBlockPos())));
+                return new Data(isCopyPaste, Either.right(new InventoryLinker.InventoryLink(ResourceKey.create(Registry.DIMENSION_REGISTRY, buf.readResourceLocation()), buf.readBlockPos(), buf.readEnum(Direction.class))));
             }
         }
 
@@ -128,9 +124,13 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
                     buf.writeInt(Item.getId(uniqueItem.toStack().getItem()));
                     buf.writeInt(entry.getCount());
                 }
+
                 return null;
-            }, location -> {
+            }, link -> {
                 buf.writeBoolean(false);
+                buf.writeResourceLocation(link.level().location());
+                buf.writeBlockPos(link.blockPos());
+                buf.writeEnum(link.face());
                 return null;
             });
         }

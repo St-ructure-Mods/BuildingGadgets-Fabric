@@ -2,7 +2,6 @@ package com.direwolf20.buildinggadgets.client.renders;
 
 import com.direwolf20.buildinggadgets.client.cache.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
-import com.direwolf20.buildinggadgets.common.Location;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
@@ -45,7 +44,7 @@ public abstract class BaseRenderer {
     }
 
     private static void renderLinkedInventoryOutline(WorldRenderContext evt, ItemStack gadget, Player player) {
-        Location dataFromStack = InventoryLinker.getDataFromStack(gadget);
+        InventoryLinker.InventoryLink dataFromStack = InventoryLinker.getDataFromStack(gadget);
         if (dataFromStack == null) {
             return;
         }
