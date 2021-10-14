@@ -13,10 +13,13 @@ import com.direwolf20.buildinggadgets.common.network.ClientPacketHandler;
 import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.impl.client.rendering.WorldRenderContextImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvent;
@@ -28,7 +31,7 @@ public class BuildingGadgetsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         KeyBindings.initialize();
-        WorldRenderEvents.AFTER_SETUP.register(EventRenderWorldLast::renderWorldLastEvent);
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(EventRenderWorldLast::renderWorldLastEvent);
         ScreenRegistry.register(OurContainers.TEMPLATE_MANAGER_CONTAINER_TYPE, TemplateManagerGUI::new);
         ClientTickEvents.END_CLIENT_TICK.register(EventKeyInput::handleEventInput);
         BlockEntityRendererRegistry.register(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY, EffectBlockTER::new);
@@ -36,6 +39,8 @@ public class BuildingGadgetsClient implements ClientModInitializer {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> CACHE_TEMPLATE_PROVIDER.clear());
         CACHE_TEMPLATE_PROVIDER.registerUpdateListener(BGRenderers.COPY_PASTE);
         ClientPacketHandler.registerMessages();
+
+        ItemTooltipCallback.EVENT.register(EventUtil::printUUID);
     }
 
     public static void playSound(SoundEvent sound, float pitch) {

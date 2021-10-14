@@ -38,7 +38,7 @@ public class DestructionRender extends BaseRenderer {
         if (world.getBlockState(startBlock) == OurBlocks.EFFECT_BLOCK.defaultBlockState())
             return;
 
-        Vec3 playerPos = getMc().gameRenderer.getMainCamera().getPosition();
+        Vec3 playerPos = evt.camera().getPosition();
 
         PoseStack stack = evt.matrixStack();
         stack.pushPose();

@@ -378,9 +378,6 @@ public class ModeRadialMenu extends Screen {
 
                 bufferBuilder.vertex(x + Math.cos(rad) * radius / 2.3F, y + Math.sin(rad) * radius / 2.3F, 0).color(r, g, b, a).endVertex();
                 bufferBuilder.vertex(xp, yp, 0).color(r, g, b, a).endVertex();
-
-//                GL11.glVertex2d(x + Math.cos(rad) * radius / 2.3F, y + Math.sin(rad) * radius / 2.3F);
-//                GL11.glVertex2d(xp, yp);*/
             }
 
             totalDeg += degPer;
@@ -436,10 +433,10 @@ public class ModeRadialMenu extends Screen {
 //        Lighting.setupForFlatItems();
 
         float s = 2.25F * fract;
+        itemRenderer.renderAndDecorateItem(tool, 0, 0);
         matrices.pushPose();
         matrices.scale(s, s, s);
         matrices.translate(x / s - (tool.getItem() instanceof GadgetCopyPaste ? 8F : 8.5F), y / s - 8, 0);
-        itemRenderer.renderGuiItem(tool, 0, 0);
 
 //        RenderSystem.disableBlend();
 //        RenderSystem.disableRescaleNormal();

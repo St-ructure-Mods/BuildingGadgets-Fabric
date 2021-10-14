@@ -64,7 +64,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         super.render(evt, player, heldItem);
 
         // Provide this as both renders require the data.
-        Vec3 cameraView = getMc().gameRenderer.getMainCamera().getPosition();
+        Vec3 cameraView = evt.camera().getPosition();
 
         // translate the matric to the projected view
         PoseStack stack = evt.matrixStack(); //Get current matrix position from the evt call

@@ -12,10 +12,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 
 public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity> {
 
@@ -56,7 +58,7 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
 //        OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
         try {
             dispatcher.renderSingleBlock(
-                    renderBlockState, stack, Minecraft.getInstance().renderBuffers().bufferSource(), 0xff0000, OverlayTexture.NO_OVERLAY
+                    renderBlockState, stack, Minecraft.getInstance().renderBuffers().bufferSource(), 15728640, OverlayTexture.NO_OVERLAY
             );
         } catch (Exception ignored) {
             BuildingGadgets.LOG.error("Failed to render block.");
@@ -65,7 +67,7 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
         stack.popPose();
         stack.pushPose();
 
-        builder = buffer.getBuffer(OurRenderTypes.RenderBlock);
+        builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
 
         float x = 0,
                 y = 0,

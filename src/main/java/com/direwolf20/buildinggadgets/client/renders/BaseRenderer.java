@@ -41,7 +41,7 @@ public abstract class BaseRenderer {
     }
 
     private void bindBlocks() {
-        getMc().getTextureManager().bindForSetup(InventoryMenu.BLOCK_ATLAS);
+        RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
     }
 
     private static void renderLinkedInventoryOutline(WorldRenderContext evt, ItemStack gadget, Player player) {
@@ -55,7 +55,7 @@ public abstract class BaseRenderer {
         }
 
         BlockPos pos = dataFromStack.blockPos();
-        Vec3 renderPos = getMc().gameRenderer.getMainCamera().getPosition()
+        Vec3 renderPos = evt.camera().getPosition()
                 .subtract(pos.getX(), pos.getY(), pos.getZ())
                 .add(.005f, .005f, .005f);
 
@@ -66,7 +66,7 @@ public abstract class BaseRenderer {
         stack.translate(-renderPos.x(), -renderPos.y(), -renderPos.z());
         stack.scale(1.01f, 1.01f, 1.01f);
 
-        renderBoxSolid(stack.last().pose(), buffer.getBuffer(OurRenderTypes.BlockOverlay), BlockPos.ZERO, 0, 1, 0, .35f);
+        renderBoxSolid(stack.last().pose(), buffer.getBuffer(OurRenderTypes.MissingBlockOverlay), BlockPos.ZERO, 0, 1, 0, .35f);
 
         stack.popPose();
         RenderSystem.disableDepthTest();

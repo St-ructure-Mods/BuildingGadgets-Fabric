@@ -21,7 +21,6 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -79,7 +78,7 @@ public class BuildRender extends BaseRenderer {
         //Prepare the fake world -- using a fake world lets us render things properly, like fences connecting.
         getBuilderWorld().setWorldAndState(player.level, renderBlockState, coordinates);
 
-        Vec3 playerPos = getMc().gameRenderer.getMainCamera().getPosition();
+        Vec3 playerPos = evt.camera().getPosition();
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 
         //Save the current position that is being rendered (I think)
@@ -87,7 +86,7 @@ public class BuildRender extends BaseRenderer {
         matrix.pushPose();
         matrix.translate(-playerPos.x(), -playerPos.y(), -playerPos.z());
 
-        BlockRenderDispatcher dispatcher = getMc().getBlockRenderer();
+        BlockRenderDispatcher dispatcher = evt.gameRenderer().getMinecraft().getBlockRenderer();
 
         RenderSystem.enableDepthTest();
         for (BlockPos coordinate : coordinates) {
@@ -99,8 +98,8 @@ public class BuildRender extends BaseRenderer {
                 matrix.scale(1.001f, 1.001f, 1.001f);
             }
 
-//            OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
-            dispatcher.renderSingleBlock(renderBlockState, matrix, Minecraft.getInstance().renderBuffers().bufferSource(), 0xff0000, OverlayTexture.NO_OVERLAY);
+            OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
+            dispatcher.renderSingleBlock(renderBlockState, matrix, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY);
 
             matrix.popPose();
             buffer.endBatch();
@@ -120,11 +119,12 @@ public class BuildRender extends BaseRenderer {
             long hasEnergy = getEnergy(player, heldItem);
 
             try (Transaction transaction = Transaction.openOuter()) {
-                VertexConsumer builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
+
                 for (BlockPos coordinate : coordinates) { //Now run through the UNSORTED list of coords, to show which blocks won't place if you don't have enough of them.
                     boolean renderFree = false;
                     hasEnergy -= ((AbstractGadget) heldItem.getItem()).getEnergyCost(heldItem);
                     MatchResult match = index.match(materials, transaction);
+                    VertexConsumer builder = buffer.getBuffer(OurRenderTypes.MissingBlockOverlay);
 
                     if (!match.isSuccess() || hasEnergy < 0) {
                         if (hasLinkedInventory && remainingCached > 0) {

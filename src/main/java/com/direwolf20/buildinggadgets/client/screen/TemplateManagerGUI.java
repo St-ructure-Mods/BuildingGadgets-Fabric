@@ -41,6 +41,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
@@ -306,7 +307,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
     private void pasteTemplateToStack(Level world, ItemStack stack, Template newTemplate, boolean replaced) {
         BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(world).ifPresent((ITemplateProvider provider) ->
-                pasteTemplateToStack(provider, stack, newTemplate, replaced && !world.isClientSide()));
+                pasteTemplateToStack(provider, stack, newTemplate, replaced && world.isClientSide()));
     }
 
     private void pasteTemplateToStack(ITemplateProvider provider, ItemStack stack, Template newTemplate, boolean replaced) {
@@ -325,10 +326,10 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
             return false;
 
         if (BGComponent.TEMPLATE_KEY_COMPONENT.isProvidedBy(stack))
-            return false;
+            return true;
 
         else if (TemplateManagerTileEntity.TEMPLATE_CONVERTIBLES.contains(stack.getItem())) {
-            container.setItem(1, container.getStateId(), new ItemStack(OurItems.TEMPLATE_ITEM));
+            container.getSlot(1).set(new ItemStack(OurItems.TEMPLATE_ITEM));
             return true;
         }
 
