@@ -26,7 +26,7 @@ interface MaterialListEntry<T extends MaterialListEntry<T>> extends Iterable<Imm
 
         CompoundTag writeToNBT(T entry, boolean persisted);
 
-        JsonSerializer<T> asJsonSerializer(boolean printName, boolean extended);
+        JsonSerializer<T> asJsonSerializer();
 
         JsonDeserializer<T> asJsonDeserializer();
     }

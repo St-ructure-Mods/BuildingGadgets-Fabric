@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 public class GadgetDestruction extends AbstractGadget {
 
     public GadgetDestruction(Properties builder) {
-        super(builder, BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.undoSize, Reference.SaveReference.UNDO_DESTRUCTION, TagReference.WHITELIST_DESTRUCTION, TagReference.BLACKLIST_DESTRUCTION);
+        super(builder, TagReference.WHITELIST_DESTRUCTION, TagReference.BLACKLIST_DESTRUCTION);
     }
 
     @Override
@@ -245,7 +245,7 @@ public class GadgetDestruction extends AbstractGadget {
             }
         }
 
-        pushUndo(stack, builder.build(world));
+        pushUndo(stack, builder.build(world), world);
     }
 
     private boolean destroyBlock(Level world, BlockPos voidPos, ServerPlayer player, Undo.Builder builder) {

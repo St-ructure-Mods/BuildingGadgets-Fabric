@@ -8,7 +8,6 @@ import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
-import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
@@ -55,8 +54,6 @@ public final class BuildingGadgets implements ModInitializer {
                         .then(OverrideBuildSizeCommand.registerList())
                         .then(OverrideCopySizeCommand.registerList())
                         .then(ForceUnloadedCommand.registerList())));
-        SaveManager.INSTANCE.onServerStarted();
-        SaveManager.INSTANCE.onServerStopped();
 
         Registries.registerTileDataSerializers();
         PacketHandler.registerMessages();

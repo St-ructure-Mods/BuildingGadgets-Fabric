@@ -2,14 +2,13 @@ package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.items.modes.*;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.concurrent.UndoScheduler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
-import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.tainted.save.Undo;
-import com.direwolf20.buildinggadgets.common.tainted.save.UndoWorldSave;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
@@ -41,7 +40,6 @@ import team.reborn.energy.api.base.SimpleBatteryItem;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import static com.direwolf20.buildinggadgets.common.util.GadgetUtils.withSuffix;
 
@@ -49,14 +47,12 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
 
     private final Tag.Named<Block> whiteList;
     private final Tag.Named<Block> blackList;
-    private final Supplier<UndoWorldSave> saveSupplier;
 
-    public AbstractGadget(Properties builder, int undoLength, String undoName, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
+    public AbstractGadget(Properties builder, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
         super(builder.defaultDurability(0));
 
         this.whiteList = TagFactory.BLOCK.create(whiteListTag);
         this.blackList = TagFactory.BLOCK.create(blackListTag);
-        saveSupplier = SaveManager.INSTANCE.registerUndoSave(w -> SaveManager.getUndoSave(w, undoLength, undoName));
     }
 
     public abstract long getEnergyCapacity();
@@ -100,10 +96,6 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
 
     public Tag.Named<Block> getBlackList() {
         return blackList;
-    }
-
-    protected UndoWorldSave getUndoSave() {
-        return saveSupplier.get();
     }
 
     @Override
@@ -253,12 +245,14 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     //this should only be called Server-Side!!!
     public UUID getUUID(ItemStack stack) {
         CompoundTag nbt = stack.getOrCreateTag();
-        if (!nbt.hasUUID(NBTKeys.GADGET_UUID)) {
-            UUID newId = getUndoSave().getFreeUUID();
+
+        if (nbt.hasUUID(NBTKeys.GADGET_UUID)) {
+            return nbt.getUUID(NBTKeys.GADGET_UUID);
+        } else {
+            UUID newId = UUID.randomUUID();
             nbt.putUUID(NBTKeys.GADGET_UUID, newId);
             return newId;
         }
-        return nbt.getUUID(NBTKeys.GADGET_UUID);
     }
 
     // Todo: tweak and fix.
@@ -276,19 +270,17 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
         return range == 1 ? 1 : (range + 1) * (range + 1);
     }
 
-    protected void pushUndo(ItemStack stack, Undo undo) {
+    protected void pushUndo(ItemStack stack, Undo undo, Level world) {
         // Don't save if there is nothing to undo...
         if (undo.getUndoData().isEmpty()) {
             return;
         }
 
-        UndoWorldSave save = getUndoSave();
-        save.insertUndo(getUUID(stack), undo);
+        BGComponent.UNDO_COMPONENT.get(world.getLevelData()).insertUndo(getUUID(stack), undo);
     }
 
     public void undo(Level world, Player player, ItemStack stack) {
-        UndoWorldSave save = getUndoSave();
-        Optional<Undo> undoOptional = save.getUndo(getUUID(stack));
+        Optional<Undo> undoOptional = BGComponent.UNDO_COMPONENT.get(world.getLevelData()).getUndo(getUUID(stack));
 
         if (undoOptional.isPresent()) {
             Undo undo = undoOptional.get();
@@ -296,7 +288,7 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
             if (!ForceUnloadedCommand.mayForceUnloadedChunks(player)) {//TODO separate command
                 ImmutableSortedSet<ChunkPos> unloadedChunks = undo.getBoundingBox().getUnloadedChunks(world);
                 if (!unloadedChunks.isEmpty()) {
-                    pushUndo(stack, undo);
+                    pushUndo(stack, undo, world);
                     player.displayClientMessage(MessageTranslation.UNDO_UNLOADED.componentTranslation().setStyle(Styles.RED), true);
                     BuildingGadgets.LOG.error("Player attempted to undo a Region missing {} unloaded chunks. Denied undo!", unloadedChunks.size());
                     BuildingGadgets.LOG.trace("The following chunks were detected as unloaded {}.", unloadedChunks);

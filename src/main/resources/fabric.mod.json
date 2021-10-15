@@ -28,6 +28,9 @@
     "cardinal-components-world" : [
       "com.direwolf20.buildinggadgets.common.component.BGComponent"
     ],
+    "cardinal-components-level" : [
+      "com.direwolf20.buildinggadgets.common.component.BGComponent"
+    ],
     "client": [
       "com.direwolf20.buildinggadgets.client.BuildingGadgetsClient"
     ],
@@ -47,7 +50,8 @@
   "custom": {
     "cardinal-components": [
       "buildinggadgets:template_provider",
-      "buildinggadgets:template_key"
+      "buildinggadgets:template_key",
+      "buildinggadgets:undo"
     ]
   }
 }

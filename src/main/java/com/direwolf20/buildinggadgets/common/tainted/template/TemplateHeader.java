@@ -153,17 +153,7 @@ public record TemplateHeader(@Nullable String name, @Nullable String author, @Nu
         return builder
                 .setPrettyPrinting()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .registerTypeAdapter(ResourceLocation.class, new JsonBiDiSerializer<ResourceLocation>() {
-                    @Override
-                    public ResourceLocation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                        return new ResourceLocation(json.getAsJsonPrimitive().getAsString());
-                    }
-
-                    @Override
-                    public JsonElement serialize(ResourceLocation src, Type typeOfSrc, JsonSerializationContext context) {
-                        return new JsonPrimitive(src.toString());
-                    }
-                })
+                .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
                 .registerTypeAdapter(MaterialList.class, new MaterialList.JsonSerializer(printName, extended))
                 .registerTypeAdapter(TemplateHeader.class, BI_DI_SERIALIZER);
     }

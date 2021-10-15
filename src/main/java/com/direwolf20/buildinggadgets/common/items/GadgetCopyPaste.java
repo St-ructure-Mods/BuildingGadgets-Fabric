@@ -18,7 +18,6 @@ import com.direwolf20.buildinggadgets.common.tainted.concurrent.CopyScheduler;
 import com.direwolf20.buildinggadgets.common.tainted.concurrent.PlacementScheduler;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
-import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
@@ -42,6 +41,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -82,7 +82,7 @@ public class GadgetCopyPaste extends AbstractGadget {
     private static final Joiner CHUNK_JOINER = Joiner.on("; ");
 
     public GadgetCopyPaste(Properties builder) {
-        super(builder, BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.undoSize, Reference.SaveReference.UNDO_COPY_PASTE, TagReference.WHITELIST_COPY_PASTE, TagReference.BLACKLIST_COPY_PASTE);
+        super(builder, TagReference.WHITELIST_COPY_PASTE, TagReference.BLACKLIST_COPY_PASTE);
     }
 
     @Override
@@ -431,6 +431,7 @@ public class GadgetCopyPaste extends AbstractGadget {
     }
 
     private void schedulePlacement(ItemStack stack, IBuildView view, Player player) {
+        ServerLevel world = view.getContext().getServerWorld();
         IItemIndex index = InventoryHelper.index(stack, player);
         long energyCost = getEnergyCost(stack);
         boolean overwrite = BuildingGadgets.getConfig().GENERAL.allowOverwriteBlocks;
@@ -439,10 +440,10 @@ public class GadgetCopyPaste extends AbstractGadget {
                 EnergyStorage.ITEM.find(stack, ContainerItemContext.withInitial(stack)),
                 t -> energyCost,
                 index,
-                (c, t) -> overwrite ? c.getWorld().getBlockState(t.getPos()).canBeReplaced(useContext) : c.getWorld().isEmptyBlock(t.getPos()));
+                (c, t) -> overwrite ? world.getBlockState(t.getPos()).canBeReplaced(useContext) : world.isEmptyBlock(t.getPos()));
         PlacementScheduler.schedulePlacement(view, checker, BuildingGadgets.getConfig().GADGETS.placeSteps)
                 .withFinisher(p -> {
-                    pushUndo(stack, p.getUndoBuilder().build(view.getContext().getServerWorld()));
+                    pushUndo(stack, p.getUndoBuilder().build(world), world);
                     onBuildFinished(stack, player, view.getBoundingBox());
                 });
     }
