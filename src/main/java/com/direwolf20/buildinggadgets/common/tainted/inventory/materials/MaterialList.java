@@ -254,7 +254,7 @@ public final class MaterialList implements Iterable<ImmutableMultiset<ItemVarian
         public JsonElement serialize(MaterialList src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject res = new JsonObject();
             res.add(JsonKeys.MATERIAL_LIST_ROOT_TYPE, context.serialize(src.getRootEntry().getSerializer().getRegistryName()));
-            res.add(JsonKeys.MATERIAL_LIST_ROOT_ENTRY, src.getRootEntry().getSerializer().asJsonSerializer(printName, extended).serialize(src.getRootEntry(), src.getRootEntry().getClass(), context));
+            res.add(JsonKeys.MATERIAL_LIST_ROOT_ENTRY, src.getRootEntry().getSerializer().asJsonSerializer().serialize(src.getRootEntry(), src.getRootEntry().getClass(), context));
             return res;
         }
 

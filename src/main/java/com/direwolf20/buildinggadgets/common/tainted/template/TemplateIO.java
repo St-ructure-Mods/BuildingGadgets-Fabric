@@ -49,7 +49,7 @@ public final class TemplateIO {
      * @param persisted whether this was written as persisted.
      * @param header    The TemplateHeader if present. Null otherwise.
      * @return A TemplateItem if the serializer is known. Null if not.
-     * @throws IOException if a read error occurs or the read nbt does not match the format written by {@link #writeTemplate(Template, OutputStream, boolean)}
+     * @throws TemplateReadException if a read error occurs or the read nbt does not match the format written by {@link #writeTemplate(Template, OutputStream, boolean)}
      */
     public static Template readTemplate(InputStream stream, @Nullable TemplateHeader header, boolean persisted) throws TemplateReadException {
         try {
@@ -73,18 +73,6 @@ public final class TemplateIO {
         }
     }
 
-    public static void writeTemplateJson(Template template, OutputStream stream) throws TemplateWriteException {
-        writeTemplateJson(template, stream, null);
-    }
-
-    public static void writeTemplateJson(Template template, OutputStream stream, @Nullable BuildContext context) throws TemplateWriteException {
-        GSON.toJson(TemplateJsonRepresentation.ofTemplate(template, context), new OutputStreamWriter(stream));
-    }
-
-    public static String writeTemplateJson(Template template) throws TemplateWriteException {
-        return writeTemplateJson(template, (BuildContext) null);
-    }
-
     public static String writeTemplateJson(Template template, @Nullable BuildContext context) throws TemplateWriteException {
         return GSON.toJson(TemplateJsonRepresentation.ofTemplate(template, context));
     }
@@ -92,14 +80,6 @@ public final class TemplateIO {
     public static Template readTemplateFromJson(String json) throws TemplateReadException {
         try {
             return GSON.fromJson(json, TemplateJsonRepresentation.class).getTemplate();
-        } catch (JsonSyntaxException e) {
-            throw new CorruptJsonException(e);
-        }
-    }
-
-    public static Template readTemplateFromJson(InputStream stream) throws TemplateReadException {
-        try {
-            return GSON.fromJson(new InputStreamReader(stream), TemplateJsonRepresentation.class).getTemplate();
         } catch (JsonSyntaxException e) {
             throw new CorruptJsonException(e);
         }

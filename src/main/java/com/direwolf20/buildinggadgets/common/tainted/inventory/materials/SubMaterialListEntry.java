@@ -149,12 +149,12 @@ abstract class SubMaterialListEntry implements MaterialListEntry<SubMaterialList
         }
 
         @Override
-        public JsonSerializer<SubMaterialListEntry> asJsonSerializer(boolean printName, boolean extended) {
+        public JsonSerializer<SubMaterialListEntry> asJsonSerializer() {
             return (src, typeOfSrc, context) -> {
                 JsonArray ar = new JsonArray();
                 src.getAllSubEntries().forEach((MaterialListEntry entry) -> {
                     @SuppressWarnings("unchecked") //I ignore generics on purpose here, as this will always be the correct type - it's it's own serializer
-                    JsonElement element = entry.getSerializer().asJsonSerializer(printName, extended).serialize(entry, entry.getClass(), context);
+                    JsonElement element = entry.getSerializer().asJsonSerializer().serialize(entry, entry.getClass(), context);
                     JsonObject obj = new JsonObject();
                     obj.add(JsonKeys.MATERIAL_ENTRY_TYPE, context.serialize(entry.getSerializer().getRegistryName()));
                     if (element.isJsonArray())

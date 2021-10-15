@@ -80,7 +80,7 @@ record SimpleMaterialListEntry(
         }
 
         @Override
-        public JsonSerializer<SimpleMaterialListEntry> asJsonSerializer(boolean printName, boolean extended) {
+        public JsonSerializer<SimpleMaterialListEntry> asJsonSerializer() {
             return (src, typeOfSrc, context) -> {
                 Multiset<ItemVariant> set = src.getItems();
                 JsonArray jsonArray = new JsonArray();
