@@ -14,7 +14,6 @@ public final class SerialisationSupport {
     private SerialisationSupport() {
     }
 
-    // TODO: Register as Reference.TileDataSerializerReference.DUMMY_SERIALIZER_RL
     private static final ITileDataSerializer DUMMY_TILE_DATA_SERIALIZER = new DummyTileDataSerializer();
 
     public static ITileDataSerializer dummyDataSerializer() {
@@ -38,7 +37,6 @@ public final class SerialisationSupport {
         }
     }
 
-    // TODO: Register as Reference.TileDataSerializerReference.NBT_TILE_ENTITY_DATA_SERIALIZER_RL
     private static final ITileDataSerializer NBT_TILE_DATA_SERIALIZER = new NBTTileEntityDataSerializer();
 
     public static ITileDataSerializer nbtTileDataSerializer() {
@@ -55,8 +53,11 @@ public final class SerialisationSupport {
             NBTTileEntityData nbtData = (NBTTileEntityData) data;
             CompoundTag res = new CompoundTag();
             res.put(NBTKeys.KEY_DATA, nbtData.getNBT());
-            if (nbtData.getRequiredMaterials() != null)
+
+            if (nbtData.getRequiredMaterials() != null) {
                 res.put(NBTKeys.KEY_MATERIALS, nbtData.getRequiredMaterials().serialize(persisted));
+            }
+
             return res;
         }
 
@@ -64,8 +65,11 @@ public final class SerialisationSupport {
         public ITileEntityData deserialize(CompoundTag tagCompound, boolean persisted) {
             CompoundTag data = tagCompound.getCompound(NBTKeys.KEY_DATA);
             MaterialList materialList = null;
-            if (tagCompound.contains(NBTKeys.KEY_MATERIALS, NbtType.COMPOUND))
+
+            if (tagCompound.contains(NBTKeys.KEY_MATERIALS, NbtType.COMPOUND)) {
                 materialList = MaterialList.deserialize(tagCompound.getCompound(NBTKeys.KEY_MATERIALS), persisted);
+            }
+
             return new NBTTileEntityData(data, materialList);
         }
     }

@@ -247,7 +247,7 @@ public final class MaterialList implements Iterable<ImmutableMultiset<ItemVarian
         }
     }
 
-    public record JsonSerializer(boolean printName, boolean extended) implements JsonBiDiSerializer<MaterialList> {
+    public record JsonSerializer() implements JsonBiDiSerializer<MaterialList> {
 
         @Override
         @SuppressWarnings("unchecked") // only called on the entry itself... this is ok

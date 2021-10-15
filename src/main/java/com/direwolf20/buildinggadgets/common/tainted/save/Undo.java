@@ -48,7 +48,7 @@ public record Undo(ResourceKey<Level> dim, Map<BlockPos, BlockInfo> dataMap, Reg
                 (ListTag) nbt.get(NBTKeys.WORLD_SAVE_UNDO_DATA_SERIALIZER_LIST),
                 inbt -> {
                     String s = inbt.getAsString();
-                    ITileDataSerializer serializer = Registries.TileEntityData.getTileDataSerializers().get(new ResourceLocation(s));
+                    ITileDataSerializer serializer = Registries.getTileDataSerializers().get(new ResourceLocation(s));
                     if (serializer == null) {
                         BuildingGadgets.LOG.warn("Found unknown serializer {}. Replacing with dummy!", s);
                         serializer = TileSupport.dummyTileEntityData().getSerializer();
@@ -105,7 +105,7 @@ public record Undo(ResourceKey<Level> dim, Map<BlockPos, BlockInfo> dataMap, Reg
         ListTag infoList = NBTHelper.serializeMap(dataMap, NbtUtils::writeBlockPos, i -> i.serialize(dataObjectIncrementer, itemObjectIncrementer));
         ListTag dataList = dataObjectIncrementer.write(d -> d.serialize(serializerObjectIncrementer, true));
         ListTag itemSetList = itemObjectIncrementer.write(ms -> NBTHelper.writeIterable(ms.entrySet(), this::writeEntry));
-        ListTag dataSerializerList = serializerObjectIncrementer.write(ts -> StringTag.valueOf(Registries.TileEntityData.getTileDataSerializers().getKey(ts).toString()));
+        ListTag dataSerializerList = serializerObjectIncrementer.write(ts -> StringTag.valueOf(Registries.getTileDataSerializers().getKey(ts).toString()));
 
         res.putString(NBTKeys.WORLD_SAVE_DIM, dim.location().toString());
         res.put(NBTKeys.WORLD_SAVE_UNDO_BLOCK_LIST, infoList);

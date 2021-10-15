@@ -42,7 +42,7 @@ public record BlockData(BlockState state, ITileEntityData tileData) {
      */
     @Nullable
     public static BlockData tryDeserialize(@Nullable CompoundTag tag, boolean persisted) {
-        return tryDeserialize(tag, persisted ? null : i -> Registries.TileEntityData.getTileDataSerializers().byId(i), persisted);
+        return tryDeserialize(tag, persisted ? null : i -> Registries.getTileDataSerializers().byId(i), persisted);
     }
 
     @Nullable
@@ -53,7 +53,7 @@ public record BlockData(BlockState state, ITileEntityData tileData) {
         ITileDataSerializer serializer;
         try {
             if (serializerProvider == null)
-                serializer = Registries.TileEntityData.getTileDataSerializers().get(new ResourceLocation(tag.getString(NBTKeys.KEY_SERIALIZER)));
+                serializer = Registries.getTileDataSerializers().get(new ResourceLocation(tag.getString(NBTKeys.KEY_SERIALIZER)));
             else
                 serializer = serializerProvider.apply(tag.getInt(NBTKeys.KEY_SERIALIZER));
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public record BlockData(BlockState state, ITileEntityData tileData) {
      * @throws NullPointerException     if the tag was null.
      */
     public static BlockData deserialize(CompoundTag tag, boolean persisted) {
-        return deserialize(tag, persisted ? null : i -> Registries.TileEntityData.getTileDataSerializers().byId(i), persisted);
+        return deserialize(tag, persisted ? null : i -> Registries.getTileDataSerializers().byId(i), persisted);
     }
 
     public static BlockData deserialize(CompoundTag tag, @Nullable IntFunction<ITileDataSerializer> serializerProvider, boolean readDataPersisted) {
@@ -85,7 +85,7 @@ public record BlockData(BlockState state, ITileEntityData tileData) {
         ITileDataSerializer serializer;
         try {
             if (serializerProvider == null)
-                serializer = Registries.TileEntityData.getTileDataSerializers().get(new ResourceLocation(tag.getString(NBTKeys.KEY_SERIALIZER)));
+                serializer = Registries.getTileDataSerializers().get(new ResourceLocation(tag.getString(NBTKeys.KEY_SERIALIZER)));
             else
                 serializer = serializerProvider.apply(tag.getInt(NBTKeys.KEY_SERIALIZER));
         } catch (Exception e) {
@@ -127,14 +127,14 @@ public record BlockData(BlockState state, ITileEntityData tileData) {
      * @return The serialized form of this {@code BlockData}.
      */
     public CompoundTag serialize(boolean persisted) {
-        return serialize(persisted ? null : ser -> Registries.TileEntityData.getTileDataSerializers().getId(ser), persisted);
+        return serialize(persisted ? null : ser -> Registries.getTileDataSerializers().getId(ser), persisted);
     }
 
     public CompoundTag serialize(@Nullable ToIntFunction<ITileDataSerializer> idGetter, boolean writeDataPersisted) {
         CompoundTag tag = new CompoundTag();
         tag.put(NBTKeys.KEY_STATE, NbtUtils.writeBlockState(state));
         if (idGetter == null)
-            tag.putString(NBTKeys.KEY_SERIALIZER, Registries.TileEntityData.getTileDataSerializers().getKey(tileData.getSerializer()).toString());
+            tag.putString(NBTKeys.KEY_SERIALIZER, Registries.getTileDataSerializers().getKey(tileData.getSerializer()).toString());
         else
             tag.putInt(NBTKeys.KEY_SERIALIZER, idGetter.applyAsInt(tileData.getSerializer()));
         tag.put(NBTKeys.KEY_DATA, tileData.getSerializer().serialize(tileData, writeDataPersisted));

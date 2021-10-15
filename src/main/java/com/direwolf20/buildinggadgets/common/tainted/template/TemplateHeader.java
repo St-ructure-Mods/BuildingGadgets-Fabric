@@ -154,7 +154,7 @@ public record TemplateHeader(@Nullable String name, @Nullable String author, @Nu
                 .setPrettyPrinting()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-                .registerTypeAdapter(MaterialList.class, new MaterialList.JsonSerializer(printName, extended))
+                .registerTypeAdapter(MaterialList.class, new MaterialList.JsonSerializer())
                 .registerTypeAdapter(TemplateHeader.class, BI_DI_SERIALIZER);
     }
 
