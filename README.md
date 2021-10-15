@@ -1,5 +1,6 @@
 <p align="center" style="padding: 3em;"><img width="60" src="https://github.com/ProjectET/BuildingGadgets-Fabric/blob/1.17-fabric/src/main/resources/assets/buildinggadgets/icon.png?raw=true" /></p>
 <h1 align="center" style="margin-top: 20px; border-bottom: 0;">st'ructure tools</h1>
+<p align="center">tele jigsaw grunt pathic telepathic st'ructure processorjigsaw worldgenjson
 <p align="center">Sometimes, building large st'ructures can be a little tedious, and take a lot of effort. Not all of us are great builders you know!
 </p>
 <p align="center">
