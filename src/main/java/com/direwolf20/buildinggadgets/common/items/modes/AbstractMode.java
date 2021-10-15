@@ -64,7 +64,7 @@ public abstract class AbstractMode {
         if (context.world.isOutsideBuildHeight(pos))
             return false;
 
-        return BuildingGadgets.getConfig().GENERAL.allowOverwriteBlocks
+        return BuildingGadgets.getConfig().general.allowOverwriteBlocks
                 ? context.getWorldState(pos).getMaterial().isReplaceable()
                 : context.getWorldState(pos).getMaterial() != Material.AIR;
     }

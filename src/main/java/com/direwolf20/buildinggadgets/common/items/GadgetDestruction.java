@@ -13,7 +13,6 @@ import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference.BlockReference.TagReference;
 import com.google.common.collect.ImmutableMultiset;
 import net.fabricmc.fabric.impl.client.rendering.fluid.FluidRenderHandlerRegistryImpl;
@@ -47,16 +46,16 @@ public class GadgetDestruction extends AbstractGadget {
 
     @Override
     public long getEnergyCapacity() {
-        return BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.maxEnergy;
+        return BuildingGadgets.getConfig().gadgets.gadgetDestruction.maxEnergy;
     }
 
     @Override
     public long getEnergyCost(ItemStack tool) {
-        return BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.energyCost * getCostMultiplier(tool);
+        return BuildingGadgets.getConfig().gadgets.gadgetDestruction.energyCost * getCostMultiplier(tool);
     }
 
     private int getCostMultiplier(ItemStack tool) {
-        return (int) (!getFuzzy(tool) ? BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.nonFuzzyMultiplier : 1);
+        return (int) (!getFuzzy(tool) ? BuildingGadgets.getConfig().gadgets.gadgetDestruction.nonFuzzyMultiplier : 1);
     }
 
     @Override
@@ -76,7 +75,7 @@ public class GadgetDestruction extends AbstractGadget {
                 .componentTranslation(String.valueOf(getConnectedArea(stack)))
                 .setStyle(Styles.YELLOW));
 
-        if (BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled)
+        if (BuildingGadgets.getConfig().gadgets.gadgetDestruction.nonFuzzyEnabled)
             tooltip.add(TooltipTranslation.GADGET_FUZZY
                     .componentTranslation(String.valueOf(getFuzzy(stack)))
                     .setStyle(Styles.GOLD));

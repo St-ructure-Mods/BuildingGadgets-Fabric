@@ -21,10 +21,10 @@ public final class UndoService implements Component, ServerTickingComponent {
 
     public void insertUndo(UUID uuid, Undo undo) {
         Deque<UndoData> deque = histories.computeIfAbsent(uuid, $ -> new LinkedList<>());
-        deque.push(new UndoData(System.currentTimeMillis() + BuildingGadgets.getConfig().GADGETS.undoExpiry, undo));
+        deque.push(new UndoData(System.currentTimeMillis() + BuildingGadgets.getConfig().gadgets.undoExpiry, undo));
 
         // Remove too many elements
-        while (deque.size() > BuildingGadgets.getConfig().GADGETS.undoSize) {
+        while (deque.size() > BuildingGadgets.getConfig().gadgets.undoSize) {
             deque.removeLast();
         }
     }

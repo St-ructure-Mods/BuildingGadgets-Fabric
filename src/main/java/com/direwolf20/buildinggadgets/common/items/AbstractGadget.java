@@ -300,7 +300,7 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
                     .stack(stack)
                     .build(world);
 
-            UndoScheduler.scheduleUndo(undo, index, buildContext, BuildingGadgets.getConfig().GADGETS.placeSteps);
+            UndoScheduler.scheduleUndo(undo, index, buildContext, BuildingGadgets.getConfig().gadgets.placeSteps);
         } else {
             player.displayClientMessage(MessageTranslation.NOTHING_TO_UNDO.componentTranslation().setStyle(Styles.RED), true);
         }

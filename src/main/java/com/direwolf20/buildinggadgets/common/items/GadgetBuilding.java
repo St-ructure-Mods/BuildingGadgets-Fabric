@@ -21,7 +21,6 @@ import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference.BlockReference.TagReference;
 import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
 import com.google.common.collect.ImmutableMultiset;
@@ -61,12 +60,12 @@ public class GadgetBuilding extends AbstractGadget {
 
     @Override
     public long getEnergyCapacity() {
-        return BuildingGadgets.getConfig().GADGETS.GADGET_BUILDING.maxEnergy;
+        return BuildingGadgets.getConfig().gadgets.gadgetBuilding.maxEnergy;
     }
 
     @Override
     public long getEnergyCost(ItemStack tool) {
-        return BuildingGadgets.getConfig().GADGETS.GADGET_BUILDING.energyCost;
+        return BuildingGadgets.getConfig().gadgets.gadgetBuilding.energyCost;
     }
 
     public boolean placeAtop(ItemStack stack) {
@@ -169,9 +168,9 @@ public class GadgetBuilding extends AbstractGadget {
         int range = getToolRange(heldItem);
         int changeAmount = (getToolMode(heldItem) != BuildingModes.SURFACE || (range % 2 == 0)) ? 1 : 2;
         if (player.isShiftKeyDown())
-            range = (range == 1) ? BuildingGadgets.getConfig().GADGETS.maxRange : range - changeAmount;
+            range = (range == 1) ? BuildingGadgets.getConfig().gadgets.maxRange : range - changeAmount;
         else
-            range = (range >= BuildingGadgets.getConfig().GADGETS.maxRange) ? 1 : range + changeAmount;
+            range = (range >= BuildingGadgets.getConfig().gadgets.maxRange) ? 1 : range + changeAmount;
 
         setToolRange(heldItem, range);
         player.displayClientMessage(MessageTranslation.RANGE_SET.componentTranslation(range).setStyle(Styles.AQUA), true);
