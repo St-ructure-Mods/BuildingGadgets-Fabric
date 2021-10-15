@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.Base64;
+import java.util.Objects;
 
 public final class TemplateIO {
     private static final Gson GSON = TemplateHeader.appendHeaderSpecification(new GsonBuilder(), false, true).create();
@@ -85,7 +86,14 @@ public final class TemplateIO {
         }
     }
 
-    private record TemplateJsonRepresentation(TemplateHeader header, String body) {
+    private static class TemplateJsonRepresentation {
+        private TemplateHeader header;
+        private String body;
+
+        private TemplateJsonRepresentation(TemplateHeader header, String body) {
+            this.header = header;
+            this.body = body;
+        }
 
         public static TemplateJsonRepresentation ofTemplate(Template template, @Nullable BuildContext context) throws TemplateWriteException {
             TemplateHeader header = context != null ?

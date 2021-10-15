@@ -35,14 +35,6 @@ public final class TileSupport {
     public static ITileEntityData createTileData(@Nullable BlockEntity be) {
         if (be == null)
             return dummyTileEntityData();
-        ITileEntityData res;
-
-        for (Iterator<ITileDataFactory> it = TileEntityData.getTileDataFactories().iterator(); it.hasNext(); ) {
-            ITileDataFactory factory = it.next();
-            res = factory.createDataFor(be);
-            if (res != null)
-                return res;
-        }
 
         return dummyTileEntityData();
     }
