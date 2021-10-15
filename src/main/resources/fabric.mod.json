@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "buildinggadgets",
   "version": "${version}",
-  "name": "Building Gadgets: Refabricated",
+  "name": "st'ructure tools",
   "description": "Fabric port of Building Gadgets.",
   "authors": [
     "ProjectET",
@@ -16,7 +16,7 @@
   "license": [
     "MIT"
   ],
-  "icon": "assets/buildinggadgets/buildinggadgets_logo.png",
+  "icon": "assets/buildinggadgets/icon.png",
   "accessWidener" : "buildinggadgets.accesswidener",
   "entrypoints": {
     "main": [
