@@ -7,7 +7,6 @@ import com.direwolf20.buildinggadgets.common.network.Target;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateKey;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.api.EnvironmentInterface;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -22,45 +21,49 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 import java.util.UUID;
 
-@EnvironmentInterface(value = EnvType.CLIENT, itf = ClientPlayNetworking.PlayChannelHandler.class)
-public class PacketRequestTemplate implements ClientPlayNetworking.PlayChannelHandler, ServerPlayNetworking.PlayChannelHandler {
+public class PacketRequestTemplate {
 
     public static void sendToTarget(Target target, UUID id) {
         if (target.flow() == PacketFlow.CLIENTBOUND) {
-            sendToClient(target.player(), id);
+            Server.sendToClient(target.player(), id);
         } else {
-            send(id);
+            Client.send(id);
         }
     }
 
-    public static void sendToClient(ServerPlayer player, UUID id) {
-        FriendlyByteBuf buf = PacketByteBufs.create();
-        buf.writeUUID(id);
-        ServerPlayNetworking.send(player, PacketHandler.PacketRequestTemplate, buf);
-    }
-
-    public static void send(UUID id) {
-        FriendlyByteBuf buf = PacketByteBufs.create();
-        buf.writeUUID(id);
-        ClientPlayNetworking.send(PacketHandler.PacketRequestTemplate, buf);
-    }
-
-    // S2C
-    @Override
     @Environment(EnvType.CLIENT)
-    public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        UUID id = buf.readUUID();
+    public static class Client implements ClientPlayNetworking.PlayChannelHandler {
 
-        client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.requestRemoteUpdate(new TemplateKey(id), client.level));
+        @Environment(EnvType.CLIENT)
+        public static void send(UUID id) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            buf.writeUUID(id);
+            ClientPlayNetworking.send(PacketHandler.PacketRequestTemplate, buf);
+        }
+
+        @Override
+        public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
+            UUID id = buf.readUUID();
+
+            client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.requestRemoteUpdate(new TemplateKey(id), client.level));
+        }
     }
 
-    // C2S
-    @Override
-    public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        UUID id = buf.readUUID();
+    public static class Server implements ServerPlayNetworking.PlayChannelHandler {
 
-        server.execute(() -> BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).ifPresent(provider -> {
-            provider.requestRemoteUpdate(new TemplateKey(id), player.level);
-        }));
+        public static void sendToClient(ServerPlayer player, UUID id) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            buf.writeUUID(id);
+            ServerPlayNetworking.send(player, PacketHandler.PacketRequestTemplate, buf);
+        }
+
+        @Override
+        public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
+            UUID id = buf.readUUID();
+
+            server.execute(() -> BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).ifPresent(provider -> {
+                provider.requestRemoteUpdate(new TemplateKey(id), player.level);
+            }));
+        }
     }
 }

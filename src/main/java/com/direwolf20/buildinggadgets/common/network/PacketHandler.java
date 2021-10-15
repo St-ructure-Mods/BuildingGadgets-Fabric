@@ -50,6 +50,6 @@ public class PacketHandler {
         ServerPlayNetworking.registerGlobalReceiver(SplitPacketUpdateTemplate, new SplitPacketUpdateTemplate());
         ServerPlayNetworking.registerGlobalReceiver(PacketSetRemoteInventoryCache, new PacketSetRemoteInventoryCache());
 
-        ServerPlayNetworking.registerGlobalReceiver(PacketRequestTemplate, new PacketRequestTemplate());
+        ServerPlayNetworking.registerGlobalReceiver(PacketRequestTemplate, new PacketRequestTemplate.Server());
     }
 }
