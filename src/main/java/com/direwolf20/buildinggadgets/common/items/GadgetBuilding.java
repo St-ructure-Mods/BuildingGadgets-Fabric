@@ -56,7 +56,7 @@ public class GadgetBuilding extends AbstractGadget {
     private static final MockBuilderWorld fakeWorld = new MockBuilderWorld();
 
     public GadgetBuilding(Properties builder) {
-        super(builder, BuildingGadgets.getConfig().GADGETS.GADGET_BUILDING.undoSize, Reference.SaveReference.UNDO_BUILDING, TagReference.WHITELIST_BUILDING, TagReference.BLACKLIST_BUILDING);
+        super(builder, TagReference.WHITELIST_BUILDING, TagReference.BLACKLIST_BUILDING);
     }
 
     @Override
@@ -216,7 +216,7 @@ public class GadgetBuilding extends AbstractGadget {
             placeBlock(world, player, index, builder, coordinate, blockData);
         }
 
-        pushUndo(stack, builder.build(world));
+        pushUndo(stack, builder.build(world), world);
     }
 
     private void placeBlock(Level world, ServerPlayer player, IItemIndex index, Undo.Builder builder, BlockPos pos, BlockData setBlock) {

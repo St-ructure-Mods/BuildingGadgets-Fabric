@@ -36,7 +36,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -69,7 +68,7 @@ public class GadgetExchanger extends AbstractGadget {
     private static final MockBuilderWorld fakeWorld = new MockBuilderWorld();
 
     public GadgetExchanger(Properties builder) {
-        super(builder, 0, "", TagReference.WHITELIST_EXCHANGING, TagReference.BLACKLIST_EXCHANGING);
+        super(builder, TagReference.WHITELIST_EXCHANGING, TagReference.BLACKLIST_EXCHANGING);
     }
 
     @Override

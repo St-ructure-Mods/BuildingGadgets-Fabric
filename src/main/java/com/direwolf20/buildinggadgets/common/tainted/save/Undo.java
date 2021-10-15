@@ -39,7 +39,7 @@ import java.util.function.ToIntFunction;
 
 public record Undo(ResourceKey<Level> dim, Map<BlockPos, BlockInfo> dataMap, Region boundingBox) {
 
-    static Undo deserialize(CompoundTag nbt) {
+    public static Undo deserialize(CompoundTag nbt) {
         Preconditions.checkArgument(nbt.contains(NBTKeys.WORLD_SAVE_DIM, NbtType.STRING)
                                     && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_BLOCK_LIST, NbtType.LIST)
                                     && nbt.contains(NBTKeys.WORLD_SAVE_UNDO_DATA_LIST, NbtType.LIST)
@@ -96,7 +96,7 @@ public record Undo(ResourceKey<Level> dim, Map<BlockPos, BlockInfo> dataMap, Reg
         return Collections.unmodifiableMap(dataMap);
     }
 
-    CompoundTag serialize() {
+    public CompoundTag serialize() {
         DataCompressor<BlockData> dataObjectIncrementer = new DataCompressor<>();
         DataCompressor<Multiset<ItemVariant>> itemObjectIncrementer = new DataCompressor<>();
         DataCompressor<ITileDataSerializer> serializerObjectIncrementer = new DataCompressor<>();

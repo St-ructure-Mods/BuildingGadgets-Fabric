@@ -23,8 +23,10 @@ public class PacketUndo implements ServerPlayNetworking.PlayChannelHandler {
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         server.execute(() -> {
             ItemStack stack = AbstractGadget.getGadget(player);
-            if (!stack.isEmpty() && !(stack.getItem() instanceof GadgetExchanger))
+
+            if (!(stack.isEmpty() || stack.getItem() instanceof GadgetExchanger)) {
                 ((AbstractGadget) stack.getItem()).undo(player.level, player, stack);
+            }
         });
     }
 }

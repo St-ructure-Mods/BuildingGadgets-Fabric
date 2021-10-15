@@ -30,12 +30,6 @@ public abstract class TimedDataSave<T extends TimedValue> extends SavedData {
         return idToValue.containsKey(res) ? getFreeUUID() : res;
     }
 
-    protected void writeAllIds(FriendlyByteBuf buffer) {
-        for (UUID id : idToValue.keySet()) {
-            buffer.writeUUID(id);
-        }
-    }
-
     protected T get(UUID id) {
         return get(id, uuid -> createValue());
     }

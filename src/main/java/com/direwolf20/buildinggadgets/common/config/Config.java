@@ -51,11 +51,11 @@ public class Config implements ConfigData {
 
         @ConfigEntry.Gui.CollapsibleObject
         @Comment("Energy Cost & Durability of the Building Gadget")
-        public final GadgetConfig GADGET_BUILDING = new GadgetConfig(500000, 50, 10);
+        public final GadgetConfig GADGET_BUILDING = new GadgetConfig(500000, 50);
 
         @ConfigEntry.Gui.CollapsibleObject
         @Comment("Energy Cost & Durability of the Exchanging Gadget")
-        public final GadgetConfig GADGET_EXCHANGER = new GadgetConfig(500000, 100, 10);
+        public final GadgetConfig GADGET_EXCHANGER = new GadgetConfig(500000, 100);
 
         @ConfigEntry.Gui.CollapsibleObject
         @Comment("Energy Cost, Durability & Maximum Energy of the Destruction Gadget")
@@ -65,27 +65,29 @@ public class Config implements ConfigData {
         @ConfigEntry.Gui.CollapsibleObject
         public final CategoryGadgetCopyPaste GADGET_COPY_PASTE = new CategoryGadgetCopyPaste();
 
+        @Comment("Gadget Max Undo size (Note, the exchanger does not support undo)")
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 128)
+        public final int undoSize = 128;
+
+        @Comment("Gadget undo list expiry time (in milliseconds)")
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 3600000) // 1 hour
+        public final int undoExpiry = 300000; // 5 minutes
+
         public static class GadgetConfig {
 
             @Comment("The max energy of the Gadget, set to 0 to disable energy usage")
-            @ConfigEntry.BoundedDiscrete(min = 0, max = Integer.MAX_VALUE)
+            @ConfigEntry.BoundedDiscrete(min = 0, max = Long.MAX_VALUE)
             public final long maxEnergy;
             //Maximum Energy
 
             @Comment("The Gadget's Energy cost per Operation")
-            @ConfigEntry.BoundedDiscrete(min = 0, max = Integer.MAX_VALUE)
+            @ConfigEntry.BoundedDiscrete(min = 0, max = Long.MAX_VALUE)
             public final long energyCost;
             //Energy Cost
 
-            @Comment("The Gadget's Max Undo size (Note, the exchanger does not support undo)")
-            @ConfigEntry.BoundedDiscrete(min = 0, max = 128)
-            public final int undoSize;
-            //Max Undo History Size
-
-            public GadgetConfig(int maxEnergy, int energyCost, int getMaxUndo) {
+            public GadgetConfig(int maxEnergy, int energyCost) {
                 this.maxEnergy = maxEnergy;
                 this.energyCost = energyCost;
-                this.undoSize = getMaxUndo;
             }
         }
 
@@ -107,7 +109,7 @@ public class Config implements ConfigData {
             //Non-Fuzzy Mode Enabled
 
             private CategoryGadgetDestruction() {
-                super(1000000, 200, 1);
+                super(1000000, 200);
             }
         }
 
@@ -132,7 +134,7 @@ public class Config implements ConfigData {
             //Max Build Dimensions
 
             private CategoryGadgetCopyPaste() {
-                super(500000, 50, 1);
+                super(500000, 50);
             }
         }
     }
