@@ -1,9 +1,9 @@
 package com.direwolf20.buildinggadgets.common.network.bidirection;
 
 import com.direwolf20.buildinggadgets.client.ClientProxy;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.Target;
-import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateKey;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,7 +19,6 @@ import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
@@ -60,6 +59,8 @@ public class PacketRequestTemplate implements ClientPlayNetworking.PlayChannelHa
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUUID();
 
-        server.execute(() -> SaveManager.INSTANCE.getTemplateProvider().requestRemoteUpdate(new TemplateKey(id), player.level));
+        server.execute(() -> BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).ifPresent(provider -> {
+            provider.requestRemoteUpdate(new TemplateKey(id), player.level);
+        }));
     }
 }

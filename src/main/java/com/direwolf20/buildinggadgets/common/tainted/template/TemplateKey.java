@@ -14,18 +14,16 @@ public final class TemplateKey implements ITemplateKey {
     @Nullable
     private UUID id;
 
-    public TemplateKey() {
-        this(null);
-    }
-
     public TemplateKey(@Nullable UUID id) {
         this.id = id;
     }
 
     @Override
-    public UUID getTemplateId(Supplier<UUID> freeIdAllocator) {
-        if (id == null)
-            setUUID(freeIdAllocator.get());
+    public UUID getOrComputeId(Supplier<UUID> freeIdAllocator) {
+        if (id == null) {
+            setId(freeIdAllocator.get());
+        }
+
         return id;
     }
 
@@ -34,9 +32,8 @@ public final class TemplateKey implements ITemplateKey {
         return id;
     }
 
-    public TemplateKey setUUID(@Nullable UUID id) {
+    public void setId(@Nullable UUID id) {
         this.id = id;
-        return this;
     }
 
     @Override

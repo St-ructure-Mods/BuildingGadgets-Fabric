@@ -35,19 +35,20 @@ public class PacketTemplateManagerTemplateCreated implements ServerPlayNetworkin
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         UUID uuid = buf.readUUID();
         BlockPos pos = buf.readBlockPos();
+
         server.execute(() -> {
             Level level = player.level;
             if (level.hasChunkAt(pos)) {
                 BlockEntity blockEntity = level.getBlockEntity(pos);
-                if (blockEntity instanceof TemplateManagerTileEntity) {
+                if (blockEntity instanceof TemplateManagerTileEntity manager) {
                     ItemStack stack = new ItemStack(OurItems.TEMPLATE_ITEM);
                     BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent(key -> {
-                        UUID id = key.getTemplateId(() -> uuid);
+                        UUID id = key.getOrComputeId(() -> uuid);
 
                         if (!id.equals(uuid)) {
                             BuildingGadgets.LOG.error("Failed to apply Template id on server!");
                         } else {
-                            ((TemplateManagerTileEntity) blockEntity).setItem(1, stack);
+                            manager.setItem(1, stack);
                             BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(level).ifPresent(provider -> provider.requestUpdate(key, new Target(PacketFlow.CLIENTBOUND, player)));
                         }
                     });

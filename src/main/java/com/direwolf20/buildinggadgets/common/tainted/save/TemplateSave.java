@@ -9,10 +9,6 @@ import java.util.UUID;
 
 public final class TemplateSave extends TimedDataSave<TemplateInfo> {
 
-    public TemplateSave() {
-        super();
-    }
-
     public static TemplateSave loads(CompoundTag tag) {
         TemplateSave templateSave = new TemplateSave();
         templateSave.load(tag);
@@ -26,11 +22,6 @@ public final class TemplateSave extends TimedDataSave<TemplateInfo> {
 
     void setTemplate(UUID id, Template template) {
         markDirtyAndUpdate(get(id, uuid -> new TemplateInfo(template))).setTemplate(template);
-    }
-
-    void removeTemplate(UUID id) {
-        remove(id);
-        setDirty();
     }
 
     @Override
@@ -61,11 +52,6 @@ public final class TemplateSave extends TimedDataSave<TemplateInfo> {
             this.template = template;
         }
 
-        private TemplateInfo(long lastUpdateTime, Template template) {
-            super(lastUpdateTime);
-            this.template = template;
-        }
-
         private TemplateInfo() {
             this(new Template());
         }
@@ -91,5 +77,4 @@ public final class TemplateSave extends TimedDataSave<TemplateInfo> {
             return nbt;
         }
     }
-
 }

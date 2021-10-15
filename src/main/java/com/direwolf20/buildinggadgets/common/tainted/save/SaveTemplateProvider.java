@@ -8,8 +8,6 @@ import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -19,23 +17,19 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public final class SaveTemplateProvider implements ITemplateProvider {
-    private final Supplier<TemplateSave> save;
+
+    private final TemplateSave save;
     private final Set<IUpdateListener> updateListeners;
 
-    public SaveTemplateProvider(Supplier<TemplateSave> save) {
-        this.save = save;
+    public SaveTemplateProvider() {
+        this.save = new TemplateSave();
         this.updateListeners = Collections.newSetFromMap(new WeakHashMap<>());
     }
 
-    public SaveTemplateProvider() {
-        this(SaveManager.INSTANCE::getTemplateSave);
-    }
-
     public TemplateSave getSave() {
-        return save.get();
+        return save;
     }
 
     @Override
@@ -46,7 +40,7 @@ public final class SaveTemplateProvider implements ITemplateProvider {
 
     @Override
     public void setTemplate(ITemplateKey key, Template template) {
-        getSave().setTemplate(key.getTemplateId(this::getFreeId), template);
+        getSave().setTemplate(key.getOrComputeId(this::getFreeId), template);
         notifyListeners(key, template, l -> l::onTemplateUpdate);
     }
 
@@ -60,6 +54,7 @@ public final class SaveTemplateProvider implements ITemplateProvider {
         UUID id = getId(key);
         Template template = getSave().getTemplate(id);
         notifyListeners(key, template, l -> l::onTemplateUpdateSend);
+
         for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
             SplitPacketUpdateTemplate.sendToClient(id, template, player);
         }
@@ -79,11 +74,7 @@ public final class SaveTemplateProvider implements ITemplateProvider {
 
     @Override
     public UUID getId(ITemplateKey key) {
-        return key.getTemplateId(this::getFreeId);
-    }
-
-    public boolean requestRemoteUpdate(ITemplateKey key, ServerPlayer playerEntity) {
-        return requestRemoteUpdate(key, new Target(PacketFlow.CLIENTBOUND, playerEntity));
+        return key.getOrComputeId(this::getFreeId);
     }
 
     @Override
@@ -99,10 +90,6 @@ public final class SaveTemplateProvider implements ITemplateProvider {
         UUID id = getId(key);
         PacketRequestTemplate.sendToTarget(target, id);
         return true;
-    }
-
-    public void onRemoteIdAllocated(UUID allocated) {
-        getSave().getTemplate(allocated);
     }
 
     private UUID getFreeId() {
@@ -121,11 +108,11 @@ public final class SaveTemplateProvider implements ITemplateProvider {
 
     @Override
     public void readFromNbt(CompoundTag tag) {
-
+        save.load(tag);
     }
 
     @Override
     public void writeToNbt(CompoundTag tag) {
-
+        save.save(tag);
     }
 }

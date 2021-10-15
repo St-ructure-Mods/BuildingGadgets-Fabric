@@ -43,6 +43,7 @@ public final class CacheTemplateProvider implements ITemplateProvider {
     @NotNull
     public Template getTemplateForKey(@NotNull ITemplateKey key) {
         UUID id = getId(key);
+
         try {
             return cache.get(id, () -> {
                 requestUpdate(id, new Target(PacketFlow.SERVERBOUND, null));
@@ -68,7 +69,7 @@ public final class CacheTemplateProvider implements ITemplateProvider {
 
     @Override
     public boolean requestUpdate(ITemplateKey key, Target target) {
-        return requestUpdate(key.getTemplateId(UUID::randomUUID), target);
+        return requestUpdate(key.getOrComputeId(UUID::randomUUID), target);
     }
 
     private boolean requestUpdate(UUID id, Target target) {
@@ -103,7 +104,7 @@ public final class CacheTemplateProvider implements ITemplateProvider {
 
     @Override
     public UUID getId(ITemplateKey key) {
-        return key.getTemplateId(UUID::randomUUID);
+        return key.getOrComputeId(UUID::randomUUID);
     }
 
     /**

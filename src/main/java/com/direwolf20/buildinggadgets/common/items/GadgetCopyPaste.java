@@ -382,8 +382,10 @@ public class GadgetCopyPaste extends AbstractGadget {
         }
 
         ITemplateKey key = BGComponent.TEMPLATE_KEY_COMPONENT.get(stack);
-        SaveManager.INSTANCE.getTemplateProvider().setTemplate(key, newTemplate);
-        SaveManager.INSTANCE.getTemplateProvider().requestRemoteUpdate(key, (ServerPlayer) player);
+        BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).ifPresent(provider -> {
+            provider.setTemplate(key, newTemplate);
+            provider.requestRemoteUpdate(key, new Target(PacketFlow.CLIENTBOUND, (ServerPlayer) player));
+        });
     }
 
     private void build(ItemStack stack, Level world, Player player, BlockPos pos) {

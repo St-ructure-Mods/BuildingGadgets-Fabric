@@ -1,9 +1,9 @@
 package com.direwolf20.buildinggadgets.common.network.bidirection;
 
 import com.direwolf20.buildinggadgets.client.ClientProxy;
+import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.Target;
-import com.direwolf20.buildinggadgets.common.tainted.save.SaveManager;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateIO;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateKey;
@@ -79,25 +79,27 @@ public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChann
     @Override
     public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUUID();
+
         try {
             Template template = readTemplate(buf);
             client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), template));
         } catch (TemplateReadException e) {
             e.printStackTrace();
         }
-
     }
 
     // C2S
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUUID();
+
         try {
             Template template = readTemplate(buf);
-            server.execute(() -> SaveManager.INSTANCE.getTemplateProvider().setTemplate(new TemplateKey(id), template));
+            server.execute(() -> BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).ifPresent(provider -> {
+                provider.setTemplate(new TemplateKey(id), template);
+            }));
         } catch (TemplateReadException e) {
             e.printStackTrace();
         }
-
     }
 }

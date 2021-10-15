@@ -1,21 +1,16 @@
 package com.direwolf20.buildinggadgets.common.tainted.template;
 
-import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.network.Target;
 import dev.onyxstudios.cca.api.v3.component.Component;
-import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
 import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
 public interface ITemplateProvider extends Component {
+
     UUID getId(ITemplateKey key);
 
     Template getTemplateForKey(ITemplateKey key);
-
-    default <T extends Throwable> Template getTemplateForKey(ComponentProvider provider) throws T {
-        return getTemplateForKey(BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(provider));
-    }
 
     /**
      * Overrides the TemplateItem for the given key.
@@ -50,7 +45,7 @@ public interface ITemplateProvider extends Component {
      * Requests an update <b>for<b/> the other side - aka sends an update packet to it. On the client this will send the data to the server,
      * on the server this will send the data to <b>all logged in Clients</b>.
      *
-     * @param key The key to request a remote update for
+     * @param key   The key to request a remote update for
      * @param level
      * @return whether or not a remote update was requested.
      */

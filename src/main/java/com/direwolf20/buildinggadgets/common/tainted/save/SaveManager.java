@@ -14,12 +14,10 @@ import java.util.function.Supplier;
 
 public enum SaveManager {
     INSTANCE;
-    private final SaveTemplateProvider templateProvider;
-    private TemplateSave templateSave;
+
     private final List<UndoSaveContainer> undoSaves;
 
     SaveManager() {
-        this.templateProvider = new SaveTemplateProvider(this::getTemplateSave);
         this.undoSaves = new LinkedList<>();
     }
 
@@ -38,7 +36,6 @@ public enum SaveManager {
                 c.acquire(world);
             }
 
-            templateSave = getTemplateSave(world, SaveReference.TEMPLATE_SAVE_TEMPLATES);
             BuildingGadgets.LOG.debug("Finished Loading saves");
         }));
     }
@@ -51,7 +48,6 @@ public enum SaveManager {
                 c.release();
             }
 
-            templateSave = null;
             BuildingGadgets.LOG.debug("Finished clearing save caches");
         });
     }
@@ -60,21 +56,9 @@ public enum SaveManager {
         return world.getDataStorage().computeIfAbsent(UndoWorldSave::loads, () -> new UndoWorldSave(maxLength), name);
     }
 
-    private static TemplateSave getTemplateSave(ServerLevel world, String name) {
-        return world.getDataStorage().computeIfAbsent(TemplateSave::loads, TemplateSave::new, name);
-    }
-
 //    private static <T extends SavedData> T get(ServerLevel world, Function<CompoundTag, T> loader, Supplier<T> supplier, String name) {
 //        return world.getDataStorage().computeIfAbsent(loader, supplier, name);
 //    }
-
-    public SaveTemplateProvider getTemplateProvider() {
-        return templateProvider;
-    }
-
-    public TemplateSave getTemplateSave() {
-        return templateSave;
-    }
 
     private static final class UndoSaveContainer {
         private final Function<ServerLevel, UndoWorldSave> constructor;
