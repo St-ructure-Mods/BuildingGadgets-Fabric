@@ -22,7 +22,7 @@ import com.direwolf20.buildinggadgets.common.util.lang.LangUtil;
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference.BlockReference.TagReference;
+import com.direwolf20.buildinggadgets.common.util.ref.Reference.TagReference;
 import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.LinkedHashMultiset;

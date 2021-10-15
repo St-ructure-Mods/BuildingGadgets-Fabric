@@ -27,7 +27,7 @@ import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.*;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference.BlockReference.TagReference;
+import com.direwolf20.buildinggadgets.common.util.ref.Reference.TagReference;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSortedSet;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;

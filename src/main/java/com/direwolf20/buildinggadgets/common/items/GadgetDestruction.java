@@ -13,7 +13,7 @@ import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference.BlockReference.TagReference;
+import com.direwolf20.buildinggadgets.common.util.ref.Reference.TagReference;
 import com.google.common.collect.ImmutableMultiset;
 import net.fabricmc.fabric.impl.client.rendering.fluid.FluidRenderHandlerRegistryImpl;
 import net.minecraft.core.BlockPos;
