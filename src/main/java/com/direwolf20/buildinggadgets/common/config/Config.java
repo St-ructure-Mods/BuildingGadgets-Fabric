@@ -7,11 +7,12 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 @me.shedaniel.autoconfig.annotation.Config(name = "building_gadgets")
 public class Config implements ConfigData {
 
-    @ConfigEntry.Gui.CollapsibleObject
-    @Comment("General mod settings")
+    @ConfigEntry.Gui.TransitiveObject
+    @ConfigEntry.Category("general")
     public final CategoryGeneral GENERAL = new CategoryGeneral();
-    @ConfigEntry.Gui.CollapsibleObject
-    @Comment("Configure the Gadgets")
+
+    @ConfigEntry.Gui.TransitiveObject
+    @ConfigEntry.Category("gadgets")
     public final CategoryGadgets GADGETS = new CategoryGadgets();
 
     public static final class CategoryGeneral {
