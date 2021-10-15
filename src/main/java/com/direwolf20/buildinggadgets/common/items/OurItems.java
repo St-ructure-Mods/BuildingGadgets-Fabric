@@ -27,9 +27,9 @@ public final class OurItems {
     public static void registerItems() {
         Registry.register(Registry.ITEM, BuildingGadgets.id("gadget_building"), BUILDING_GADGET_ITEM);
         Registry.register(Registry.ITEM, BuildingGadgets.id("gadget_exchanging"), EXCHANGING_GADGET_ITEM);
-        // Registry.register(Registry.ITEM, BuildingGadgets.id("gadget_copy_paste"), COPY_PASTE_GADGET_ITEM);
+        Registry.register(Registry.ITEM, BuildingGadgets.id("gadget_copy_paste"), COPY_PASTE_GADGET_ITEM);
         Registry.register(Registry.ITEM, BuildingGadgets.id("gadget_destruction"), DESTRUCTION_GADGET_ITEM);
-        // Registry.register(Registry.ITEM, BuildingGadgets.id("template"), TEMPLATE_ITEM);
-        // Registry.register(Registry.ITEM, BuildingGadgets.id("template_manager"), TEMPLATE_MANGER_ITEM);
+        Registry.register(Registry.ITEM, BuildingGadgets.id("template"), TEMPLATE_ITEM);
+        Registry.register(Registry.ITEM, BuildingGadgets.id("template_manager"), TEMPLATE_MANGER_ITEM);
     }
 }

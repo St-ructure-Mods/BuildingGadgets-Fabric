@@ -10,7 +10,7 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "i": {
-      "item": "minecraft:iron_ingot"
+      "item": "minecraft:bedrock"
     },
     "r": {
       "item": "minecraft:redstone"
