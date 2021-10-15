@@ -114,17 +114,17 @@ public class EffectBlock extends BaseEntityBlock {
         BlockState state = OurBlocks.EFFECT_BLOCK.defaultBlockState();
         world.setBlock(spawnPos, state, 3);
 
-        BlockEntity tile = world.getBlockEntity(spawnPos);
-        if (!(tile instanceof EffectBlockTileEntity)) {
+        if (world.getBlockEntity(spawnPos) instanceof EffectBlockTileEntity effect) {
+            effect.initializeData(curState, curTe, spawnBlock, mode);
+
+            // Send data to client
+            if (world instanceof Level level) {
+                level.sendBlockUpdated(spawnPos, state, state, 1);
+            }
+        } else {
             // Fail safely by replacing with air. Kinda voids but meh...
             world.setBlock(spawnPos, Blocks.AIR.defaultBlockState(), 3);
-            return;
         }
-
-        ((EffectBlockTileEntity) tile).initializeData(curState, curTe, spawnBlock, mode);
-        // Send data to client
-        if (world instanceof Level)
-            ((Level) world).sendBlockUpdated(spawnPos, state, state, 1);
     }
 
     public EffectBlock() {

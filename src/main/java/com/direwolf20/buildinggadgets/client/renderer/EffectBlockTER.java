@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity> {
@@ -27,7 +26,7 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
 
     @Override
     public void render(EffectBlockTileEntity tile, float partialTicks, PoseStack stack, MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn) {
-        BlockData renderData = new BlockData(Blocks.TNT.defaultBlockState(), null);
+        BlockData renderData = tile.getRenderedBlock();
         if (renderData == null)
             return;
         VertexConsumer builder;

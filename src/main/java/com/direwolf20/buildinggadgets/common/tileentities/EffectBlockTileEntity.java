@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,9 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Tainted(reason = "Used blockData and a stupid non-centralised callback system")
 public class EffectBlockTileEntity extends BlockEntity implements BlockEntityClientSerializable {
-    /**
-     * Even though this is called "rendered", is will be used for replacement under normal conditions.
-     */
+
     private BlockData renderedBlock;
     /**
      * A copy of the target block, used for inheriting data for {@link Mode#REPLACE}
@@ -44,28 +42,37 @@ public class EffectBlockTileEntity extends BlockEntity implements BlockEntityCli
 
         this.mode = mode;
 
-        if (mode == Mode.REPLACE)
-            this.renderedBlock = TileSupport.createBlockData(curState, be);
-        else
-            this.renderedBlock = replacementBlock;
+        if (mode == Mode.REPLACE) {
+            this.setRenderedBlock(TileSupport.createBlockData(curState, be));
+        } else {
+            this.setRenderedBlock(replacementBlock);
+        }
     }
 
     public static void tick(Level level, BlockPos blockPos, BlockState state, EffectBlockTileEntity blockEntity) {
-        blockEntity.ticks++;
-        if (blockEntity.ticks >= blockEntity.getLifespan()) {
+        if (++blockEntity.ticks >= blockEntity.getLifespan()) {
             blockEntity.complete();
         }
     }
 
     private void complete() {
-        if (level == null || level.isClientSide || mode == null || renderedBlock == null)
+        if (level == null || level.isClientSide || mode == null || getRenderedBlock() == null) {
             return;
+        }
 
         mode.onBuilderRemoved(this);
     }
 
     public BlockData getRenderedBlock() {
         return renderedBlock;
+    }
+
+    public void setRenderedBlock(BlockData renderedBlock) {
+        this.renderedBlock = renderedBlock;
+
+        if (level instanceof ServerLevel) {
+            sync();
+        }
     }
 
     public BlockData getSourceBlock() {
@@ -84,27 +91,16 @@ public class EffectBlockTileEntity extends BlockEntity implements BlockEntityCli
         return 20;
     }
 
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        // Vanilla uses the type parameter to indicate which type of tile entity (command block, skull, or beacon?) is receiving the packet, but it seems like Forge has overridden this behavior
-        return new ClientboundBlockEntityDataPacket(worldPosition, 0, getUpdateTag());
-    }
-
-    @NotNull
-    @Override
-    public CompoundTag getUpdateTag() {
-        return save(new CompoundTag());
-    }
-
     @NotNull
     @Override
     public CompoundTag save(@NotNull CompoundTag compound) {
-        if (mode != null && renderedBlock != null && sourceBlock != null) {
+        if (mode != null && getRenderedBlock() != null && sourceBlock != null) {
             compound.putInt(NBTKeys.GADGET_TICKS, ticks);
             compound.putInt(NBTKeys.GADGET_MODE, mode.ordinal());
-            compound.put(NBTKeys.GADGET_REPLACEMENT_BLOCK, renderedBlock.serialize(true));
+            compound.put(NBTKeys.GADGET_REPLACEMENT_BLOCK, getRenderedBlock().serialize(true));
             compound.put(NBTKeys.GADGET_SOURCE_BLOCK, sourceBlock.serialize(true));
         }
+
         return super.save(compound);
     }
 
@@ -119,7 +115,7 @@ public class EffectBlockTileEntity extends BlockEntity implements BlockEntityCli
 
             ticks = nbt.getInt(NBTKeys.GADGET_TICKS);
             mode = Mode.values()[nbt.getInt(NBTKeys.GADGET_MODE)];
-            renderedBlock = BlockData.tryDeserialize(nbt.getCompound(NBTKeys.GADGET_REPLACEMENT_BLOCK), true);
+            setRenderedBlock(BlockData.tryDeserialize(nbt.getCompound(NBTKeys.GADGET_REPLACEMENT_BLOCK), true));
             sourceBlock = BlockData.tryDeserialize(nbt.getCompound(NBTKeys.GADGET_SOURCE_BLOCK), true);
         }
     }
