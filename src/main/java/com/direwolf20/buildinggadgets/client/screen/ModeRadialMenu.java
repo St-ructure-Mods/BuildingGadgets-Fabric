@@ -23,7 +23,6 @@ import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -120,7 +119,7 @@ public class ModeRadialMenu extends Screen {
             }));
         }
         if (!(tool.getItem() instanceof GadgetCopyPaste)) {
-            if (!isDestruction || BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.nonFuzzyEnabled) {
+            if (!isDestruction || BuildingGadgets.getConfig().gadgets.gadgetDestruction.nonFuzzyEnabled) {
                 Button button = new PositionedIconActionable(RadialTranslation.FUZZY, "fuzzy", right, send -> {
                     if (send)
                         PacketToggleFuzzy.send();
@@ -142,11 +141,11 @@ public class ModeRadialMenu extends Screen {
             }
             if (!isDestruction) {
                 int widthSlider = 82;
-                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), BuildingGadgets.getConfig().GADGETS.maxRange,
+                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), BuildingGadgets.getConfig().gadgets.maxRange,
                         GadgetUtils.getToolRange(tool), Color.DARK_GRAY, (slider, integer) -> {
                     sendRangeUpdate(slider.getValueInt());
                     int value = slider.getValueInt();
-                    int valueNew = Mth.clamp(value + integer, 0, BuildingGadgets.getConfig().GADGETS.maxRange);
+                    int valueNew = Mth.clamp(value + integer, 0, BuildingGadgets.getConfig().gadgets.maxRange);
                     sendRangeUpdate(valueNew);
                     slider.setValueInt(valueNew);
                     slider.applyValue();

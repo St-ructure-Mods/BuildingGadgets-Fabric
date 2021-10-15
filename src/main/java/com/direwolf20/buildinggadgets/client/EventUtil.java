@@ -10,7 +10,6 @@ import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.tainted.template.TemplateHeader;
-import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
@@ -27,9 +26,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.*;
-import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.lwjgl.opengl.GL11;
@@ -89,13 +88,6 @@ public class EventUtil {
                     tooltip.add(new TextComponent(spaces));
             }
         }));
-    }
-
-    public static void printUUID(ItemStack stack, TooltipFlag context, List<Component> lines) {
-        BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent(iTemplateKey -> {
-            CompoundTag tag = stack.getOrCreateTag();
-            if(tag.hasUUID(NBTKeys.TEMPLATE_KEY_ID)) lines.add(new TextComponent(stack.getOrCreateTag().getUUID(NBTKeys.TEMPLATE_KEY_ID).toString()));
-        });
     }
 
     public static void onDrawTooltip(PoseStack poseStack, ItemStack itemStack, int xin, int yin) {

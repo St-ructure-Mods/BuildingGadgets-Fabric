@@ -55,7 +55,7 @@ public class DestructionGUI extends Screen {
                 PacketDestructionGUI.send(left.getValueInt(), right.getValueInt(), up.getValueInt(), down.getValueInt(), depth.getValueInt());
                 this.onClose();
             } else
-                Minecraft.getInstance().player.displayClientMessage(MessageTranslation.DESTRCUT_TOO_LARGE.componentTranslation(BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.destroySize), true);
+                Minecraft.getInstance().player.displayClientMessage(MessageTranslation.DESTRCUT_TOO_LARGE.componentTranslation(BuildingGadgets.getConfig().gadgets.gadgetDestruction.destroySize), true);
         }));
 
         this.addRenderableWidget(new Button((x - 30) - 32, y + 65, 60, 20, new TranslatableComponent(GuiMod.getLangKeySingle("cancel")), b -> onClose()));
@@ -78,7 +78,7 @@ public class DestructionGUI extends Screen {
         int x = left.getValueInt() + right.getValueInt();
         int y = up.getValueInt() + down.getValueInt();
         int z = depth.getValueInt();
-        int dim = BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.destroySize;
+        int dim = BuildingGadgets.getConfig().gadgets.gadgetDestruction.destroySize;
 
         return x <= dim && y <= dim && z <= dim;
     }
@@ -114,7 +114,7 @@ public class DestructionGUI extends Screen {
 
         drawCenteredString(matrices, font, this.sizeString, width / 2, (height / 2) + 40, this.isValidSize ? 0x00FF00 : 0xFF2000);
         if (!this.isValidSize) {
-            drawCenteredString(matrices, font, MessageTranslation.DESTRCUT_TOO_LARGE.format(BuildingGadgets.getConfig().GADGETS.GADGET_DESTRUCTION.destroySize), width / 2, (height / 2) + 50, 0xFF2000);
+            drawCenteredString(matrices, font, MessageTranslation.DESTRCUT_TOO_LARGE.format(BuildingGadgets.getConfig().gadgets.gadgetDestruction.destroySize), width / 2, (height / 2) + 50, 0xFF2000);
         }
     }
 

@@ -27,7 +27,6 @@ import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.util.helpers.VectorHelper;
 import com.direwolf20.buildinggadgets.common.util.lang.*;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference.BlockReference.TagReference;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSortedSet;
@@ -87,12 +86,12 @@ public class GadgetCopyPaste extends AbstractGadget {
 
     @Override
     public long getEnergyCapacity() {
-        return BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.maxEnergy;
+        return BuildingGadgets.getConfig().gadgets.gadgetCopyPaste.maxEnergy;
     }
 
     @Override
     public long getEnergyCost(ItemStack tool) {
-        return BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.energyCost;
+        return BuildingGadgets.getConfig().gadgets.gadgetCopyPaste.energyCost;
     }
 
     @Override
@@ -348,7 +347,7 @@ public class GadgetCopyPaste extends AbstractGadget {
             }
         }
 
-        int maxDimension = BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.maxCopySize;
+        int maxDimension = BuildingGadgets.getConfig().gadgets.gadgetCopyPaste.maxCopySize;
 
         if (region.getXSize() > 0xFFFF || region.getYSize() > 255 || region.getZSize() > 0xFFFF ||  //these are the max dimensions of a Template
             ((region.getXSize() > maxDimension || region.getYSize() > maxDimension || region.getZSize() > maxDimension) && !OverrideCopySizeCommand.mayPerformLargeCopy(player))) {
@@ -373,7 +372,7 @@ public class GadgetCopyPaste extends AbstractGadget {
                             .author(player.getName().getContents())
                             .build());
             onCopyFinished(newTemplate.normalize(), stack, player);
-        }, buildView, BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.copySteps);
+        }, buildView, BuildingGadgets.getConfig().gadgets.gadgetCopyPaste.copySteps);
     }
 
     private void onCopyFinished(Template newTemplate, ItemStack stack, Player player) {
@@ -416,7 +415,7 @@ public class GadgetCopyPaste extends AbstractGadget {
             }
         }
 
-        int maxDimension = BuildingGadgets.getConfig().GADGETS.GADGET_COPY_PASTE.maxBuildSize;
+        int maxDimension = BuildingGadgets.getConfig().gadgets.gadgetCopyPaste.maxBuildSize;
 
         if ((region.getXSize() > maxDimension || region.getYSize() > maxDimension || region.getZSize() > maxDimension) &&
             !OverrideBuildSizeCommand.mayPerformLargeBuild(player)) {
@@ -434,14 +433,14 @@ public class GadgetCopyPaste extends AbstractGadget {
         ServerLevel world = view.getContext().getServerWorld();
         IItemIndex index = InventoryHelper.index(stack, player);
         long energyCost = getEnergyCost(stack);
-        boolean overwrite = BuildingGadgets.getConfig().GENERAL.allowOverwriteBlocks;
+        boolean overwrite = BuildingGadgets.getConfig().general.allowOverwriteBlocks;
         BlockPlaceContext useContext = new BlockPlaceContext(new UseOnContext(player, InteractionHand.MAIN_HAND, VectorHelper.getLookingAt(player, stack)));
         PlacementChecker checker = new PlacementChecker(
                 EnergyStorage.ITEM.find(stack, ContainerItemContext.withInitial(stack)),
                 t -> energyCost,
                 index,
                 (c, t) -> overwrite ? world.getBlockState(t.getPos()).canBeReplaced(useContext) : world.isEmptyBlock(t.getPos()));
-        PlacementScheduler.schedulePlacement(view, checker, BuildingGadgets.getConfig().GADGETS.placeSteps)
+        PlacementScheduler.schedulePlacement(view, checker, BuildingGadgets.getConfig().gadgets.placeSteps)
                 .withFinisher(p -> {
                     pushUndo(stack, p.getUndoBuilder().build(world), world);
                     onBuildFinished(stack, player, view.getBoundingBox());
