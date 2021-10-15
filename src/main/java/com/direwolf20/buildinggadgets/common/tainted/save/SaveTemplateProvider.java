@@ -31,7 +31,7 @@ public final class SaveTemplateProvider implements ITemplateProvider {
     }
 
     public SaveTemplateProvider() {
-        this(TemplateSave::new);
+        this(SaveManager.INSTANCE::getTemplateSave);
     }
 
     public TemplateSave getSave() {
@@ -60,7 +60,7 @@ public final class SaveTemplateProvider implements ITemplateProvider {
         UUID id = getId(key);
         Template template = getSave().getTemplate(id);
         notifyListeners(key, template, l -> l::onTemplateUpdateSend);
-        for (ServerPlayer player: level.getServer().getPlayerList().getPlayers()) {
+        for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
             SplitPacketUpdateTemplate.sendToClient(id, template, player);
         }
 

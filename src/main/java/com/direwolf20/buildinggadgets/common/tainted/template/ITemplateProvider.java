@@ -1,14 +1,10 @@
 package com.direwolf20.buildinggadgets.common.tainted.template;
 
-import com.direwolf20.buildinggadgets.client.cache.CacheTemplateProvider;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.network.Target;
-import com.direwolf20.buildinggadgets.common.tainted.save.SaveTemplateProvider;
 import dev.onyxstudios.cca.api.v3.component.Component;
 import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -19,10 +15,6 @@ public interface ITemplateProvider extends Component {
 
     default <T extends Throwable> Template getTemplateForKey(ComponentProvider provider) throws T {
         return getTemplateForKey(BGComponent.TEMPLATE_KEY_COMPONENT.getNullable(provider));
-    }
-
-    static @NotNull ITemplateProvider forWorldType(Level world) {
-        return world.isClientSide ? new CacheTemplateProvider() : new SaveTemplateProvider();
     }
 
     /**
