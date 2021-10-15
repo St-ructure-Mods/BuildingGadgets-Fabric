@@ -14,23 +14,26 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity> {
 
+    public BlockRenderDispatcher dispatcher;
+
     public EffectBlockTER(BlockEntityRendererProvider.Context ctx) {
+        dispatcher = ctx.getBlockRenderDispatcher();
     }
 
     @Override
     public void render(EffectBlockTileEntity tile, float partialTicks, PoseStack stack, MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn) {
-        BlockData renderData = tile.getRenderedBlock();
+        BlockData renderData = new BlockData(Blocks.TNT.defaultBlockState(), null);
         if (renderData == null)
             return;
         VertexConsumer builder;
 
         MultiBufferSource.BufferSource buffer2 = Minecraft.getInstance().renderBuffers().bufferSource();
         EffectBlock.Mode toolMode = tile.getReplacementMode();
-        BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 
         int teCounter = tile.getTicksExisted();
         int maxLife = tile.getLifespan();

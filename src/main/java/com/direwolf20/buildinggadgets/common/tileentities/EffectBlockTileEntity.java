@@ -5,6 +5,7 @@ import com.direwolf20.buildinggadgets.common.tainted.Tainted;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
+import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Tainted(reason = "Used blockData and a stupid non-centralised callback system")
-public class EffectBlockTileEntity extends BlockEntity {
+public class EffectBlockTileEntity extends BlockEntity implements BlockEntityClientSerializable {
     /**
      * Even though this is called "rendered", is will be used for replacement under normal conditions.
      */
@@ -121,5 +122,15 @@ public class EffectBlockTileEntity extends BlockEntity {
             renderedBlock = BlockData.tryDeserialize(nbt.getCompound(NBTKeys.GADGET_REPLACEMENT_BLOCK), true);
             sourceBlock = BlockData.tryDeserialize(nbt.getCompound(NBTKeys.GADGET_SOURCE_BLOCK), true);
         }
+    }
+
+    @Override
+    public void fromClientTag(CompoundTag tag) {
+        load(tag);
+    }
+
+    @Override
+    public CompoundTag toClientTag(CompoundTag tag) {
+        return save(tag);
     }
 }
