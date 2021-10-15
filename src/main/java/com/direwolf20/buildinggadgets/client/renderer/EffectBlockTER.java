@@ -10,21 +10,15 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
 
 public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity> {
 
-    BlockRenderDispatcher dispatcher;
-
     public EffectBlockTER(BlockEntityRendererProvider.Context ctx) {
-        dispatcher = ctx.getBlockRenderDispatcher();
     }
 
     @Override
@@ -36,6 +30,7 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
 
         MultiBufferSource.BufferSource buffer2 = Minecraft.getInstance().renderBuffers().bufferSource();
         EffectBlock.Mode toolMode = tile.getReplacementMode();
+        BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 
         int teCounter = tile.getTicksExisted();
         int maxLife = tile.getLifespan();
@@ -55,10 +50,10 @@ public class EffectBlockTER implements BlockEntityRenderer<EffectBlockTileEntity
 
         BlockState renderBlockState = renderData.getState();
 
-//        OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
+        OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
         try {
             dispatcher.renderSingleBlock(
-                    renderBlockState, stack, Minecraft.getInstance().renderBuffers().bufferSource(), 15728640, OverlayTexture.NO_OVERLAY
+                    renderBlockState, stack, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY
             );
         } catch (Exception ignored) {
             BuildingGadgets.LOG.error("Failed to render block.");

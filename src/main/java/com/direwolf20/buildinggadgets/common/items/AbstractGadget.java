@@ -25,6 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -61,6 +62,27 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     public abstract long getEnergyCapacity();
 
     public abstract long getEnergyCost(ItemStack tool);
+
+    @Override
+    public int getBarColor(ItemStack itemStack) {
+        float f = getBarWidth(itemStack) / 13.0F;
+        return Mth.hsvToRgb(f / 3.0F, 1.0F, 1.0F);
+    }
+
+    @Override
+    public boolean canBeDepleted() {
+        return getEnergyCapacity() > 0;
+    }
+
+    @Override
+    public boolean isBarVisible(ItemStack itemStack) {
+        return getEnergyCapacity() > 0;
+    }
+
+    @Override
+    public int getBarWidth(ItemStack itemStack) {
+        return (int) (13.0F - (getEnergyCapacity() - (float) getStoredEnergy(itemStack)) * 13.0F / (float) getEnergyCapacity());
+    }
 
     @Override
     public long getEnergyMaxInput() {
