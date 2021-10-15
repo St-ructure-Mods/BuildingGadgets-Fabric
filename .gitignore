@@ -7,15 +7,9 @@
 # files
 !/.gitignore
 !/README.md
-!/CONTRIBUTION.md
-!/License.md
+!/LICENSE
 !/build.gradle
 !/settings.gradle
 !/gradlew
 !/gradlew.bat
 !/gradle.properties
-!/update.json
-!/CHANGELOG.md
-!/SPEC.md
-!/EclipseCodeStyle.xml
-!/IntelliJIdeaCodeStyle.xml
