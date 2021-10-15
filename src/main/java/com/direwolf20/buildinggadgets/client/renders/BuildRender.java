@@ -119,7 +119,6 @@ public class BuildRender extends BaseRenderer {
             long hasEnergy = getEnergy(player, heldItem);
 
             try (Transaction transaction = Transaction.openOuter()) {
-
                 for (BlockPos coordinate : coordinates) { //Now run through the UNSORTED list of coords, to show which blocks won't place if you don't have enough of them.
                     boolean renderFree = false;
                     hasEnergy -= ((AbstractGadget) heldItem.getItem()).getEnergyCost(heldItem);

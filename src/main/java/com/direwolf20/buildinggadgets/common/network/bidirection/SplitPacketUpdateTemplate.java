@@ -11,7 +11,6 @@ import com.direwolf20.buildinggadgets.common.util.exceptions.TemplateReadExcepti
 import com.direwolf20.buildinggadgets.common.util.exceptions.TemplateWriteException;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.api.EnvironmentInterface;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -28,78 +27,76 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
-@EnvironmentInterface(value = EnvType.CLIENT, itf = ClientPlayNetworking.PlayChannelHandler.class)
-public class SplitPacketUpdateTemplate implements ClientPlayNetworking.PlayChannelHandler, ServerPlayNetworking.PlayChannelHandler {
+public class SplitPacketUpdateTemplate {
 
     public static void sendToTarget(Target target, UUID id, Template template) {
         if (target.flow() == PacketFlow.CLIENTBOUND) {
             sendToClient(id, template, target.player());
         } else {
-            send(id, template);
+            Client.send(id, template);
         }
     }
 
-    // S2C
     public static void sendToClient(UUID id, Template template, ServerPlayer player) {
         FriendlyByteBuf buf = PacketByteBufs.create();
-        buf.writeUUID(id);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
-            TemplateIO.writeTemplate(template, stream);
-            buf.writeBytes(stream.toByteArray());
-        } catch (TemplateWriteException e) {
-            e.printStackTrace();
-        }
-
+        write(buf, id, template);
         ServerPlayNetworking.send(player, PacketHandler.SplitPacketUpdateTemplate, buf);
     }
 
-    // C2S
-    public static void send(UUID id, Template template) {
-        FriendlyByteBuf buf = PacketByteBufs.create();
-        buf.writeUUID(id);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
-            TemplateIO.writeTemplate(template, stream);
-            buf.writeBytes(stream.toByteArray());
-        } catch (TemplateWriteException e) {
-            e.printStackTrace();
-        }
-        ClientPlayNetworking.send(PacketHandler.SplitPacketUpdateTemplate, buf);
-    }
-
-    public Template readTemplate(FriendlyByteBuf buf) throws TemplateReadException {
+    private static Template readTemplate(FriendlyByteBuf buf) throws TemplateReadException {
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
         return TemplateIO.readTemplate(new ByteArrayInputStream(bytes), null);
     }
 
-    // S2C
-    @Environment(EnvType.CLIENT)
-    @Override
-    public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        UUID id = buf.readUUID();
+    private static void write(FriendlyByteBuf buf, UUID id, Template template) {
+        buf.writeUUID(id);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         try {
-            Template template = readTemplate(buf);
-            client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), template));
-        } catch (TemplateReadException e) {
+            TemplateIO.writeTemplate(template, stream);
+            buf.writeBytes(stream.toByteArray());
+        } catch (TemplateWriteException e) {
             e.printStackTrace();
         }
     }
 
-    // C2S
-    @Override
-    public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        UUID id = buf.readUUID();
+    @Environment(EnvType.CLIENT)
+    public static class Client implements ClientPlayNetworking.PlayChannelHandler {
 
-        try {
-            Template template = readTemplate(buf);
-            server.execute(() -> BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).ifPresent(provider -> {
-                provider.setTemplate(new TemplateKey(id), template);
-            }));
-        } catch (TemplateReadException e) {
-            e.printStackTrace();
+        public static void send(UUID id, Template template) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            write(buf, id, template);
+            ClientPlayNetworking.send(PacketHandler.SplitPacketUpdateTemplate, buf);
+        }
+
+        @Override
+        public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
+            UUID id = buf.readUUID();
+
+            try {
+                Template template = readTemplate(buf);
+                client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), template));
+            } catch (TemplateReadException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static class Server implements ServerPlayNetworking.PlayChannelHandler {
+
+        @Override
+        public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
+            UUID id = buf.readUUID();
+
+            try {
+                Template template = readTemplate(buf);
+                server.execute(() -> BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).ifPresent(provider -> {
+                    provider.setTemplate(new TemplateKey(id), template);
+                }));
+            } catch (TemplateReadException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.network;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.network.C2S.*;
 import com.direwolf20.buildinggadgets.common.network.bidirection.PacketRequestTemplate;
+import com.direwolf20.buildinggadgets.common.network.bidirection.PacketSetRemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.network.bidirection.SplitPacketUpdateTemplate;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.ResourceLocation;
@@ -47,8 +48,8 @@ public class PacketHandler {
         ServerPlayNetworking.registerGlobalReceiver(PacketUndo, new PacketUndo());
 
         ServerPlayNetworking.registerGlobalReceiver(PacketTemplateManagerTemplateCreated, new PacketTemplateManagerTemplateCreated());
-        ServerPlayNetworking.registerGlobalReceiver(SplitPacketUpdateTemplate, new SplitPacketUpdateTemplate());
-        ServerPlayNetworking.registerGlobalReceiver(PacketSetRemoteInventoryCache, new PacketSetRemoteInventoryCache());
+        ServerPlayNetworking.registerGlobalReceiver(SplitPacketUpdateTemplate, new SplitPacketUpdateTemplate.Server());
+        ServerPlayNetworking.registerGlobalReceiver(PacketSetRemoteInventoryCache, new PacketSetRemoteInventoryCache.Server());
 
         ServerPlayNetworking.registerGlobalReceiver(PacketRequestTemplate, new PacketRequestTemplate.Server());
     }

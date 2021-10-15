@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.client.cache;
 
-import com.direwolf20.buildinggadgets.common.network.C2S.PacketSetRemoteInventoryCache;
+import com.direwolf20.buildinggadgets.common.network.bidirection.PacketSetRemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Multiset;

@@ -1,4 +1,4 @@
-package com.direwolf20.buildinggadgets.common.network.C2S;
+package com.direwolf20.buildinggadgets.common.network.bidirection;
 
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
@@ -11,7 +11,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.api.EnvironmentInterface;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -21,6 +20,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -29,55 +29,61 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 
-@EnvironmentInterface(value = EnvType.CLIENT, itf = ClientPlayNetworking.PlayChannelHandler.class)
-public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayChannelHandler, ClientPlayNetworking.PlayChannelHandler {
+public class PacketSetRemoteInventoryCache {
 
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        Data data = Data.read(buf);
+    public static class Client implements ClientPlayNetworking.PlayChannelHandler {
 
-        client.execute(() -> data.either.ifLeft(cache -> {
-            if (!data.isCopyPaste()) {
-                BaseRenderer.setInventoryCache(cache.cache());
-            }
-        }));
+        @Override
+        @Environment(EnvType.CLIENT)
+        public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
+            Data data = Data.read(buf);
+
+            client.execute(() -> data.either.ifLeft(cache -> {
+                if (!data.isCopyPaste()) {
+                    BaseRenderer.setInventoryCache(cache.cache());
+                }
+            }));
+        }
     }
 
-    @Override
-    public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        Data data = Data.read(buf);
+    public static class Server implements ServerPlayNetworking.PlayChannelHandler {
 
-        server.execute(() -> data.either.ifRight(link -> {
-            Multiset<ItemVariant> items = HashMultiset.create();
+        @Override
+        public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
+            Data data = Data.read(buf);
 
-            InventoryLinker.getLinkedInventory(player.level, link, null).ifPresent(inventory -> {
-                try (Transaction transaction = Transaction.openOuter()) {
-                    Object2IntMap<Item> counts = new Object2IntOpenHashMap<>();
+            server.execute(() -> data.either.ifRight(link -> {
+                Multiset<ItemVariant> items = HashMultiset.create();
 
-                    for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
-                        if (!view.isResourceBlank()) {
-                            Item item = view.getResource().getItem();
-                            counts.put(item, counts.getInt(item) + 1);
+                InventoryLinker.getLinkedInventory(player.level, link, null).ifPresent(inventory -> {
+                    try (Transaction transaction = Transaction.openOuter()) {
+                        Object2IntMap<Item> counts = new Object2IntOpenHashMap<>();
+
+                        for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
+                            if (!view.isResourceBlank()) {
+                                Item item = view.getResource().getItem();
+                                counts.put(item, counts.getInt(item) + 1);
+                            }
                         }
-                    }
 
-                    for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
-                        if (!view.isResourceBlank()) {
-                            Item item = view.getResource().getItem();
-                            ItemVariant uniqueItem = ItemVariant.of(item);
+                        for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
+                            if (!view.isResourceBlank()) {
+                                Item item = view.getResource().getItem();
+                                ItemVariant uniqueItem = ItemVariant.of(item);
 
-                            if (!items.contains(uniqueItem)) {
-                                items.add(uniqueItem, counts.getInt(item));
+                                if (!items.contains(uniqueItem)) {
+                                    items.add(uniqueItem, counts.getInt(item));
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
 
-            send(new Data(data.isCopyPaste, Either.left(new Cache(ImmutableMultiset.copyOf(items)))), player);
-        }));
+                send(new Data(data.isCopyPaste, Either.left(new Cache(ImmutableMultiset.copyOf(items)))), player);
+            }));
+        }
     }
 
     private static void send(Data data, ServerPlayer player) {
@@ -102,12 +108,15 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
                 ImmutableMultiset.Builder<ItemVariant> builder = ImmutableMultiset.builder();
 
                 for (int i = 0; i < len; i++) {
-                    builder.addCopies(ItemVariant.of(Item.byId(buf.readInt())), buf.readInt());
+                    builder.addCopies(ItemVariant.fromPacket(buf), buf.readInt());
                 }
 
                 return new Data(isCopyPaste, Either.left(new Cache(builder.build())));
             } else {
-                return new Data(isCopyPaste, Either.right(new InventoryLinker.InventoryLink(ResourceKey.create(Registry.DIMENSION_REGISTRY, buf.readResourceLocation()), buf.readBlockPos(), buf.readEnum(Direction.class))));
+                ResourceKey<Level> level = ResourceKey.create(Registry.DIMENSION_REGISTRY, buf.readResourceLocation());
+                BlockPos blockPos = buf.readBlockPos();
+                Direction face = buf.readEnum(Direction.class);
+                return new Data(isCopyPaste, Either.right(new InventoryLinker.InventoryLink(level, blockPos, face)));
             }
         }
 
@@ -116,12 +125,12 @@ public class PacketSetRemoteInventoryCache implements ServerPlayNetworking.PlayC
 
             either.mapBoth(cache -> {
                 buf.writeBoolean(true);
-                buf.writeInt(cache.cache().size());
+                buf.writeInt(cache.cache().entrySet().size());
 
                 for (Multiset.Entry<ItemVariant> entry : cache.cache().entrySet()) {
                     ItemVariant uniqueItem = entry.getElement();
 
-                    buf.writeInt(Item.getId(uniqueItem.toStack().getItem()));
+                    uniqueItem.toPacket(buf);
                     buf.writeInt(entry.getCount());
                 }
 
