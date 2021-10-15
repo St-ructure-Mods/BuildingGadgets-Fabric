@@ -23,15 +23,6 @@ body:
     validations:
       required: true
   - type: input
-    id: forge-version
-    attributes:
-      label: Forge Version
-      description: |
-        You can get this from the main menu screen in the bottom left corner of the screen.
-      placeholder: 36.1.24
-    validations:
-      required: false
-  - type: input
     id: modpack
     attributes:
       label: Modpack & Version
