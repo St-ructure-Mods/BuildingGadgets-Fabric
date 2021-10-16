@@ -5,6 +5,9 @@ import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryLinker;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Multiset;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +39,7 @@ public class RemoteInventoryCache {
         InventoryLinker.InventoryLink loc = InventoryLinker.getDataFromStack(gadget);
 
         if (isCacheOld(loc)) {
-            updateCache(loc);
+            updateCache(loc, gadget);
         }
 
         return loc != null;
@@ -46,13 +49,20 @@ public class RemoteInventoryCache {
         return cache;
     }
 
-    private void updateCache(InventoryLinker.InventoryLink loc) {
+    private void updateCache(InventoryLinker.InventoryLink loc, ItemStack gadget) {
         location = loc;
 
         if (loc == null) {
             cache = null;
         } else {
-            PacketSetRemoteInventoryCache.send(isCopyPaste, loc);
+            // Figure out what hand the gadget is in
+            LocalPlayer player = Minecraft.getInstance().player;
+
+            if (player.getItemInHand(InteractionHand.MAIN_HAND) == gadget) {
+                PacketSetRemoteInventoryCache.send(isCopyPaste, InteractionHand.MAIN_HAND);
+            } else if (player.getItemInHand(InteractionHand.OFF_HAND) == gadget) {
+                PacketSetRemoteInventoryCache.send(isCopyPaste, InteractionHand.OFF_HAND);
+            }
         }
     }
 

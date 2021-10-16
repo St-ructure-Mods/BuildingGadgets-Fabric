@@ -18,15 +18,11 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.InteractionHand;
 
 public class PacketSetRemoteInventoryCache {
 
@@ -51,10 +47,10 @@ public class PacketSetRemoteInventoryCache {
         public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
             Data data = Data.read(buf);
 
-            server.execute(() -> data.either.ifRight(link -> {
+            server.execute(() -> data.either.ifRight(hand -> {
                 Multiset<ItemVariant> items = HashMultiset.create();
 
-                InventoryLinker.getLinkedInventory(player.level, link, null).ifPresent(inventory -> {
+                InventoryLinker.getLinkedInventory(player.level, player.getItemInHand(hand)).ifPresent(inventory -> {
                     try (Transaction transaction = Transaction.openOuter()) {
                         for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
                             if (!view.isResourceBlank()) {
@@ -77,13 +73,13 @@ public class PacketSetRemoteInventoryCache {
     }
 
     @Environment(EnvType.CLIENT)
-    public static void send(boolean isCopyPaste, InventoryLinker.InventoryLink link) {
+    public static void send(boolean isCopyPaste, InteractionHand hand) {
         FriendlyByteBuf buf = PacketByteBufs.create();
-        new Data(isCopyPaste, Either.right(link)).write(buf);
+        new Data(isCopyPaste, Either.right(hand)).write(buf);
         ClientPlayNetworking.send(PacketHandler.PacketSetRemoteInventoryCache, buf);
     }
 
-    private record Data(boolean isCopyPaste, Either<Cache, InventoryLinker.InventoryLink> either) {
+    private record Data(boolean isCopyPaste, Either<Cache, InteractionHand> either) {
         private static Data read(FriendlyByteBuf buf) {
             boolean isCopyPaste = buf.readBoolean();
 
@@ -97,10 +93,8 @@ public class PacketSetRemoteInventoryCache {
 
                 return new Data(isCopyPaste, Either.left(new Cache(builder.build())));
             } else {
-                ResourceKey<Level> level = ResourceKey.create(Registry.DIMENSION_REGISTRY, buf.readResourceLocation());
-                BlockPos blockPos = buf.readBlockPos();
-                Direction face = buf.readEnum(Direction.class);
-                return new Data(isCopyPaste, Either.right(new InventoryLinker.InventoryLink(level, blockPos, face)));
+                InteractionHand hand = buf.readEnum(InteractionHand.class);
+                return new Data(isCopyPaste, Either.right(hand));
             }
         }
 
@@ -119,11 +113,9 @@ public class PacketSetRemoteInventoryCache {
                 }
 
                 return null;
-            }, link -> {
+            }, hand -> {
                 buf.writeBoolean(false);
-                buf.writeResourceLocation(link.level().location());
-                buf.writeBlockPos(link.blockPos());
-                buf.writeEnum(link.face());
+                buf.writeEnum(hand);
                 return null;
             });
         }
