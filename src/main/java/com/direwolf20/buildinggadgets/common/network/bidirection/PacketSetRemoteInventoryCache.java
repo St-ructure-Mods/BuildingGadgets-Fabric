@@ -7,8 +7,6 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 import com.mojang.datafixers.util.Either;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -28,7 +26,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 
 public class PacketSetRemoteInventoryCache {
@@ -59,12 +56,10 @@ public class PacketSetRemoteInventoryCache {
 
                 InventoryLinker.getLinkedInventory(player.level, link, null).ifPresent(inventory -> {
                     try (Transaction transaction = Transaction.openOuter()) {
-                        Object2IntMap<Item> counts = new Object2IntOpenHashMap<>();
-
                         for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
                             if (!view.isResourceBlank()) {
                                 ItemVariant resource = view.getResource();
-                                items.add(resource, (int) (counts.getInt(resource) + view.getAmount()));
+                                items.add(resource, (int) view.getAmount());
                             }
                         }
                     }
