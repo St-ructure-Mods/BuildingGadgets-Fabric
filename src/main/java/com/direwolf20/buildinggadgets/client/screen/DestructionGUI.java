@@ -142,7 +142,7 @@ public class DestructionGUI extends Screen {
 
         GuiDestructionSlider(int x, int y, String prefix, int current) {
             super(
-                    x, y, width, height, new TextComponent(String.format("%s ", prefix)), max, current, Color.DARK_GRAY, (slider, amount) -> {
+                    x, y, width, height, new TextComponent(String.format("%s ", prefix)), min, max, current, Color.DARK_GRAY, (GuiSliderInt slider, Integer amount) -> {
                         slider.setValueInt(Mth.clamp(slider.getValueInt() + amount, min, max));
                         slider.applyValue();
                     }

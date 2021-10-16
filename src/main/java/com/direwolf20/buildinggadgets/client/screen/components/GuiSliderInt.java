@@ -24,43 +24,31 @@ public class GuiSliderInt extends AbstractSliderButton {
     private final int colorSliderBackground;
     private final int colorSlider;
     private final BiConsumer<GuiSliderInt, Integer> increment;
-    private double value;
-    private final double maxVal;
-    private Component prefix;
+    private final int minVal, maxVal;
+    private final Component prefix;
 
-    public GuiSliderInt(int xPos, int yPos, int width, int height, Component prefix, double maxVal,
-                        double currentVal, Color color,
+    public GuiSliderInt(int xPos, int yPos, int width, int height, Component prefix, int minVal, int maxVal,
+                        int currentVal, Color color,
                         BiConsumer<GuiSliderInt, Integer> increment) {
-
         super(xPos, yPos, width, height, prefix, currentVal);
 
-        colorBackground = GuiMod.getColor(color, 200).getRGB();
-        colorSliderBackground = GuiMod.getColor(color.darker(), 200).getRGB();
-        colorSlider = GuiMod.getColor(color.brighter().brighter(), 200).getRGB();
+        this.colorBackground = GuiMod.getColor(color, 200).getRGB();
+        this.colorSliderBackground = GuiMod.getColor(color.darker(), 200).getRGB();
+        this.colorSlider = GuiMod.getColor(color.brighter().brighter(), 200).getRGB();
+        this.minVal = minVal;
         this.maxVal = maxVal;
-        this.value = currentVal / maxVal;
+        this.value = (double) (currentVal - this.minVal) / this.maxVal;
         this.increment = increment;
         this.prefix = prefix;
         this.updateMessage();
     }
 
     public int getValueInt() {
-        return (int) (value * maxVal);
-    }
-
-    public double getValue() {
-        return value;
+        return (int) Mth.clamp(Math.round(minVal + value * (maxVal - minVal + 1)), minVal, maxVal);
     }
 
     public void setValueInt(int i) {
-        double e = this.value;
-        this.value = Mth.clamp(i / maxVal, 0D, 1.0D);
-        if (e != this.value) {
-            playSound();
-            this.applyValue();
-        }
-
-        this.updateMessage();
+        setValue((double) i / (maxVal - minVal + 1));
     }
 
     @Override
@@ -72,26 +60,19 @@ public class GuiSliderInt extends AbstractSliderButton {
     }
 
     private void setValue(double d) {
-        double e = this.value;
-        int pv = getValueInt();
+        int oldIntValue = getValueInt();
         this.value = Mth.clamp(d, 0.0D, 1.0D);
-        if (e != this.value) {
-            if(pv != getValueInt()) {
-                playSound();
-            }
+
+        if(oldIntValue != getValueInt()) {
             this.applyValue();
+            playSound();
+            updateMessage();
         }
-
-        this.updateMessage();
-    }
-
-    private void setValueFromMouse(double d) {
-        this.setValue((d - (double)(this.x + 4)) / (double)(this.width - 8));
     }
 
     @Override
-    protected void onDrag(double d, double e, double f, double g) {
-        setValueFromMouse(d);
+    protected void onDrag(double mouseX, double mouseY, double deltaX, double deltaY) {
+        this.setValue((mouseX - this.x - 4) / (this.width - 8));
     }
 
     @Override
@@ -105,8 +86,9 @@ public class GuiSliderInt extends AbstractSliderButton {
 
     @Override
     public void render(PoseStack matrices, int mouseX, int mouseY, float partial) {
-        if (!visible)
+        if (!visible) {
             return;
+        }
 
         Minecraft mc = Minecraft.getInstance();
         isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
@@ -120,8 +102,10 @@ public class GuiSliderInt extends AbstractSliderButton {
         String buttonText = component.getMessage().getString();
         int strWidth = mc.font.width(buttonText);
         int ellipsisWidth = mc.font.width("...");
-        if (strWidth > component.getWidth() - 6 && strWidth > ellipsisWidth)
+
+        if (strWidth > component.getWidth() - 6 && strWidth > ellipsisWidth) {
             buttonText = mc.font.plainSubstrByWidth(buttonText, component.getWidth() - 6 - ellipsisWidth).trim() + "...";
+        }
 
         drawCenteredString(matrices, mc.font, buttonText, component.x + component.getWidth() / 2, component.y + (component.getHeight() - 8) / 2, color);
     }
@@ -132,8 +116,9 @@ public class GuiSliderInt extends AbstractSliderButton {
 
     @Override
     protected void renderBg(PoseStack matrices, Minecraft mc, int mouseX, int mouseY) {
-        if (!visible)
+        if (!visible) {
             return;
+        }
 
         drawBorderedRect(matrices, (int) (x + (value * (width - 8))), y, 8, height);
     }
@@ -145,10 +130,10 @@ public class GuiSliderInt extends AbstractSliderButton {
 
     public Collection<AbstractWidget> getComponents() {
         return ImmutableSet.of(
-                this,
-                new GuiButtonIncrement(this, x - height, y, height, height, new TextComponent("-"), b -> increment.accept(this, -1)),
-                new GuiButtonIncrement(this, x + width, y, height, height, new TextComponent("+"), b -> increment.accept(this, 1)
-                ));
+            this,
+            new GuiButtonIncrement(this, x - height, y, height, height, new TextComponent("-"), b -> increment.accept(this, -1)),
+            new GuiButtonIncrement(this, x + width, y, height, height, new TextComponent("+"), b -> increment.accept(this, 1)
+        ));
     }
 
     private static class GuiButtonIncrement extends Button {
@@ -161,8 +146,9 @@ public class GuiSliderInt extends AbstractSliderButton {
 
         @Override
         public void render(PoseStack matrices, int mouseX, int mouseY, float partial) {
-            if (!visible)
+            if (!visible) {
                 return;
+            }
 
             Minecraft mc = Minecraft.getInstance();
             isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;

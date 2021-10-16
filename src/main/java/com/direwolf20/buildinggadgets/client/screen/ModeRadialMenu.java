@@ -148,11 +148,11 @@ public class ModeRadialMenu extends Screen {
             }
             if (!isDestruction) {
                 int widthSlider = 82;
-                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), BuildingGadgets.getConfig().gadgets.maxRange,
+                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), 1, BuildingGadgets.getConfig().gadgets.maxRange,
                         GadgetUtils.getToolRange(tool), Color.DARK_GRAY, (slider, integer) -> {
                     sendRangeUpdate(slider.getValueInt());
                     int value = slider.getValueInt();
-                    int valueNew = Mth.clamp(value + integer, 0, BuildingGadgets.getConfig().gadgets.maxRange);
+                    int valueNew = Mth.clamp(value + integer, 1, BuildingGadgets.getConfig().gadgets.maxRange);
                     sendRangeUpdate(valueNew);
                     slider.setValueInt(valueNew);
                     slider.applyValue();
