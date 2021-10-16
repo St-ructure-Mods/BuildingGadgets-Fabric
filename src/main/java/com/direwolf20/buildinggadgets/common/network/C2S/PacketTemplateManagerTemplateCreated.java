@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.common.network.C2S;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
+import com.direwolf20.buildinggadgets.common.items.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.Target;
@@ -48,7 +49,9 @@ public class PacketTemplateManagerTemplateCreated implements ServerPlayNetworkin
                         if (!id.equals(uuid)) {
                             BuildingGadgets.LOG.error("Failed to apply Template id on server!");
                         } else {
-                            manager.setItem(1, stack);
+                            if(!(manager.getItem(1).getItem() instanceof GadgetCopyPaste)) {
+                                manager.setItem(1, stack);
+                            }
                             BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(level).ifPresent(provider -> provider.requestUpdate(key, new Target(PacketFlow.CLIENTBOUND, player)));
                         }
                     });
