@@ -63,19 +63,8 @@ public class PacketSetRemoteInventoryCache {
 
                         for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
                             if (!view.isResourceBlank()) {
-                                Item item = view.getResource().getItem();
-                                counts.put(item, counts.getInt(item) + 1);
-                            }
-                        }
-
-                        for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
-                            if (!view.isResourceBlank()) {
-                                Item item = view.getResource().getItem();
-                                ItemVariant uniqueItem = ItemVariant.of(item);
-
-                                if (!items.contains(uniqueItem)) {
-                                    items.add(uniqueItem, counts.getInt(item));
-                                }
+                                ItemVariant resource = view.getResource();
+                                items.add(resource, (int) (counts.getInt(resource) + view.getAmount()));
                             }
                         }
                     }

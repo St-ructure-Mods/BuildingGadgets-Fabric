@@ -12,11 +12,13 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class RemoteInventoryCache {
+
+    private final Stopwatch timer = Stopwatch.createStarted();
     private final boolean isCopyPaste;
+
     private boolean forceUpdate;
-    private InventoryLinker.InventoryLink locCached;
+    private InventoryLinker.InventoryLink location;
     private Multiset<ItemVariant> cache;
-    private Stopwatch timer;
 
     public RemoteInventoryCache(boolean isCopyPaste) {
         this.isCopyPaste = isCopyPaste;
@@ -45,7 +47,7 @@ public class RemoteInventoryCache {
     }
 
     private void updateCache(InventoryLinker.InventoryLink loc) {
-        locCached = loc;
+        location = loc;
 
         if (loc == null) {
             cache = null;
@@ -55,23 +57,13 @@ public class RemoteInventoryCache {
     }
 
     private boolean isCacheOld(@Nullable InventoryLinker.InventoryLink loc) {
-        if (!Objects.equals(locCached, loc)) {
-            timer = loc == null ? null : Stopwatch.createStarted();
+        if (forceUpdate || !Objects.equals(location, loc) || timer.elapsed(TimeUnit.MILLISECONDS) >= 5000) {
+            timer.reset();
+            timer.start();
+            forceUpdate = false;
             return true;
+        } else {
+            return false;
         }
-
-        if (timer != null) {
-            boolean overtime = forceUpdate || timer.elapsed(TimeUnit.MILLISECONDS) >= 5000;
-
-            if (overtime) {
-                timer.reset();
-                timer.start();
-                forceUpdate = false;
-            }
-
-            return overtime;
-        }
-
-        return false;
     }
 }
