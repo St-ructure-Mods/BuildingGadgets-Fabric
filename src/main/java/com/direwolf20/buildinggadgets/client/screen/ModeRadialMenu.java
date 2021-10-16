@@ -22,7 +22,9 @@ import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -32,7 +34,12 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -426,21 +433,14 @@ public class ModeRadialMenu extends Screen {
             matrices.popPose();
         }
 
-//        RenderSystem.enableRescaleNormal();
-//        RenderSystem.enableBlend();
-//        RenderSystem.blendFuncSeparate(770, 771, 1, 0);
-//        Lighting.setupForFlatItems();
-
         float s = 2.25F * fract;
-        itemRenderer.renderAndDecorateItem(tool, 0, 0);
-        matrices.pushPose();
-        matrices.scale(s, s, s);
-        matrices.translate(x / s - (tool.getItem() instanceof GadgetCopyPaste ? 8F : 8.5F), y / s - 8, 0);
 
-//        RenderSystem.disableBlend();
-//        RenderSystem.disableRescaleNormal();
-//        Lighting.setupForFlatItems();
-        matrices.popPose();
+        PoseStack stack = RenderSystem.getModelViewStack();
+        stack.pushPose();
+        stack.scale(s, s, s);
+        stack.translate(x / s - (tool.getItem() instanceof GadgetCopyPaste ? 8 : 8.5), y / s - 8, 0);
+        this.itemRenderer.renderAndDecorateItem(tool, 0, 0);
+        stack.popPose();
     }
 
     private boolean isCursorInSlice(float angle, float totalDeg, float degPer, boolean inRange) {
