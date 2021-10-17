@@ -4,6 +4,7 @@ import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
+import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.ExchangingModes;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
@@ -237,7 +238,7 @@ public class GadgetExchanger extends AbstractGadget {
         data = TileSupport.createTileData(world, pos);
 
         ItemStack tool = getGadget(player);
-        if (tool.isEmpty() || !this.canUse(tool, player))
+        if (tool.isEmpty() || !this.canUse(tool, player) || !GOMLCompat.canUse(world, pos, player))
             return;
 
         BuildContext buildContext = BuildContext.builder()

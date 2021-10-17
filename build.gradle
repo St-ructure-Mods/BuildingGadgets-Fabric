@@ -33,6 +33,15 @@ repositories {
             includeGroup "com.terraformersmc"
         }
     }
+
+    maven {
+        url = "https://maven.jamieswhiteshirt.com/libs-release/"
+        content {
+            includeGroup 'com.jamieswhiteshirt'
+        }
+    }
+
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -60,6 +69,9 @@ dependencies {
 
     modRuntime("dev.architectury:architectury-fabric:${project.architectury_version}")
     modRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
+
+    modImplementation "com.jamieswhiteshirt:rtree-3i-lite-fabric:${project.rtree_version}"
+    modImplementation "com.github.Draylar:get-off-my-lawn:${project.goml_version}"
 }
 
 base {

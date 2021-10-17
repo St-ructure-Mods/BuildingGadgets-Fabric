@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.items;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
+import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
@@ -237,7 +238,7 @@ public class GadgetBuilding extends AbstractGadget {
                 return;
             }
 
-            if (!(world.mayInteract(player, pos) && this.canUse(heldItem, player) && setBlock.getState().canSurvive(world, pos))) {
+            if (!(world.mayInteract(player, pos) && this.canUse(heldItem, player) && setBlock.getState().canSurvive(world, pos) && GOMLCompat.canUse(world, pos, player))) {
                 return;
             }
 

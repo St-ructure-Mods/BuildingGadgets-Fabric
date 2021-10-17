@@ -4,6 +4,7 @@ import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideBuildSizeCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
+import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
@@ -14,6 +15,7 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.Commands;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -57,5 +59,7 @@ public final class BuildingGadgets implements ModInitializer {
 
         Registries.registerTileDataSerializers();
         PacketHandler.registerMessages();
+
+        GOMLCompat.isLoaded = FabricLoader.getInstance().isModLoaded("goml");
     }
 }

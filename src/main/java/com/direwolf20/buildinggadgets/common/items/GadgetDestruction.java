@@ -4,6 +4,7 @@ import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
+import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
@@ -239,7 +240,7 @@ public class GadgetDestruction extends AbstractGadget {
             BlockEntity be = world.getBlockEntity(clearPos);
             if (!isAllowedBlock(state.getBlock()))
                 continue;
-            if (be == null) {
+            if (be == null && GOMLCompat.canUse(world, clearPos, player)) {
                 destroyBlock(world, clearPos, player, builder);
             }
         }
