@@ -204,6 +204,7 @@
   "gui.buildinggadgets.help.button.paste": "Pastes data on your computer's clipboard to a pre-existing template, or to a piece of paper, creating a template",
   "gui.buildinggadgets.help.button.save": "Saves the data in the gadget/template to a pre-existing template, or to a piece of paper, creating a template",
   "_comment": "config",
+  "text.autoconfig.building_gadgets.title": "Building Gadgets Settings",
   "text.autoconfig.building_gadgets.category.general": "General",
   "text.autoconfig.building_gadgets.option.general.rayTraceRange": "Maximum build distance",
   "text.autoconfig.building_gadgets.option.general.allowAbsoluteCoords": "Allow absolute coordinates",
