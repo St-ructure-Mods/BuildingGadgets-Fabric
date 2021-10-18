@@ -2,7 +2,6 @@ package com.direwolf20.buildinggadgets.common.component;
 
 import com.direwolf20.buildinggadgets.client.ClientProxy;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.capability.ItemTemplateKey;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.tainted.save.SaveTemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;

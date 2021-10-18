@@ -167,12 +167,12 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
                 ITemplateKey key = keyCap.orElseThrow(RuntimeException::new);
                 return provider.getTemplateForKey(key);
             }
-            BuildingGadgets.LOG.warn("Item used for material list does not have an ITemplateKey capability!");
+            BuildingGadgets.LOG.warn("Item used for material list does not have an ITemplateKey component!");
             minecraft.player.closeContainer();
             return null;
         }
 
-        BuildingGadgets.LOG.warn("Client world used for material list does not have an ITemplateProvider capability!");
+        BuildingGadgets.LOG.warn("Client world used for material list does not have an ITemplateProvider component!");
         minecraft.player.closeContainer();
         return null;
     }

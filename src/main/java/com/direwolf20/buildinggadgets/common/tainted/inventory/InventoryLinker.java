@@ -48,8 +48,7 @@ public class InventoryLinker {
     }
 
     /**
-     * Directly fetch the linked inventory if the tile exists (removes if not) and if the tile holds
-     * a capability.
+     * Directly fetch the linked inventory if the tile exists (removes if not) and if the tile holds an inventory
      */
     public static Optional<Storage<ItemVariant>> getLinkedInventory(Level world, InventoryLink link, @Nullable ItemStack stack) {
         if (!world.dimension().equals(link.level())) {

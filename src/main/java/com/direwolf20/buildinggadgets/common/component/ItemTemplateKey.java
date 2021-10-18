@@ -1,6 +1,5 @@
-package com.direwolf20.buildinggadgets.common.capability;
+package com.direwolf20.buildinggadgets.common.component;
 
-import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import dev.onyxstudios.cca.api.v3.item.ItemComponent;
