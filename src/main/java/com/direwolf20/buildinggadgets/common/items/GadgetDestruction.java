@@ -4,6 +4,7 @@ import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
+import com.direwolf20.buildinggadgets.common.compat.FLANCompat;
 import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
@@ -21,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -240,7 +242,7 @@ public class GadgetDestruction extends AbstractGadget {
             BlockEntity be = world.getBlockEntity(clearPos);
             if (!isAllowedBlock(state.getBlock()))
                 continue;
-            if (be == null && GOMLCompat.canUse(world, clearPos, player)) {
+            if (be == null && GOMLCompat.canUse(world, clearPos, player) && FLANCompat.canUse((ServerLevel) world, clearPos, player)) {
                 destroyBlock(world, clearPos, player, builder);
             }
         }

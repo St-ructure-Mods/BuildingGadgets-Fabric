@@ -30,7 +30,7 @@ public class GuiSliderInt extends AbstractSliderButton {
     public GuiSliderInt(int xPos, int yPos, int width, int height, Component prefix, int minVal, int maxVal,
                         int currentVal, Color color,
                         BiConsumer<GuiSliderInt, Integer> increment) {
-        super(xPos, yPos, width, height, prefix, currentVal);
+        super(xPos, yPos, width, height, prefix, (double) (currentVal - minVal) / (maxVal - minVal + 1));
 
         this.colorBackground = GuiMod.getColor(color, 200).getRGB();
         this.colorSliderBackground = GuiMod.getColor(color.darker(), 200).getRGB();
@@ -40,7 +40,6 @@ public class GuiSliderInt extends AbstractSliderButton {
         this.increment = increment;
         this.prefix = prefix;
 
-        this.setValueInt(currentVal);
         this.updateMessage();
     }
 

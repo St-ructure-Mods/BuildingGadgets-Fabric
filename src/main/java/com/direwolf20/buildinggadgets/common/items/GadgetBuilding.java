@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.items;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
+import com.direwolf20.buildinggadgets.common.compat.FLANCompat;
 import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
@@ -33,6 +34,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -238,7 +240,7 @@ public class GadgetBuilding extends AbstractGadget {
                 return;
             }
 
-            if (!(world.mayInteract(player, pos) && this.canUse(heldItem, player) && setBlock.getState().canSurvive(world, pos) && GOMLCompat.canUse(world, pos, player))) {
+            if (!(world.mayInteract(player, pos) && this.canUse(heldItem, player) && setBlock.getState().canSurvive(world, pos) && GOMLCompat.canUse(world, pos, player) && FLANCompat.canUse((ServerLevel) world, pos, player))) {
                 return;
             }
 

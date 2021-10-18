@@ -4,6 +4,7 @@ import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideBuildSizeCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
+import com.direwolf20.buildinggadgets.common.compat.FLANCompat;
 import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
@@ -61,5 +62,6 @@ public final class BuildingGadgets implements ModInitializer {
         PacketHandler.registerMessages();
 
         GOMLCompat.isLoaded = FabricLoader.getInstance().isModLoaded("goml");
+        FLANCompat.isLoaded = FabricLoader.getInstance().isModLoaded("flan");
     }
 }

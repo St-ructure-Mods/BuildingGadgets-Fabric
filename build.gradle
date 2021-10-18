@@ -41,6 +41,11 @@ repositories {
         }
     }
 
+    maven {
+        name = "Flemmli97"
+        url "https://gitlab.com/api/v4/projects/21830712/packages/maven"
+    }
+
     maven { url 'https://jitpack.io' }
 }
 
@@ -72,6 +77,10 @@ dependencies {
 
     modImplementation "com.jamieswhiteshirt:rtree-3i-lite-fabric:${project.rtree_version}"
     modImplementation "com.github.Draylar:get-off-my-lawn:${project.goml_version}"
+
+    modImplementation("io.github.flemmli97:flan:${project.minecraft_version}-${project.flan_version}") {
+        transitive = false //Remove this if you want to have all those optional dependencies
+    }
 }
 
 base {
