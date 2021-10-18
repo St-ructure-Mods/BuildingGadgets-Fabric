@@ -37,9 +37,10 @@ public class GuiSliderInt extends AbstractSliderButton {
         this.colorSlider = GuiMod.getColor(color.brighter().brighter(), 200).getRGB();
         this.minVal = minVal;
         this.maxVal = maxVal;
-        this.value = (double) (currentVal - this.minVal) / this.maxVal;
         this.increment = increment;
         this.prefix = prefix;
+
+        this.setValueInt(currentVal);
         this.updateMessage();
     }
 
@@ -48,7 +49,7 @@ public class GuiSliderInt extends AbstractSliderButton {
     }
 
     public void setValueInt(int i) {
-        setValue((double) i / (maxVal - minVal + 1));
+        setValue((double) (i - minVal) / (maxVal - minVal + 1));
     }
 
     @Override
