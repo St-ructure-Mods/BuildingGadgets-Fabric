@@ -240,7 +240,7 @@ public class GadgetBuilding extends AbstractGadget {
                 return;
             }
 
-            if (!(world.mayInteract(player, pos) && this.canUse(heldItem, player) && setBlock.getState().canSurvive(world, pos) && GOMLCompat.canUse(world, pos, player) && FLANCompat.canUse((ServerLevel) world, pos, player))) {
+            if (!mayInteract(player, pos)) {
                 return;
             }
 

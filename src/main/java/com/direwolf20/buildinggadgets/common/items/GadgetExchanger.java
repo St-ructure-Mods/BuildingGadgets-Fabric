@@ -234,13 +234,12 @@ public class GadgetExchanger extends AbstractGadget {
 
     private void exchangeBlock(ServerLevel world, ServerPlayer player, IItemIndex index, BlockPos pos, BlockData setBlock, TransactionContext transaction) {
         BlockState currentBlock = world.getBlockState(pos);
-        ITileEntityData data;
-
-        data = TileSupport.createTileData(world, pos);
-
+        ITileEntityData data = TileSupport.createTileData(world, pos);
         ItemStack tool = getGadget(player);
-        if (tool.isEmpty() || !this.canUse(tool, player) || !GOMLCompat.canUse(world, pos, player) || !FLANCompat.canUse(world, pos, player))
+
+        if (tool.isEmpty() || !(this.canUse(tool, player) && mayInteract(player, pos))) {
             return;
+        }
 
         BuildContext buildContext = BuildContext.builder()
                 .stack(tool)

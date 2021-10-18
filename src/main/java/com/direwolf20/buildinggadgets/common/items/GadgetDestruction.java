@@ -242,7 +242,7 @@ public class GadgetDestruction extends AbstractGadget {
             BlockEntity be = world.getBlockEntity(clearPos);
             if (!isAllowedBlock(state.getBlock()))
                 continue;
-            if (be == null && GOMLCompat.canUse(world, clearPos, player) && FLANCompat.canUse((ServerLevel) world, clearPos, player)) {
+            if (be == null && mayInteract(player, pos)) {
                 destroyBlock(world, clearPos, player, builder);
             }
         }

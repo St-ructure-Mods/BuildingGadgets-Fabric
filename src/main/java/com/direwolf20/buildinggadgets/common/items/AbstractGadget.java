@@ -2,6 +2,8 @@ package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
+import com.direwolf20.buildinggadgets.common.compat.FLANCompat;
+import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.items.modes.*;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
@@ -304,5 +306,9 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
         } else {
             player.displayClientMessage(MessageTranslation.NOTHING_TO_UNDO.componentTranslation().setStyle(Styles.RED), true);
         }
+    }
+
+    protected static boolean mayInteract(ServerPlayer player, BlockPos pos) {
+        return player.mayInteract(player.level, pos) && GOMLCompat.canUse(player, pos) && FLANCompat.canUse(player, pos);
     }
 }
