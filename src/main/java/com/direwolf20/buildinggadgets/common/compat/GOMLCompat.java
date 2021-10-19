@@ -4,7 +4,6 @@ import com.jamieswhiteshirt.rtree3i.Entry;
 import draylar.goml.api.Claim;
 import draylar.goml.api.ClaimBox;
 import draylar.goml.api.ClaimUtils;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class GOMLCompat {
 
-    public static final boolean MOD_LOADED = FabricLoader.getInstance().isModLoaded("goml");
+    public static boolean MOD_LOADED;
 
     public static boolean canUse(ServerPlayer player, BlockPos pos) {
         if (MOD_LOADED) {

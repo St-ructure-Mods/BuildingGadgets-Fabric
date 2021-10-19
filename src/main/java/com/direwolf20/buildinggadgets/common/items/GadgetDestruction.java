@@ -242,7 +242,7 @@ public class GadgetDestruction extends AbstractGadget {
             BlockEntity be = world.getBlockEntity(clearPos);
             if (!isAllowedBlock(state.getBlock()))
                 continue;
-            if (be == null && mayInteract(player, pos)) {
+            if (be == null && mayInteract(player, clearPos)) {
                 destroyBlock(world, clearPos, player, builder);
             }
         }
