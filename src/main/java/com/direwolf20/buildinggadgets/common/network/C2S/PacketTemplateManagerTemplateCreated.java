@@ -49,9 +49,7 @@ public class PacketTemplateManagerTemplateCreated implements ServerPlayNetworkin
                         if (!id.equals(uuid)) {
                             BuildingGadgets.LOG.error("Failed to apply Template id on server!");
                         } else {
-                            if(!(manager.getItem(1).getItem() instanceof GadgetCopyPaste)) {
-                                manager.setItem(1, stack);
-                            }
+                            manager.setItem(1, stack);
                             BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(level).ifPresent(provider -> provider.requestUpdate(key, new Target(PacketFlow.CLIENTBOUND, player)));
                         }
                     });

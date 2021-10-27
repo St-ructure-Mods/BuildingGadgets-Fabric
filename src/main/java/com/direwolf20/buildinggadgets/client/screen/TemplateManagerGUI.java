@@ -326,7 +326,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
             return false;
 
         if (BGComponent.TEMPLATE_KEY_COMPONENT.isProvidedBy(stack))
-            return true;
+            return false;
 
         else if (TemplateManagerTileEntity.TEMPLATE_CONVERTIBLES.contains(stack.getItem())) {
             container.getSlot(1).set(new ItemStack(OurItems.TEMPLATE_ITEM));

@@ -75,18 +75,18 @@ public class DestructionGUI extends Screen {
     }
 
     private boolean isWithinBounds() {
-        int x = left.getValueInt() + right.getValueInt();
-        int y = up.getValueInt() + down.getValueInt();
+        int x = 1 + left.getValueInt() + right.getValueInt();
+        int y = 1 + up.getValueInt() + down.getValueInt();
         int z = depth.getValueInt();
         int dim = BuildingGadgets.getConfig().gadgets.gadgetDestruction.destroySize;
 
-        return x <= dim && y <= dim && z <= dim;
+        return x <= (dim + 1) && y <= (dim + 1) && z <= dim;
     }
 
     private String getSizeString() {
         return String.format("%d x %d x %d",
-                left.getValueInt() + right.getValueInt(),
-                up.getValueInt() + down.getValueInt(),
+                left.getValueInt() + right.getValueInt() + 1,
+                up.getValueInt() + down.getValueInt() + 1,
                 depth.getValueInt()
         );
     }
