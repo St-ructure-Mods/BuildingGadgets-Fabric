@@ -41,7 +41,6 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
@@ -101,6 +100,11 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
         this.container = container;
         this.be = container.getTe();
+    }
+
+    @Override
+    protected boolean hasClickedOutside(double d, double e, int i, int j, int k) {
+        return d < (double) i - 16 || e < (double) j || d >= (double)(i + this.imageWidth + 30) || e >= (double)(j + this.imageHeight + 12);
     }
 
     @Override

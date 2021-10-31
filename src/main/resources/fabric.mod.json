@@ -35,7 +35,10 @@
       "com.direwolf20.buildinggadgets.client.BuildingGadgetsClient"
     ],
     "modmenu": [
-      "com.direwolf20.buildinggadgets.common.config.ModMenuCompat"
+      "com.direwolf20.buildinggadgets.common.compat.ModMenuCompat"
+    ],
+    "rei": [
+      "com.direwolf20.buildinggadgets.common.compat.REICompat"
     ]
   },
   "mixins": [
