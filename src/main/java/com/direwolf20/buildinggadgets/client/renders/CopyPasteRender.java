@@ -164,8 +164,8 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
 
                 dispatcher.renderSingleBlock(state, matrix, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY);
                 matrix.popPose();
-                bufferSource.endBatch();
             }
+            bufferSource.endBatch();
 
             //renderBuffer.render(matrix.last().pose()); //Actually draw whats in the buffer
             //return;
