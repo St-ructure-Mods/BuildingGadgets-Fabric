@@ -14,6 +14,7 @@ import com.direwolf20.buildinggadgets.common.tainted.template.Template;
 import com.direwolf20.buildinggadgets.common.world.MockDelegationWorld;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
@@ -147,11 +148,12 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
                 }
             }
 
+            RenderSystem.enableDepthTest();
             MultiBufferSource.BufferSource bufferSource = getMc().renderBuffers().bufferSource();
             matrix.translate(startPos.getX(), startPos.getY(), startPos.getZ());
             BlockRenderDispatcher dispatcher = getMc().getBlockRenderer();
             BlockColors blockColors = Minecraft.getInstance().getBlockColors();
-            OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
+
             for (PlacementTarget target : targets) {
                 matrix.pushPose();
                 BlockPos pos = target.pos();
@@ -162,9 +164,13 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
                 float f1 = (float) (color >> 8 & 255) / 255.0F;
                 float f2 = (float) (color & 255) / 255.0F;
 
+                OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
                 dispatcher.renderSingleBlock(state, matrix, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY);
+
                 matrix.popPose();
+                bufferSource.endBatch();
             }
+            RenderSystem.disableDepthTest();
             bufferSource.endBatch();
 
             //renderBuffer.render(matrix.last().pose()); //Actually draw whats in the buffer
@@ -228,13 +234,13 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         });
 */
 //        try {
-        Vec3 projectedView2 = getMc().gameRenderer.getMainCamera().getPosition();
-        Vec3 startPosView = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
-        projectedView2 = projectedView2.subtract(startPosView);
+        //Vec3 projectedView2 = getMc().gameRenderer.getMainCamera().getPosition();
+        //Vec3 startPosView = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
+        //projectedView2 = projectedView2.subtract(startPosView);
         //renderBuffer.sort((float) projectedView2.x(), (float) projectedView2.y(), (float) projectedView2.z());
 //        } catch (Exception ignored) {
 //        }
-        matrix.translate(startPos.getX(), startPos.getY(), startPos.getZ());
+        //matrix.translate(startPos.getX(), startPos.getY(), startPos.getZ());
         //renderBuffer.render(matrix.last().pose()); //Actually draw whats in the buffer
     }
 
