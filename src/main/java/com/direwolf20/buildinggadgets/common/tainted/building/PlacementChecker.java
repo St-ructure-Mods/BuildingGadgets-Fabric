@@ -78,6 +78,9 @@ public record PlacementChecker(EnergyStorage energyStorage, ToLongFunction<Place
                 if (energyStorage.extract(energy, extract) == energy) {
                     extract.commit();
                 }
+                else {
+                    return new CheckResult(match, insertedItems, false);
+                }
             }
         }
 
