@@ -137,7 +137,6 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
     //TODO: fix
     private void renderTargets(PoseStack matrix, Vec3 projectedView, BuildContext context, List<PlacementTarget> targets, BlockPos startPos) {
         tickTrack++;
-        if (/*renderBuffer != null &&*/ tickTrack < 300) {
             if (tickTrack % 30 == 0) {
                 try {
                     Vec3 projectedView2 = projectedView;
@@ -175,7 +174,6 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
 
             //renderBuffer.render(matrix.last().pose()); //Actually draw whats in the buffer
             //return;
-        }
 
 //        List<BlockPos> blockPosList = sorter.getSortedTargets().stream().map(PlacementTarget::getPos).collect(Collectors.toList());
 
