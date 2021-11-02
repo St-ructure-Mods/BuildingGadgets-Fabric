@@ -177,8 +177,8 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
 
 //        List<BlockPos> blockPosList = sorter.getSortedTargets().stream().map(PlacementTarget::getPos).collect(Collectors.toList());
 
-/*        tickTrack = 0;
-        if (renderBuffer != null) //Reset Render Buffer before rebuilding
+        tickTrack = 0;
+/*        if (renderBuffer != null) //Reset Render Buffer before rebuilding
             renderBuffer.close();
         //TODO: FIX GL_INVALID_OPERATION, Invalid VBO usage
         renderBuffer = MultiVBORenderer.of((buffer) -> {
