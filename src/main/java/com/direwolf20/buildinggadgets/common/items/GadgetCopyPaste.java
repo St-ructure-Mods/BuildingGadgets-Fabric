@@ -94,6 +94,12 @@ public class GadgetCopyPaste extends AbstractGadget {
         return BuildingGadgets.getConfig().gadgets.gadgetCopyPaste.energyCost;
     }
 
+
+    @Override
+    public long getEnergyMaxOutput() {
+        return 10000;
+    }
+
     @Override
     public boolean performRotate(ItemStack stack, Player player) {
         return BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).flatMap(provider ->
@@ -274,7 +280,7 @@ public class GadgetCopyPaste extends AbstractGadget {
                     setRegionAndCopy(stack, world, player, posLookingAt.getBlockPos());
                 }
             } else if (getToolMode(stack) == ToolMode.PASTE && !player.isShiftKeyDown()) {
-                getActivePos(player, stack).ifPresent(pos -> build(stack, world, player, pos));
+                getActivePos(player, stack).ifPresent(pos -> build(stack, world, player, pos, hand));
             }
         } else {
             if (player.isShiftKeyDown() && Screen.hasControlDown() && lookingAtInventory) {
@@ -387,7 +393,7 @@ public class GadgetCopyPaste extends AbstractGadget {
         });
     }
 
-    private void build(ItemStack stack, Level world, Player player, BlockPos pos) {
+    private void build(ItemStack stack, Level world, Player player, BlockPos pos, InteractionHand hand) {
         BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(world).ifPresent((ITemplateProvider provider) -> BGComponent.TEMPLATE_KEY_COMPONENT.maybeGet(stack).ifPresent((ITemplateKey key) -> {
             Template template = provider.getTemplateForKey(key);
             BuildContext buildContext = BuildContext.builder()
@@ -399,7 +405,7 @@ public class GadgetCopyPaste extends AbstractGadget {
             if (!checkPlacement(world, player, view.getBoundingBox())) {
                 return;
             }
-            schedulePlacement(stack, view, player);
+            schedulePlacement(stack, view, player, hand);
         }));
     }
 
@@ -429,17 +435,17 @@ public class GadgetCopyPaste extends AbstractGadget {
         return true;
     }
 
-    private void schedulePlacement(ItemStack stack, IBuildView view, Player player) {
+    private void schedulePlacement(ItemStack stack, IBuildView view, Player player, InteractionHand hand) {
         ServerLevel world = view.getContext().getServerWorld();
         IItemIndex index = InventoryHelper.index(stack, player);
         long energyCost = getEnergyCost(stack);
         boolean overwrite = BuildingGadgets.getConfig().general.allowOverwriteBlocks;
         BlockPlaceContext useContext = new BlockPlaceContext(new UseOnContext(player, InteractionHand.MAIN_HAND, VectorHelper.getLookingAt(player, stack)));
         PlacementChecker checker = new PlacementChecker(
-                EnergyStorage.ITEM.find(stack, ContainerItemContext.withInitial(stack)),
+                EnergyStorage.ITEM.find(stack, ContainerItemContext.ofPlayerHand(player, hand)),
                 t -> energyCost,
                 index,
-                (c, t) -> overwrite ? world.getBlockState(t.getPos()).canBeReplaced(useContext) : world.isEmptyBlock(t.getPos()));
+                (c, t) -> overwrite ? world.getBlockState(t.getPos()).canBeReplaced(useContext) && mayInteract((ServerPlayer) player, t.getPos()) : world.isEmptyBlock(t.getPos()) && mayInteract((ServerPlayer) player, t.getPos()));
         PlacementScheduler.schedulePlacement(view, checker, BuildingGadgets.getConfig().gadgets.placeSteps)
                 .withFinisher(p -> {
                     pushUndo(stack, p.getUndoBuilder().build(world), world);

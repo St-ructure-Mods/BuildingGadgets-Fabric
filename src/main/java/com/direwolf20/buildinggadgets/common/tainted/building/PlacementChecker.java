@@ -30,7 +30,6 @@ public record PlacementChecker(EnergyStorage energyStorage, ToLongFunction<Place
     /**
      * @implNote This code is so god damn messy. Good luck understanding it.
      */
-    //TODO fix TR energy returning 0 energy as extracted thus preventing people from placing stuff in survival
     public CheckResult checkPositionWithResult(BuildContext context, PlacementTarget target, boolean giveBackItems, TransactionContext transaction) {
         if (target.getPos().getY() > context.getWorld().getMaxBuildHeight() || target.getPos().getY() < 0 || !placeCheck.test(context, target))
             return new CheckResult(MatchResult.failure(), ImmutableMultiset.of(), false);
@@ -76,7 +75,7 @@ public record PlacementChecker(EnergyStorage energyStorage, ToLongFunction<Place
 
         if (!isCreative) {
             try (Transaction extract = Transaction.openNested(transaction)) {
-                if (energyStorage.extract(energy, transaction) == energy) {
+                if (energyStorage.extract(energy, extract) == energy) {
                     extract.commit();
                 }
             }
