@@ -241,6 +241,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
             this.buffers = ImmutableMap.copyOf(buffers);
         }
 
+        //TODO: Sort verts
         public void sort(float x, float y, float z) {
             // Dire the fucking depth buffer. WHAT THE FUCK
             // Fuck you for putting me through this pain
