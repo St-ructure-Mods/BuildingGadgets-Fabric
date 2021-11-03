@@ -10,8 +10,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 
+import java.util.Iterator;
 import java.util.Objects;
-import java.util.Spliterator;
 import java.util.function.BiConsumer;
 
 public final class CopyScheduler extends SteppedScheduler {
@@ -25,27 +25,33 @@ public final class CopyScheduler extends SteppedScheduler {
     }
 
     private final BiConsumer<ImmutableMap<BlockPos, BlockData>, Region> finisher;
-    private final Spliterator<PlacementTarget> targets;
+    private final Iterator<PlacementTarget> targets;
     private final ImmutableMap.Builder<BlockPos, BlockData> builder;
     private Region.Builder regionBuilder;
 
     private CopyScheduler(BiConsumer<ImmutableMap<BlockPos, BlockData>, Region> finisher, IBuildView worldView, int steps) {
         super(steps);
         this.finisher = finisher;
-        this.targets = worldView.spliterator();
+        this.targets = worldView.iterator();
         this.builder = ImmutableMap.builder();
     }
 
     @Override
     protected StepResult advance() {
-        return StepResult.ofBoolean(targets.tryAdvance(t -> {
+        if (targets.hasNext()) {
+            PlacementTarget t = targets.next();
+
             if (!t.getData().getState().isAir() && ((GadgetCopyPaste) OurItems.COPY_PASTE_GADGET_ITEM).isAllowedBlock(t.getData().getState().getBlock())) {
                 builder.put(t.getPos(), t.getData());
                 if (regionBuilder == null)
                     regionBuilder = Region.enclosingBuilder();
                 regionBuilder.enclose(t.getPos());
             }
-        }));
+
+            return StepResult.SUCCESS;
+        } else {
+            return StepResult.END;
+        }
     }
 
     @Override

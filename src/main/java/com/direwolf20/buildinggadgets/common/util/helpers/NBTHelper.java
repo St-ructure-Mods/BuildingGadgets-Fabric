@@ -8,13 +8,10 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
 
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
+import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.StreamSupport;
 
 /**
  * Utility class providing additional Methods for reading and writing array's which are not normally provided as
@@ -23,8 +20,15 @@ import java.util.stream.StreamSupport;
 
 @Tainted(reason = "Everything here is single use. It should not be a helper")
 public class NBTHelper {
+
     public static <T> ListTag writeIterable(Iterable<T> iterable, Function<? super T, ? extends Tag> serializer) {
-        return StreamSupport.stream(iterable.spliterator(), false).map(serializer).collect(toListNBT());
+        ListTag list = new ListTag();
+
+        for (T t : iterable) {
+            list.add(serializer.apply(t));
+        }
+
+        return list;
     }
 
     public static <K, V> ListTag serializeMap(Map<K, V> map, Function<? super K, ? extends Tag> keySerializer, Function<? super V, ? extends Tag> valueSerializer) {
@@ -84,37 +88,4 @@ public class NBTHelper {
         list.stream().map(entryDeserializer).forEach(p -> toAppendTo.add(p.getA(), p.getB()));
         return toAppendTo;
     }
-
-    public static <T extends Tag> Collector<T, ListTag, ListTag> toListNBT() {
-        return new Collector<>() {
-            @Override
-            public Supplier<ListTag> supplier() {
-                return ListTag::new;
-            }
-
-            @Override
-            public BiConsumer<ListTag, T> accumulator() {
-                return ListTag::add;
-            }
-
-            @Override
-            public BinaryOperator<ListTag> combiner() {
-                return (l1, l2) -> {
-                    l1.addAll(l2);
-                    return l1;
-                };
-            }
-
-            @Override
-            public Function<ListTag, ListTag> finisher() {
-                return Function.identity();
-            }
-
-            @Override
-            public Set<Characteristics> characteristics() {
-                return EnumSet.of(Characteristics.IDENTITY_FINISH, Characteristics.UNORDERED);
-            }
-        };
-    }
-
 }

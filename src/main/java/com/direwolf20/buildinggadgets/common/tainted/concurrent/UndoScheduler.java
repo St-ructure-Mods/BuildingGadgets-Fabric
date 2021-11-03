@@ -16,9 +16,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Spliterator;
 
 public final class UndoScheduler extends SteppedScheduler {
     public static UndoScheduler scheduleUndo(Undo undo, IItemIndex index, BuildContext context, int steps) {
@@ -35,8 +35,7 @@ public final class UndoScheduler extends SteppedScheduler {
         return res;
     }
 
-    private final Spliterator<Map.Entry<BlockPos, BlockInfo>> spliterator;
-    private boolean lastWasSuccess;
+    private final Iterator<Map.Entry<BlockPos, BlockInfo>> iterator;
     private final BuildContext context;
     private final IItemIndex index;
 
@@ -45,42 +44,44 @@ public final class UndoScheduler extends SteppedScheduler {
         assert context.getPlayer() != null;
         assert !context.getStack().isEmpty();
 
-        this.spliterator = undo.getUndoData().entrySet().spliterator();
+        this.iterator = undo.getUndoData().entrySet().iterator();
         this.index = index;
         this.context = context;
     }
 
     @Override
     protected StepResult advance() {
-        if (!spliterator.tryAdvance(this::undoBlock))
+        if (iterator.hasNext()) {
+            return undoBlock(iterator.next());
+        } else {
             return StepResult.END;
-        return lastWasSuccess ? StepResult.SUCCESS : StepResult.FAILURE;
+        }
     }
 
-    private void undoBlock(Map.Entry<BlockPos, BlockInfo> entry) {
+    private StepResult undoBlock(Map.Entry<BlockPos, BlockInfo> entry) {
         //if the block that was placed is no longer there, we should not undo anything
         BlockState state = context.getWorld().getBlockState(entry.getKey());
         BlockEntity be = context.getWorld().getBlockEntity(entry.getKey());
         BlockData data;
         data = TileSupport.createBlockData(state, be);
         if (data.getState().getBlock().defaultBlockState() != entry.getValue().getPlacedData().getState().getBlock().defaultBlockState()) {
-            lastWasSuccess = false;
-            return;
+            return StepResult.FAILURE;
         }
         if (!state.isAir() && !context.getServerWorld().mayInteract(context.getPlayer(), entry.getKey())) {
-            lastWasSuccess = false;
-            return;
+            return StepResult.FAILURE;
         }
 
         try (Transaction transaction = Transaction.openOuter()) {
             MatchResult matchResult = index.match(MaterialList.of(entry.getValue().getProducedItems()), transaction);
-            lastWasSuccess = matchResult.isSuccess();
 
-            if (lastWasSuccess) {
+            if (matchResult.isSuccess()) {
                 index.insert(entry.getValue().getUsedItems(), transaction);
 
                 EffectBlock.spawnUndoBlock(context, new PlacementTarget(entry.getKey(), entry.getValue().getRecordedData()));
                 transaction.commit();
+                return StepResult.SUCCESS;
+            } else {
+                return StepResult.FAILURE;
             }
         }
     }

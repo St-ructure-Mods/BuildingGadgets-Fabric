@@ -43,7 +43,7 @@ public final class PositionalBuildView implements IBuildView {
     @NotNull
     @Override
     public Iterator<PlacementTarget> iterator() {
-        return Iterators.transform(map.entrySet().iterator(), entry -> new PlacementTarget(entry.getKey(), entry.getValue()));
+        return Iterators.transform(map.entrySet().iterator(), entry -> new PlacementTarget(entry.getKey().offset(translation), entry.getValue()));
     }
 
     @Override
@@ -52,7 +52,6 @@ public final class PositionalBuildView implements IBuildView {
         this.translation = pos;
         return this;
     }
-
 
     @Override
     public PositionalBuildView copy() {

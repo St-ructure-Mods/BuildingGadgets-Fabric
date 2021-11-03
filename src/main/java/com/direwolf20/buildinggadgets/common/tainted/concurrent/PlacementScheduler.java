@@ -17,8 +17,8 @@ import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
+import java.util.Iterator;
 import java.util.Objects;
-import java.util.Spliterator;
 import java.util.function.Consumer;
 
 public final class PlacementScheduler extends SteppedScheduler {
@@ -35,9 +35,8 @@ public final class PlacementScheduler extends SteppedScheduler {
     }
 
     private final IBuildView view;
-    private final Spliterator<PlacementTarget> spliterator;
+    private final Iterator<PlacementTarget> iterator;
     private final PlacementChecker checker;
-    private boolean lastWasSuccess;
     private Consumer<PlacementScheduler> finisher;
     private final Undo.Builder undoBuilder;
 
@@ -45,7 +44,7 @@ public final class PlacementScheduler extends SteppedScheduler {
         super(steps);
         this.checker = checker;
         this.view = view;
-        this.spliterator = view.spliterator();
+        this.iterator = view.iterator();
         this.undoBuilder = Undo.builder();
         this.finisher = p -> {
         };
@@ -58,9 +57,11 @@ public final class PlacementScheduler extends SteppedScheduler {
 
     @Override
     protected StepResult advance() {
-        if (!spliterator.tryAdvance(this::checkTarget))
+        if (iterator.hasNext()) {
+            return checkTarget(iterator.next());
+        } else {
             return StepResult.END;
-        return lastWasSuccess ? StepResult.SUCCESS : StepResult.FAILURE;
+        }
     }
 
     public Builder getUndoBuilder() {
@@ -72,12 +73,11 @@ public final class PlacementScheduler extends SteppedScheduler {
         return this;
     }
 
-    private void checkTarget(PlacementTarget target) {
+    private StepResult checkTarget(PlacementTarget target) {
         try (Transaction transaction = Transaction.openOuter()) {
             CheckResult res = checker.checkPositionWithResult(view.getContext(), target, false, transaction);
-            lastWasSuccess = res.isSuccess();
 
-            if (lastWasSuccess) {
+            if (res.isSuccess()) {
                 undoBuilder.record(view.getContext().getWorld(), target.getPos(), target.getData(), res.getMatch().getChosenOption(), res.getInsertedItems());
                 EffectBlock.spawnEffectBlock(view.getContext(), target, Mode.PLACE);
 
@@ -89,6 +89,9 @@ public final class PlacementScheduler extends SteppedScheduler {
                 }
 
                 transaction.commit();
+                return StepResult.SUCCESS;
+            } else {
+                return StepResult.FAILURE;
             }
         }
     }

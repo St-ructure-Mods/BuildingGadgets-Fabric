@@ -33,8 +33,7 @@ public class SurfaceMode extends AbstractMode {
         List<BlockPos> coords = new ArrayList<>();
 
         ConnectedSurface.create(area, context.getWorld(), pos -> isExchanging() ? pos : pos.relative(context.getHitSide().getOpposite()), start, context.getHitSide().getOpposite(), context.getRange(), context.isFuzzy())
-                .spliterator()
-                .forEachRemaining(coords::add);
+                .forEach(coords::add);
 
         return coords;
     }

@@ -6,11 +6,7 @@ public abstract class SteppedScheduler implements BooleanSupplier {
     protected enum StepResult {
         SUCCESS,
         FAILURE,
-        END;
-
-        public static StepResult ofBoolean(boolean b) {
-            return b ? SUCCESS : END;
-        }
+        END,
     }
 
     private final int steps;
