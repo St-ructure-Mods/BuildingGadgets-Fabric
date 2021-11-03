@@ -4,8 +4,6 @@ import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
-import com.direwolf20.buildinggadgets.common.compat.FLANCompat;
-import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.ExchangingModes;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
@@ -263,26 +261,26 @@ public class GadgetExchanger extends AbstractGadget {
         // if (ForgeEventFactory.onBlockPlace(player, blockSnapshot, Direction.UP) || MinecraftForge.EVENT_BUS.post(e))
         //     return;
 
-        this.applyDamage(tool, player);
+        if (this.useEnergy(tool, player)) {
+            MaterialList materials = data.getRequiredItems(
+                    buildContext,
+                    currentBlock,
+                    world.clip(new ClipContext(player.position(), Vec3.atLowerCornerOf(pos), ClipContext.Block.COLLIDER, Fluid.NONE, player)),
+                    pos);
 
-        MaterialList materials = data.getRequiredItems(
-                buildContext,
-                currentBlock,
-                world.clip(new ClipContext(player.position(), Vec3.atLowerCornerOf(pos), ClipContext.Block.COLLIDER, Fluid.NONE, player)),
-                pos);
+            Iterator<ImmutableMultiset<ItemVariant>> it = materials.iterator();
+            Multiset<ItemVariant> producedItems = LinkedHashMultiset.create();
 
-        Iterator<ImmutableMultiset<ItemVariant>> it = materials.iterator();
-        Multiset<ItemVariant> producedItems = LinkedHashMultiset.create();
+            if (buildContext.getStack().isEnchanted() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, buildContext.getStack()) > 0) {
+                producedItems = it.hasNext() ? it.next() : ImmutableMultiset.of();
+            } else {
+                List<ItemStack> drops = Block.getDrops(currentBlock, (ServerLevel) buildContext.getWorld(), pos, buildContext.getWorld().getBlockEntity(pos));
+                producedItems.addAll(drops.stream().map(ItemVariant::of).collect(Collectors.toList()));
+            }
 
-        if (buildContext.getStack().isEnchanted() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, buildContext.getStack()) > 0) {
-            producedItems = it.hasNext() ? it.next() : ImmutableMultiset.of();
-        } else {
-            List<ItemStack> drops = Block.getDrops(currentBlock, (ServerLevel) buildContext.getWorld(), pos, buildContext.getWorld().getBlockEntity(pos));
-            producedItems.addAll(drops.stream().map(ItemVariant::of).collect(Collectors.toList()));
+            index.insert(producedItems, transaction);
+            EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.REPLACE);
         }
-
-        index.insert(producedItems, transaction);
-        EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.REPLACE);
     }
 
     public static ItemStack getGadget(Player player) {

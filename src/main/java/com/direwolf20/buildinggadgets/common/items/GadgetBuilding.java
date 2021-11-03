@@ -3,8 +3,6 @@ package com.direwolf20.buildinggadgets.common.items;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
-import com.direwolf20.buildinggadgets.common.compat.FLANCompat;
-import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
@@ -34,7 +32,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -244,12 +241,12 @@ public class GadgetBuilding extends AbstractGadget {
                 return;
             }
 
-            this.applyDamage(heldItem, player);
-
-            ImmutableMultiset<ItemVariant> usedItems = match.getChosenOption();
-            builder.record(world, pos, setBlock, usedItems, ImmutableMultiset.of());
-            EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.PLACE);
-            transaction.commit();
+            if (this.useEnergy(heldItem, player)) {
+                ImmutableMultiset<ItemVariant> usedItems = match.getChosenOption();
+                builder.record(world, pos, setBlock, usedItems, ImmutableMultiset.of());
+                EffectBlock.spawnEffectBlock(world, pos, setBlock, EffectBlock.Mode.PLACE);
+                transaction.commit();
+            }
         }
     }
 

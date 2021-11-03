@@ -143,12 +143,12 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
         return getEnergyCost(tool) <= SimpleBatteryItem.getStoredEnergyUnchecked(tool);
     }
 
-    public void applyDamage(ItemStack tool, ServerPlayer player) {
+    public boolean useEnergy(ItemStack tool, ServerPlayer player) {
         if (player.isCreative() || this.getEnergyCapacity() == 0) {
-            return;
+            return true;
         }
 
-        ((AbstractGadget) tool.getItem()).tryUseEnergy(tool, getEnergyCost(tool));
+        return ((AbstractGadget) tool.getItem()).tryUseEnergy(tool, getEnergyCost(tool));
     }
 
     protected void addEnergyInformation(List<Component> tooltip, ItemStack stack) {

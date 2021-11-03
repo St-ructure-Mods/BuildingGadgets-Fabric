@@ -4,8 +4,6 @@ import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
-import com.direwolf20.buildinggadgets.common.compat.FLANCompat;
-import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
@@ -22,7 +20,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -250,21 +247,25 @@ public class GadgetDestruction extends AbstractGadget {
         pushUndo(stack, builder.build(world), world);
     }
 
-    private boolean destroyBlock(Level world, BlockPos voidPos, ServerPlayer player, Undo.Builder builder) {
-        if (world.isEmptyBlock(voidPos))
-            return false;
+    private void destroyBlock(Level world, BlockPos voidPos, ServerPlayer player, Undo.Builder builder) {
+        if (world.isEmptyBlock(voidPos)) {
+            return;
+        }
 
         ItemStack tool = getGadget(player);
-        if (tool.isEmpty())
-            return false;
 
-        if (!this.canUse(tool, player))
-            return false;
+        if (tool.isEmpty()) {
+            return;
+        }
 
-        this.applyDamage(tool, player);
-        builder.record(world, voidPos, BlockData.AIR, ImmutableMultiset.of(), ImmutableMultiset.of());
-        EffectBlock.spawnEffectBlock(world, voidPos, TileSupport.createBlockData(world, voidPos), EffectBlock.Mode.REMOVE);
-        return true;
+        if (!this.canUse(tool, player)) {
+            return;
+        }
+
+        if (this.useEnergy(tool, player)) {
+            builder.record(world, voidPos, BlockData.AIR, ImmutableMultiset.of(), ImmutableMultiset.of());
+            EffectBlock.spawnEffectBlock(world, voidPos, TileSupport.createBlockData(world, voidPos), EffectBlock.Mode.REMOVE);
+        }
     }
 
     public static ItemStack getGadget(Player player) {
