@@ -50,25 +50,27 @@ public final class UndoScheduler extends SteppedScheduler {
     }
 
     @Override
-    protected StepResult advance() {
+    protected boolean advance() {
         if (iterator.hasNext()) {
             return undoBlock(iterator.next());
         } else {
-            return StepResult.END;
+            return false;
         }
     }
 
-    private StepResult undoBlock(Map.Entry<BlockPos, BlockInfo> entry) {
+    private boolean undoBlock(Map.Entry<BlockPos, BlockInfo> entry) {
         //if the block that was placed is no longer there, we should not undo anything
         BlockState state = context.getWorld().getBlockState(entry.getKey());
         BlockEntity be = context.getWorld().getBlockEntity(entry.getKey());
         BlockData data;
         data = TileSupport.createBlockData(state, be);
+
         if (data.getState().getBlock().defaultBlockState() != entry.getValue().getPlacedData().getState().getBlock().defaultBlockState()) {
-            return StepResult.FAILURE;
+            return true;
         }
+
         if (!state.isAir() && !context.getServerWorld().mayInteract(context.getPlayer(), entry.getKey())) {
-            return StepResult.FAILURE;
+            return true;
         }
 
         try (Transaction transaction = Transaction.openOuter()) {
@@ -79,15 +81,13 @@ public final class UndoScheduler extends SteppedScheduler {
 
                 EffectBlock.spawnUndoBlock(context, new PlacementTarget(entry.getKey(), entry.getValue().getRecordedData()));
                 transaction.commit();
-                return StepResult.SUCCESS;
-            } else {
-                return StepResult.FAILURE;
             }
         }
+
+        return true;
     }
 
     @Override
     protected void onFinish() {
-
     }
 }

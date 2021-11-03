@@ -3,35 +3,31 @@ package com.direwolf20.buildinggadgets.common.tainted.concurrent;
 import java.util.function.BooleanSupplier;
 
 public abstract class SteppedScheduler implements BooleanSupplier {
-    protected enum StepResult {
-        SUCCESS,
-        FAILURE,
-        END,
-    }
 
     private final int steps;
-    private boolean finished;
 
     public SteppedScheduler(int steps) {
         this.steps = steps;
-        this.finished = false;
     }
 
     @Override
     public boolean getAsBoolean() {
-        if (finished)
-            return false;
-        for (int i = 0; advance() != StepResult.END && i < steps - 1; ++i)
-            ;
-        boolean res = advance() != StepResult.END;
-        if (!res) {
-            this.finished = true;
-            onFinish();
+        int step = 0;
+
+        while (step++ < steps) {
+            if (!advance()) {
+                onFinish();
+                return true;
+            }
         }
-        return res;
+
+        return false;
     }
 
-    protected abstract StepResult advance();
+    /**
+     * @return Should continue advancing
+     */
+    protected abstract boolean advance();
 
     protected abstract void onFinish();
 }

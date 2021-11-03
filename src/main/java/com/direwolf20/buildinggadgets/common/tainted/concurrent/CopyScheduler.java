@@ -37,20 +37,23 @@ public final class CopyScheduler extends SteppedScheduler {
     }
 
     @Override
-    protected StepResult advance() {
+    protected boolean advance() {
         if (targets.hasNext()) {
             PlacementTarget t = targets.next();
 
             if (!t.getData().getState().isAir() && ((GadgetCopyPaste) OurItems.COPY_PASTE_GADGET_ITEM).isAllowedBlock(t.getData().getState().getBlock())) {
                 builder.put(t.getPos(), t.getData());
-                if (regionBuilder == null)
+
+                if (regionBuilder == null) {
                     regionBuilder = Region.enclosingBuilder();
+                }
+
                 regionBuilder.enclose(t.getPos());
             }
 
-            return StepResult.SUCCESS;
+            return true;
         } else {
-            return StepResult.END;
+            return false;
         }
     }
 

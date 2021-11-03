@@ -56,11 +56,11 @@ public final class PlacementScheduler extends SteppedScheduler {
     }
 
     @Override
-    protected StepResult advance() {
+    protected boolean advance() {
         if (iterator.hasNext()) {
             return checkTarget(iterator.next());
         } else {
-            return StepResult.END;
+            return false;
         }
     }
 
@@ -73,7 +73,7 @@ public final class PlacementScheduler extends SteppedScheduler {
         return this;
     }
 
-    private StepResult checkTarget(PlacementTarget target) {
+    private boolean checkTarget(PlacementTarget target) {
         try (Transaction transaction = Transaction.openOuter()) {
             CheckResult res = checker.checkPositionWithResult(view.getContext(), target, false, transaction);
 
@@ -89,10 +89,9 @@ public final class PlacementScheduler extends SteppedScheduler {
                 }
 
                 transaction.commit();
-                return StepResult.SUCCESS;
-            } else {
-                return StepResult.FAILURE;
             }
         }
+
+        return true;
     }
 }
