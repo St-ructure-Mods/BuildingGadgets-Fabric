@@ -154,7 +154,6 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
             return;
         }
 
-//        List<BlockPos> blockPosList = sorter.getSortedTargets().stream().map(PlacementTarget::getPos).collect(Collectors.toList());
 
         tickTrack = 0;
         if (renderBuffer != null) //Reset Render Buffer before rebuilding
@@ -173,13 +172,12 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
                 BlockState state = context.getWorld().getBlockState(target.getPos());
 
                 stack.pushPose(); //Save position again
-                //matrix.translate(-startPos.getX(), -startPos.getY(), -startPos.getZ());
                 stack.translate(targetPos.getX(), targetPos.getY(), targetPos.getZ());
 
                 try {
                     if (state.getRenderShape() == RenderShape.MODEL) {
                         dispatcher.renderSingleBlock(state, stack, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY);
-                        //renderModelBrightnessColorQuads(stack.last(), noDepthbuilder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, null, new Random(Mth.getSeed(targetPos))), 15728640, 655360);
+
                     }
                 } catch (Exception e) {
                     BuildingGadgets.LOG.trace("Caught exception whilst rendering {}.", state, e);
@@ -189,13 +187,10 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
             }
             stack.popPose(); //Load after loop
         });
-//        try {
         Vec3 projectedView2 = getMc().gameRenderer.getMainCamera().getPosition();
         Vec3 startPosView = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
         projectedView2 = projectedView2.subtract(startPosView);
         renderBuffer.sort((float) projectedView2.x(), (float) projectedView2.y(), (float) projectedView2.z());
-//        } catch (Exception ignored) {
-//        }
         matrix.translate(startPos.getX(), startPos.getY(), startPos.getZ());
         renderBuffer.render(matrix.last().pose()); //Actually draw whats in the buffer
     }
