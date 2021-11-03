@@ -4,16 +4,14 @@ import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
-import com.direwolf20.buildinggadgets.common.util.spliterator.DelegatingSpliterator;
 import net.minecraft.core.BlockPos;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Spliterator;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 /**
  * An {@link IBuildView} which views a {@link Region} in an {@link IWorld} as an {@link IBuildView}. {@link PlacementTarget PlacementTargets}
@@ -26,6 +24,7 @@ import java.util.function.Consumer;
  * to evaluate all {@link BlockData} instances described by this {@link IBuildView view}.
  */
 public final class WorldBuildView implements IBuildView {
+
     private final BuildContext context;
     private final Region region;
     private final BiFunction<BuildContext, BlockPos, Optional<BlockData>> dataFactory;
@@ -49,20 +48,19 @@ public final class WorldBuildView implements IBuildView {
         this.translation = BlockPos.ZERO;
     }
 
+    @NotNull
     @Override
-    public Spliterator<PlacementTarget> spliterator() {
-        return new WorldBackedSpliterator(getBoundingBox().stream().spliterator(), translation, dataFactory, getContext());
+    public Iterator<PlacementTarget> iterator() {
+        return getBoundingBox().stream()
+                .map(pos -> dataFactory.apply(context, pos).map(data -> new PlacementTarget(pos.offset(translation), data)).orElse(null))
+                .filter(Objects::nonNull)
+                .iterator();
     }
 
     @Override
     public WorldBuildView translateTo(BlockPos pos) {
         this.translation = pos;
         return this;
-    }
-
-    @Override
-    public int estimateSize() {
-        return region.size();
     }
 
     @Override
@@ -77,48 +75,5 @@ public final class WorldBuildView implements IBuildView {
 
     public Region getBoundingBox() {
         return region;
-    }
-
-    private static final class WorldBackedSpliterator extends DelegatingSpliterator<BlockPos, PlacementTarget> {
-        private final BlockPos translation;
-        private final BiFunction<BuildContext, BlockPos, Optional<BlockData>> dataFactory;
-        private final BuildContext context;
-
-        private WorldBackedSpliterator(Spliterator<BlockPos> other, BlockPos translation, BiFunction<BuildContext, BlockPos, Optional<BlockData>> dataFactory, BuildContext context) {
-            super(other);
-            this.translation = translation;
-            this.dataFactory = dataFactory;
-            this.context = context;
-        }
-
-        @Override
-        protected boolean advance(BlockPos object, Consumer<? super PlacementTarget> action) {
-            Optional<BlockData> dataOptional = dataFactory.apply(context, object);
-            if (dataOptional.isPresent()) {
-                BlockData data = dataOptional.get();
-                action.accept(new PlacementTarget(object.offset(translation), data));
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public Comparator<? super PlacementTarget> getComparator() {
-            return Comparator.comparing(PlacementTarget::getPos);
-        }
-
-        @Override
-        @Nullable
-        public Spliterator<PlacementTarget> trySplit() {
-            Spliterator<BlockPos> other = getOther().trySplit();
-            if (other != null)
-                return new WorldBackedSpliterator(other, translation, dataFactory, context);
-            return null;
-        }
-
-        @Override
-        public int characteristics() {
-            return ORDERED | SORTED | DISTINCT;
-        }
     }
 }

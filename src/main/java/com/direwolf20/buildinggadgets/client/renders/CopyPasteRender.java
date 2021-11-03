@@ -37,8 +37,8 @@ import java.io.Closeable;
 import java.util.*;
 import java.util.function.Consumer;
 
-
 public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
+
     private MultiVBORenderer renderBuffer;
     private int tickTrack = 0;
     private UUID lastRendered = null;
@@ -119,7 +119,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
                 IBuildView view = provider.getTemplateForKey(key).createViewInContext(context);
 
                 // Sort the render
-                List<PlacementTarget> targets = new ArrayList<>(view.estimateSize());
+                List<PlacementTarget> targets = new ArrayList<>();
                 for (PlacementTarget target : view) {
                     if (target.placeIn(context)) {
                         targets.add(target);

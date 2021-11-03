@@ -3,13 +3,14 @@ package com.direwolf20.buildinggadgets.common.tainted.building.view;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
-import com.direwolf20.buildinggadgets.common.util.spliterator.MappingSpliterator;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterators;
 import net.minecraft.core.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Spliterator;
 
 /**
  * A simple {@link IBuildView} backed by a {@link Map Map<BlockPos, BlockData>}. {@link PlacementTarget PlacementTargets} will be created
@@ -18,11 +19,11 @@ import java.util.Spliterator;
  * created.
  */
 public final class PositionalBuildView implements IBuildView {
+
     private final Map<BlockPos, BlockData> map;
     private Region boundingBox;
     private BlockPos translation;
     private final BuildContext context;
-
 
     public static PositionalBuildView createUnsafe(BuildContext context, Map<BlockPos, BlockData> map, Region boundingBox) {
         return new PositionalBuildView(
@@ -39,10 +40,10 @@ public final class PositionalBuildView implements IBuildView {
         this.translation = BlockPos.ZERO;
     }
 
+    @NotNull
     @Override
-    public Spliterator<PlacementTarget> spliterator() {
-        BlockPos translation = this.translation;
-        return new MappingSpliterator<>(map.entrySet().spliterator(), e -> new PlacementTarget(e.getKey().offset(translation), e.getValue()));
+    public Iterator<PlacementTarget> iterator() {
+        return Iterators.transform(map.entrySet().iterator(), entry -> new PlacementTarget(entry.getKey(), entry.getValue()));
     }
 
     @Override
@@ -50,11 +51,6 @@ public final class PositionalBuildView implements IBuildView {
         boundingBox = boundingBox.translate(pos.subtract(translation));//translate the bounding box to the correct position
         this.translation = pos;
         return this;
-    }
-
-    @Override
-    public int estimateSize() {
-        return map.size();
     }
 
 
