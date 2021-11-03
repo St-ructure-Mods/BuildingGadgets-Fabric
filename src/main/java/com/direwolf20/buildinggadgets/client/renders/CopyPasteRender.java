@@ -20,19 +20,16 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -42,7 +39,6 @@ import java.io.Closeable;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.direwolf20.buildinggadgets.client.renderer.MyRenderMethods.renderModelBrightnessColorQuads;
 
 public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
     private MultiVBORenderer renderBuffer;
@@ -163,10 +159,9 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         tickTrack = 0;
         if (renderBuffer != null) //Reset Render Buffer before rebuilding
             renderBuffer.close();
-        //TODO: FIX GL_INVALID_OPERATION, Invalid VBO usage
+
         renderBuffer = MultiVBORenderer.of((buffer) -> {
-            VertexConsumer builder = buffer.getBuffer(RenderType.solid());
-            VertexConsumer noDepthbuilder = buffer.getBuffer(RenderType.solid());
+            OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(buffer, .7f);
 
             BlockRenderDispatcher dispatcher = getMc().getBlockRenderer();
 
@@ -181,29 +176,10 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
                 //matrix.translate(-startPos.getX(), -startPos.getY(), -startPos.getZ());
                 stack.translate(targetPos.getX(), targetPos.getY(), targetPos.getZ());
 
-                BakedModel ibakedmodel = dispatcher.getBlockModel(state);
-                BlockColors blockColors = Minecraft.getInstance().getBlockColors();
-                int color = blockColors.getColor(state, context.getWorld(), targetPos, 0);
-
-                float f = (float) (color >> 16 & 255) / 255.0F;
-                float f1 = (float) (color >> 8 & 255) / 255.0F;
-                float f2 = (float) (color & 255) / 255.0F;
                 try {
                     if (state.getRenderShape() == RenderShape.MODEL) {
-                        for (Direction direction : Direction.values()) {
-                            // TODO: likely broken this
-                            if (Block.shouldRenderFace(state, context.getWorld(), targetPos, direction, target.getPos()) && !(context.getWorld().getBlockState(targetPos.relative(direction)).getBlock().equals(state.getBlock()))) {
-                                if (state.getMaterial().isSolidBlocking()) {
-                                    renderModelBrightnessColorQuads(stack.last(), builder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, direction, new Random(Mth.getSeed(targetPos))), 15728640, 655360);
-                                } else {
-                                    renderModelBrightnessColorQuads(stack.last(), noDepthbuilder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, direction, new Random(Mth.getSeed(targetPos))), 15728640, 655360);
-                                }
-                            }
-                        }
-                        if (state.getMaterial().isSolidBlocking())
-                            renderModelBrightnessColorQuads(stack.last(), builder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, null, new Random(Mth.getSeed(targetPos))), 15728640, 655360);
-                        else
-                            renderModelBrightnessColorQuads(stack.last(), noDepthbuilder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, null, new Random(Mth.getSeed(targetPos))), 15728640, 655360);
+                        dispatcher.renderSingleBlock(state, stack, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY);
+                        //renderModelBrightnessColorQuads(stack.last(), noDepthbuilder, f, f1, f2, 0.7f, ibakedmodel.getQuads(state, null, new Random(Mth.getSeed(targetPos))), 15728640, 655360);
                     }
                 } catch (Exception e) {
                     BuildingGadgets.LOG.trace("Caught exception whilst rendering {}.", state, e);
@@ -285,13 +261,13 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         }
 
         public void render(Matrix4f modelViewMatrix) {
+
             buffers.forEach((rt, vbo) -> {
-                VertexFormat fmt = rt.format();
+                RenderSystem.setShader(GameRenderer::getPositionTexColorNormalShader);
 
                 rt.setupRenderState();
-                fmt.setupBufferState();
+                vbo.bind();
                 vbo.drawWithShader(modelViewMatrix, RenderSystem.getProjectionMatrix(), RenderSystem.getShader());
-                fmt.clearBufferState();
                 rt.clearRenderState();
             });
         }
