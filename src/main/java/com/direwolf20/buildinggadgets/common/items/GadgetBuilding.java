@@ -219,7 +219,7 @@ public class GadgetBuilding extends AbstractGadget {
     }
 
     private void placeBlock(Level world, ServerPlayer player, IItemIndex index, Undo.Builder builder, BlockPos pos, BlockData setBlock) {
-        if ((pos.getY() > world.getMaxBuildHeight() || pos.getY() < 0) || !player.mayBuild())
+        if ((pos.getY() > world.getMaxBuildHeight() || pos.getY() < world.getMinBuildHeight()) || !player.mayBuild())
             return;
 
         ItemStack heldItem = getGadget(player);

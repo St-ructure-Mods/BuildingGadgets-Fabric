@@ -31,7 +31,7 @@ public record PlacementChecker(EnergyStorage energyStorage, ToLongFunction<Place
      * @implNote This code is so god damn messy. Good luck understanding it.
      */
     public CheckResult checkPositionWithResult(BuildContext context, PlacementTarget target, boolean giveBackItems, TransactionContext transaction) {
-        if (target.getPos().getY() > context.getWorld().getMaxBuildHeight() || target.getPos().getY() < 0 || !placeCheck.test(context, target))
+        if (target.getPos().getY() > context.getWorld().getMaxBuildHeight() || target.getPos().getY() < context.getWorld().getMinBuildHeight() || !placeCheck.test(context, target))
             return new CheckResult(MatchResult.failure(), ImmutableMultiset.of(), false);
         long energy = energyFun.applyAsLong(target);
         Multiset<ItemVariant> insertedItems = ImmutableMultiset.of();
