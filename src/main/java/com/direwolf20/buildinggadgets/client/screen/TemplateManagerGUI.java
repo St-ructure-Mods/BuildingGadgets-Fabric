@@ -67,6 +67,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.anti_ad.mc.ipn.api.IPNIgnore;
 
 import java.awt.*;
 import java.util.Comparator;
@@ -74,6 +75,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+@IPNIgnore
 public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerContainer> {
     private static final ResourceLocation background = new ResourceLocation(Reference.MODID, "textures/gui/template_manager.png");
 
