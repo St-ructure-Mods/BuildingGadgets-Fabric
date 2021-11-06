@@ -81,6 +81,8 @@ dependencies {
     modImplementation("io.github.flemmli97:flan:${project.minecraft_version}-${project.flan_version}") {
         transitive = false //Remove this if you want to have all those optional dependencies
     }
+    modCompileOnly "org.anti-ad.mc:inventory-profiles-next:fabric-1.17.1-${project.ipn_version}"
+
 }
 
 base {
