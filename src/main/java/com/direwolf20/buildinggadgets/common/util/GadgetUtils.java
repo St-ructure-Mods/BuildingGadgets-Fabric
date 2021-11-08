@@ -75,7 +75,6 @@ public class GadgetUtils {
                 if (header.getAuthor() != null && !header.getAuthor().isEmpty())
                     tooltip.add(TooltipTranslation.TEMPLATE_AUTHOR.componentTranslation(header.getAuthor()).setStyle(Styles.AQUA));
             });
-            EventUtil.addTemplatePadding(stack, tooltip);
         });
     }
 

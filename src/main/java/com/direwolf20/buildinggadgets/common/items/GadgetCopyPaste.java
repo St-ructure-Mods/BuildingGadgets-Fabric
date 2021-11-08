@@ -2,6 +2,8 @@ package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
+import com.direwolf20.buildinggadgets.client.screen.tooltip.TemplateData;
+import com.direwolf20.buildinggadgets.client.screen.tooltip.TemplateTooltip;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideBuildSizeCommand;
@@ -45,6 +47,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -461,5 +464,10 @@ public class GadgetCopyPaste extends AbstractGadget {
 
     private void sendMessage(ItemStack stack, Player player, ITranslationProvider messageSource, Style style) {
         player.displayClientMessage(messageSource.componentTranslation().setStyle(style), true);
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack itemStack) {
+        return Optional.of(new TemplateData(itemStack));
     }
 }

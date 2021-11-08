@@ -1,12 +1,14 @@
 package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
+import com.direwolf20.buildinggadgets.client.screen.tooltip.TemplateData;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.util.GadgetUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -14,6 +16,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TemplateItem extends Item {
 
@@ -51,5 +54,10 @@ public class TemplateItem extends Item {
             return offhand;
 
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack itemStack) {
+        return Optional.of(new TemplateData(itemStack));
     }
 }
