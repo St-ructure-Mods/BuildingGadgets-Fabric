@@ -4,7 +4,6 @@
   "package": "com.direwolf20.buildinggadgets.common.mixins",
   "compatibilityLevel": "JAVA_16",
   "client": [
-    "client.ClientTooltipComponentMixin"
   ],
   "injectors": {
     "defaultRequire": 1

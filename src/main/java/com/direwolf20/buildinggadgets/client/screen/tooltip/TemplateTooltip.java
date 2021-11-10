@@ -118,7 +118,6 @@ public class TemplateTooltip implements ClientTooltipComponent {
             int totalMissing = 0;
             //add missing offset because the Stack is 16 by 16 as a render, not 9 by 9
             //needs to be 8 instead of 7, so that there is a one pixel padding to the text, just as there is between stacks
-            by += 8;
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             for (Multiset.Entry<ItemVariant> entry : sortedEntries) {

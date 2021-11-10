@@ -14,4 +14,8 @@ public class TemplateData implements TooltipComponent {
     public ItemStack getStack() {
         return this.stack;
     }
+
+    public TemplateTooltip clientTooltip() {
+        return new TemplateTooltip(this);
+    }
 }
