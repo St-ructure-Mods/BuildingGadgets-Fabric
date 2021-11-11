@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.9-SNAPSHOT'
+    id 'fabric-loom' version '0.10-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -72,7 +72,7 @@ dependencies {
     include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-world:${project.cca_version}")
     include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-level:${project.cca_version}")
 
-    modRuntime("dev.architectury:architectury-fabric:${project.architectury_version}")
+    modRuntimeOnly("dev.architectury:architectury-fabric:${project.architectury_version}")
     modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
 
     modImplementation "com.jamieswhiteshirt:rtree-3i-lite-fabric:${project.rtree_version}"
