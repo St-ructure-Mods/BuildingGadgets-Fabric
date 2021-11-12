@@ -11,7 +11,7 @@
     <a href="https://github.com/ProjectET/BuildingGadgets-Fabric/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/ProjectET/BuildingGadgets-Fabric"></a>
     <a href="https://discord.gg/wrBTFWQXD4"><img alt="discord" src="https://img.shields.io/discord/898724484134096896" ></a>
     <a href="https://github.com/ProjectET/BuildingGadgets-Fabric/releases/latest"><img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/ProjectET/BuildingGadgets-Fabric"></a>
-    <a href="https://github.com/ProjectET/BuildingGadgets-Fabric/tree/master/src/main/java/com/direwolf20/buildinggadgets"><img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/ProjectET/BuildingGadgets-Fabric"></a>
+    <a href="https://github.com/ProjectET/BuildingGadgets-Fabric/tree/1.17-fabric/src/main/java/com/direwolf20/buildinggadgets"><img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/ProjectET/BuildingGadgets-Fabric"></a>
 </p>
 
 # Welcome to st'ructure tools!
