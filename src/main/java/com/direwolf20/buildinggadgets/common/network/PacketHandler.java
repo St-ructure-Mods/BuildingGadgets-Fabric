@@ -31,6 +31,8 @@ public class PacketHandler {
 
     public static final ResourceLocation PacketRequestTemplate = BuildingGadgets.id("packet_request_template");
 
+    public static final ResourceLocation PacketLookupResult = BuildingGadgets.id("packet_lookup_result");
+
     public static void registerMessages() {
         ServerPlayNetworking.registerGlobalReceiver(PacketAnchor, new PacketAnchor());
         ServerPlayNetworking.registerGlobalReceiver(PacketBindTool, new PacketBindTool());

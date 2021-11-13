@@ -2,6 +2,8 @@ package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
+import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
+import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -12,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -55,7 +58,9 @@ public class InventoryLinker {
             return Optional.empty();
         }
 
-        Storage<ItemVariant> storage = ItemStorage.SIDED.find(world, link.blockPos(), link.face());
+        //TODO: Horrible hack i hope can make this better
+        Storage<ItemVariant> storage = null;
+        if(world.getBlockEntity(link.blockPos) instanceof Container) storage = InventoryStorage.of((Container) world.getBlockEntity(link.blockPos), link.face);
 
         if (storage == null) {
             // Unlink if the storage no longer exists

@@ -7,6 +7,7 @@ import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketRotateMirror;
+import com.direwolf20.buildinggadgets.common.network.S2C.LookupResult;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.IItemIndex;
@@ -24,6 +25,7 @@ import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference.TagReference;
 import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
 import com.google.common.collect.ImmutableMultiset;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.gui.screens.Screen;
@@ -131,12 +133,19 @@ public class GadgetBuilding extends AbstractGadget {
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         //On item use, if sneaking, select the block clicked on, else build -- This is called when you right click a tool NOT on a block.
         ItemStack itemstack = player.getItemInHand(hand);
+        BlockHitResult posLookingAt = VectorHelper.getLookingAt(player, itemstack);
 
         player.startUsingItem(hand);
         if (!world.isClientSide) {
+            boolean lookingAtInventory = ItemStorage.SIDED.find(world, posLookingAt.getBlockPos(), posLookingAt.getDirection()) != null;
             // Debug code for free energy
             //itemstack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> e.receiveEnergy(15000000, false));
             if (player.isShiftKeyDown()) {
+                if (lookingAtInventory) {
+                    LookupResult.sendToClient((ServerPlayer) player, lookingAtInventory);
+                    return InteractionResultHolder.pass(itemstack);
+                }
+
                 InteractionResultHolder<Block> result = selectBlock(itemstack, player);
                 if (!result.getResult().consumesAction()) {
                     player.displayClientMessage(MessageTranslation.INVALID_BLOCK.componentTranslation(result.getObject().getName()).setStyle(Styles.AQUA), true);
@@ -148,10 +157,6 @@ public class GadgetBuilding extends AbstractGadget {
         } else {
             if (!player.isShiftKeyDown()) {
                 BaseRenderer.updateInventoryCache();
-            } else {
-                if (Screen.hasControlDown()) {
-                    PacketBindTool.send();
-                }
             }
         }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
