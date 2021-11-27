@@ -52,7 +52,6 @@ public class TemplateItem extends Item {
         ItemStack offhand = player.getOffhandItem();
         if (BGComponent.TEMPLATE_KEY_COMPONENT.isProvidedBy(offhand))
             return offhand;
-
         return ItemStack.EMPTY;
     }
 
