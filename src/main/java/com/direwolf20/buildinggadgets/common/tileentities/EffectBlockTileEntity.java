@@ -5,10 +5,13 @@ import com.direwolf20.buildinggadgets.common.tainted.Tainted;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Tainted(reason = "Used blockData and a stupid non-centralised callback system")
-public class EffectBlockTileEntity extends BlockEntity implements BlockEntityClientSerializable {
+public class EffectBlockTileEntity extends BlockEntity {
 
     private BlockData renderedBlock;
     /**
@@ -69,10 +72,6 @@ public class EffectBlockTileEntity extends BlockEntity implements BlockEntityCli
 
     public void setRenderedBlock(BlockData renderedBlock) {
         this.renderedBlock = renderedBlock;
-
-        if (level instanceof ServerLevel) {
-            sync();
-        }
     }
 
     public BlockData getSourceBlock() {
@@ -93,15 +92,14 @@ public class EffectBlockTileEntity extends BlockEntity implements BlockEntityCli
 
     @NotNull
     @Override
-    public CompoundTag save(@NotNull CompoundTag compound) {
+    public void saveAdditional(@NotNull CompoundTag compound) {
+        super.saveAdditional(compound);
         if (mode != null && getRenderedBlock() != null && sourceBlock != null) {
             compound.putInt(NBTKeys.GADGET_TICKS, ticks);
             compound.putInt(NBTKeys.GADGET_MODE, mode.ordinal());
             compound.put(NBTKeys.GADGET_REPLACEMENT_BLOCK, getRenderedBlock().serialize(true));
             compound.put(NBTKeys.GADGET_SOURCE_BLOCK, sourceBlock.serialize(true));
         }
-
-        return super.save(compound);
     }
 
     @Override
@@ -121,12 +119,23 @@ public class EffectBlockTileEntity extends BlockEntity implements BlockEntityCli
     }
 
     @Override
-    public void fromClientTag(CompoundTag tag) {
-        load(tag);
+    public void setChanged() {
+        super.setChanged();
+        if (level instanceof ServerLevel) {
+            ((ServerChunkCache) level.getChunkSource()).blockChanged(getBlockPos());
+        }
     }
 
     @Override
-    public CompoundTag toClientTag(CompoundTag tag) {
-        return save(tag);
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
+        return tag;
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

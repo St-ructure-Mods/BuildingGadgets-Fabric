@@ -2,7 +2,6 @@ package com.direwolf20.buildinggadgets.common.tainted.inventory;
 
 import com.direwolf20.buildinggadgets.common.util.lang.MessageTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;

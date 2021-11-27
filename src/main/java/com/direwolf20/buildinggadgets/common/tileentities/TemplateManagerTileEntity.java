@@ -13,6 +13,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.ContainerHelper;
@@ -61,16 +66,36 @@ public class TemplateManagerTileEntity extends BlockEntity implements ExtendedSc
         super.load(compound);
     }
 
-    @NotNull
     @Override
-    public CompoundTag save(CompoundTag compound) {
+    public void saveAdditional(CompoundTag compound) {
         ContainerHelper.saveAllItems(compound, inventory);
-        return super.save(compound);
+        super.saveAdditional(compound);
     }
 
     public boolean canInteractWith(Player playerIn) {
         // If we are too far away (>4 blocks) from this tile entity you cannot use it
         return !isRemoved() && playerIn.distanceToSqr(Vec3.atLowerCornerOf(worldPosition).add(0.5D, 0.5D, 0.5D)) <= 64D;
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (level instanceof ServerLevel) {
+            ((ServerChunkCache) level.getChunkSource()).blockChanged(getBlockPos());
+        }
+    }
+
+    @Override
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
+        return tag;
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

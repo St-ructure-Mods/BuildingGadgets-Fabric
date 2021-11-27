@@ -51,10 +51,7 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.17.1:${project.parchment_version}@zip")
-    }
+    mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
@@ -75,13 +72,12 @@ dependencies {
     modRuntimeOnly("dev.architectury:architectury-fabric:${project.architectury_version}")
     modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
 
-    modImplementation "com.jamieswhiteshirt:rtree-3i-lite-fabric:${project.rtree_version}"
-    modImplementation "com.github.Draylar:get-off-my-lawn:${project.goml_version}"
+    modCompileOnly "com.github.Draylar:get-off-my-lawn:${project.goml_version}"
 
-    modImplementation("io.github.flemmli97:flan:${project.minecraft_version}-${project.flan_version}") {
+    modCompileOnly("io.github.flemmli97:flan:1.17.1-${project.flan_version}") {
         transitive = false //Remove this if you want to have all those optional dependencies
     }
-    modCompileOnly "org.anti-ad.mc:inventory-profiles-next:fabric-1.17.1-${project.ipn_version}"
+//    modCompileOnly "org.anti-ad.mc:inventory-profiles-next:fabric-1.18-rc2-${project.ipn_version}"
 
 }
 

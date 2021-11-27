@@ -82,7 +82,7 @@ public class TemplateTooltip implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderImage(Font font, int xin, int yin, PoseStack poseStack, ItemRenderer itemRenderer, int k, TextureManager textureManager) {
+    public void renderImage(Font font, int xin, int yin, PoseStack poseStack, ItemRenderer itemRenderer, int k) {
         if (!Screen.hasShiftDown())
             return;
 

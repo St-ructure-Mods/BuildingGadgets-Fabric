@@ -16,7 +16,7 @@ public record NBTTileEntityData(@NotNull CompoundTag nbt,
                                 @Nullable MaterialList requiredMaterials) implements ITileEntityData {
     public static NBTTileEntityData ofTile(BlockEntity be) {
         CompoundTag nbt = new CompoundTag();
-        be.save(nbt);
+        be.saveWithId();
         return new NBTTileEntityData(nbt, null);
     }
 
