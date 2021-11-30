@@ -49,7 +49,8 @@
     "minecraft": ">=1.18-rc.3 <1.19-",
     "fabricloader": ">=0.12.0",
     "fabric": ">=0.43.1",
-    "cloth-config2": ">=6.0.42"
+    "cloth-config2": ">=6.0.42",
+    "cardinal-components-base": ">=4.0.0"
   },
   "custom": {
     "cardinal-components": [

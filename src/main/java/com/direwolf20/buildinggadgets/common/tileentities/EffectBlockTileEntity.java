@@ -90,7 +90,6 @@ public class EffectBlockTileEntity extends BlockEntity {
         return 20;
     }
 
-    @NotNull
     @Override
     public void saveAdditional(@NotNull CompoundTag compound) {
         super.saveAdditional(compound);
