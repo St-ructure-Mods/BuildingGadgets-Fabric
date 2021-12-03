@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.network.bidirection;
 
-import com.direwolf20.buildinggadgets.client.ClientProxy;
+import com.direwolf20.buildinggadgets.client.BuildingGadgetsClient;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.Target;
@@ -45,7 +45,7 @@ public class PacketRequestTemplate {
         public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
             UUID id = buf.readUUID();
 
-            client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.requestRemoteUpdate(new TemplateKey(id), client.level));
+            client.execute(() -> BuildingGadgetsClient.CACHE_TEMPLATE_PROVIDER.requestRemoteUpdate(new TemplateKey(id), client.level));
         }
     }
 

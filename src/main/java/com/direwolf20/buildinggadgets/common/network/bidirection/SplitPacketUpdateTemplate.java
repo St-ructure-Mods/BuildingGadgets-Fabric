@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.network.bidirection;
 
-import com.direwolf20.buildinggadgets.client.ClientProxy;
+import com.direwolf20.buildinggadgets.client.BuildingGadgetsClient;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.Target;
@@ -76,7 +76,7 @@ public class SplitPacketUpdateTemplate {
 
             try {
                 Template template = readTemplate(buf);
-                client.execute(() -> ClientProxy.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), template));
+                client.execute(() -> BuildingGadgetsClient.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), template));
             } catch (TemplateReadException e) {
                 e.printStackTrace();
             }
