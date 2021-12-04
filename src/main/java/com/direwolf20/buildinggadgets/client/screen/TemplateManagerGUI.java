@@ -34,7 +34,6 @@ import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 import com.google.gson.JsonParseException;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -68,7 +67,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-//import org.anti_ad.mc.ipn.api.IPNIgnore;
+import org.anti_ad.mc.ipn.api.IPNIgnore;
 
 import java.awt.*;
 import java.util.Comparator;
@@ -76,7 +75,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-//@IPNIgnore
+@IPNIgnore
 public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerContainer> {
     private static final ResourceLocation background = new ResourceLocation(Reference.MODID, "textures/gui/template_manager.png");
 

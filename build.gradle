@@ -18,6 +18,14 @@ repositories {
     }
 
     maven {
+        name = "Curse Maven"
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+
+    maven {
         name = 'Ladysnake Mods'
         url = 'https://ladysnake.jfrog.io/artifactory/mods'
     }
@@ -74,10 +82,14 @@ dependencies {
 
     modCompileOnly "com.github.Draylar:get-off-my-lawn:${project.goml_version}"
 
-    modCompileOnly("io.github.flemmli97:flan:1.17.1-${project.flan_version}") {
+    modCompileOnly("io.github.flemmli97:flan:${minecraft_version}-${flan_version}:fabric-api") {
         transitive = false //Remove this if you want to have all those optional dependencies
     }
-//    modCompileOnly "org.anti-ad.mc:inventory-profiles-next:fabric-1.18-rc2-${project.ipn_version}"
+    modRuntime("io.github.flemmli97:flan:${minecraft_version}-${flan_version}:fabric") {
+        transitive = false //Remove this if you want to have all those optional dependencies
+    }
+
+    modCompileOnly "curse.maven:IPN-495267:3543808"
 
 }
 
