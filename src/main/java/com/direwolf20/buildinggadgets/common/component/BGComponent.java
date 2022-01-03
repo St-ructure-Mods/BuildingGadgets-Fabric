@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.common.component;
 
 import com.direwolf20.buildinggadgets.client.BuildingGadgetsClient;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.common.compat.NoWorldCompat;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.tainted.save.SaveTemplateProvider;
 import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
@@ -14,6 +15,7 @@ import dev.onyxstudios.cca.api.v3.level.LevelComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.level.LevelComponentInitializer;
 import dev.onyxstudios.cca.api.v3.world.WorldComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.world.WorldComponentInitializer;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.level.ServerLevel;
 
 public class BGComponent implements ItemComponentInitializer, WorldComponentInitializer, LevelComponentInitializer {
@@ -33,9 +35,11 @@ public class BGComponent implements ItemComponentInitializer, WorldComponentInit
         registry.register(TEMPLATE_PROVIDER_COMPONENT, world -> {
             if (world instanceof ServerLevel) {
                 return new SaveTemplateProvider();
-            } else {
+            }
+            else if (world instanceof ClientLevel){
                 return BuildingGadgetsClient.CACHE_TEMPLATE_PROVIDER;
             }
+            else return new NoWorldCompat();
         });
     }
 

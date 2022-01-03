@@ -82,10 +82,10 @@ dependencies {
 
     modCompileOnly "com.github.Draylar:get-off-my-lawn:${project.goml_version}"
 
-    modCompileOnly("io.github.flemmli97:flan:${minecraft_version}-${flan_version}:fabric-api") {
+    modCompileOnly("io.github.flemmli97:flan:1.18-${flan_version}:fabric-api") {
         transitive = false //Remove this if you want to have all those optional dependencies
     }
-    modRuntime("io.github.flemmli97:flan:${minecraft_version}-${flan_version}:fabric") {
+    modRuntime("io.github.flemmli97:flan:1.18-${flan_version}:fabric") {
         transitive = false //Remove this if you want to have all those optional dependencies
     }
 
@@ -98,8 +98,8 @@ base {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     withSourcesJar()
 }

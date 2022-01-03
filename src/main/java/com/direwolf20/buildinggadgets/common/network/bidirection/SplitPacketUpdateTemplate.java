@@ -25,22 +25,20 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Map;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 public class SplitPacketUpdateTemplate {
 
+    public static final int PAYLOAD_LIMIT = Short.MAX_VALUE;
+
     public static void sendToTarget(Target target, UUID id, Template template) {
         if (target.flow() == PacketFlow.CLIENTBOUND) {
-            sendToClient(id, template, target.player());
+            Server.send(id, template, target.player());
         } else {
             Client.send(id, template);
         }
-    }
-
-    public static void sendToClient(UUID id, Template template, ServerPlayer player) {
-        FriendlyByteBuf buf = PacketByteBufs.create();
-        write(buf, id, template);
-        ServerPlayNetworking.send(player, PacketHandler.SplitPacketUpdateTemplate, buf);
     }
 
     private static Template readTemplate(FriendlyByteBuf buf) throws TemplateReadException {
@@ -64,39 +62,91 @@ public class SplitPacketUpdateTemplate {
     @Environment(EnvType.CLIENT)
     public static class Client implements ClientPlayNetworking.PlayChannelHandler {
 
+        private FriendlyByteBuf accumulator;
+
         public static void send(UUID id, Template template) {
             FriendlyByteBuf buf = PacketByteBufs.create();
             write(buf, id, template);
-            ClientPlayNetworking.send(PacketHandler.SplitPacketUpdateTemplate, buf);
+
+            while (buf.isReadable(PAYLOAD_LIMIT)) {
+                ClientPlayNetworking.send(PacketHandler.SplitPacketUpdateTemplate, PacketByteBufs.readBytes(buf, PAYLOAD_LIMIT));
+            }
+
+            if (buf.isReadable()) {
+                ClientPlayNetworking.send(PacketHandler.SplitPacketUpdateTemplate, buf);
+            }
+
+            // todo: sentinel value when length == 0, probably should use another marker packet instead but cope
+            ClientPlayNetworking.send(PacketHandler.SplitPacketUpdateTemplate, PacketByteBufs.empty());
         }
 
         @Override
         public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-            UUID id = buf.readUUID();
+            if(accumulator == null) {
+                accumulator = PacketByteBufs.create();
+            }
+
+            if (buf.isReadable()) {
+                accumulator.writeBytes(buf);
+                return;
+            }
+
+            UUID id = accumulator.readUUID();
 
             try {
-                Template template = readTemplate(buf);
+                Template template = readTemplate(accumulator);
                 client.execute(() -> BuildingGadgetsClient.CACHE_TEMPLATE_PROVIDER.setTemplate(new TemplateKey(id), template));
             } catch (TemplateReadException e) {
                 e.printStackTrace();
             }
+
+            accumulator.release();
+            accumulator = null;
         }
     }
 
     public static class Server implements ServerPlayNetworking.PlayChannelHandler {
 
+        private final Map<ServerPlayer, FriendlyByteBuf> buffers = new WeakHashMap<>();
+
+        public static void send(UUID id, Template template, ServerPlayer player) {
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            write(buf, id, template);
+
+            while (buf.isReadable(PAYLOAD_LIMIT)) {
+                ServerPlayNetworking.send(player, PacketHandler.SplitPacketUpdateTemplate, PacketByteBufs.readBytes(buf, PAYLOAD_LIMIT));
+            }
+
+            if (buf.isReadable()) {
+                ServerPlayNetworking.send(player, PacketHandler.SplitPacketUpdateTemplate, buf);
+            }
+
+            // todo: sentinel value when length == 0, probably should use another marker packet instead but cope
+            ServerPlayNetworking.send(player, PacketHandler.SplitPacketUpdateTemplate, PacketByteBufs.empty());
+        }
+
         @Override
         public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-            UUID id = buf.readUUID();
+            FriendlyByteBuf accumulator = buffers.computeIfAbsent(player, $ -> PacketByteBufs.create());
+
+            if (buf.isReadable()) {
+                accumulator.writeBytes(buf);
+                return;
+            }
+
+            UUID id = accumulator.readUUID();
 
             try {
-                Template template = readTemplate(buf);
+                Template template = readTemplate(accumulator);
+
                 server.execute(() -> BGComponent.TEMPLATE_PROVIDER_COMPONENT.maybeGet(player.level).ifPresent(provider -> {
                     provider.setTemplate(new TemplateKey(id), template);
                 }));
             } catch (TemplateReadException e) {
                 e.printStackTrace();
             }
+
+            buffers.remove(player).release();
         }
     }
 }

@@ -24,8 +24,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-//TODO: Fix Client only set stack
-
 @Tainted(reason = "Uses template system")
 public final class CacheTemplateProvider implements ITemplateProvider {
     private final Cache<UUID, Template> cache;

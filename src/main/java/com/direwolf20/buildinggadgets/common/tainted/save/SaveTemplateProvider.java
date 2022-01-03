@@ -56,7 +56,7 @@ public final class SaveTemplateProvider implements ITemplateProvider {
         notifyListeners(key, template, l -> l::onTemplateUpdateSend);
 
         for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
-            SplitPacketUpdateTemplate.sendToClient(id, template, player);
+            SplitPacketUpdateTemplate.Server.send(id, template, player);
         }
 
         return true;
