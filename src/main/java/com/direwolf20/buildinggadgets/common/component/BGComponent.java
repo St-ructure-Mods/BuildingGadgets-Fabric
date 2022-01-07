@@ -15,6 +15,8 @@ import dev.onyxstudios.cca.api.v3.level.LevelComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.level.LevelComponentInitializer;
 import dev.onyxstudios.cca.api.v3.world.WorldComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.world.WorldComponentInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.level.ServerLevel;
 
@@ -36,7 +38,7 @@ public class BGComponent implements ItemComponentInitializer, WorldComponentInit
             if (world instanceof ServerLevel) {
                 return new SaveTemplateProvider();
             }
-            else if (world instanceof ClientLevel){
+            else if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT && world instanceof ClientLevel){
                 return BuildingGadgetsClient.CACHE_TEMPLATE_PROVIDER;
             }
             else return new NoWorldCompat();
