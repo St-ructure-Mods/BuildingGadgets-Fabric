@@ -5,6 +5,7 @@ import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideBuildSizeCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
 import com.direwolf20.buildinggadgets.common.compat.FLANCompat;
+import com.direwolf20.buildinggadgets.common.compat.FTBChunksCompat;
 import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
@@ -63,5 +64,6 @@ public final class BuildingGadgets implements ModInitializer {
 
         GOMLCompat.MOD_LOADED = FabricLoader.getInstance().isModLoaded("goml");
         FLANCompat.MOD_LOADED = FabricLoader.getInstance().isModLoaded("flan");
+        FTBChunksCompat.MOD_LOADED = FabricLoader.getInstance().isModLoaded("ftbchunks");
     }
 }

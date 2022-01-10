@@ -11,6 +11,7 @@ import com.direwolf20.buildinggadgets.common.containers.TemplateManagerContainer
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketTemplateManagerTemplateCreated;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
+import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.IBuildView;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
@@ -154,7 +155,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         }
 
         this.nameField.render(matrices, mouseX, mouseY, partialTicks);
-//        fill(matrices, guiLeft + panel.getX() - 1, guiTop + panel.getY() - 1, guiLeft + panel.getX() + panel.getWidth() + 1, guiTop + panel.getY() + panel.getHeight() + 1, 0xFF8A8A8A);
+        fill(matrices, leftPos + panel.getX() - 1, topPos + panel.getY() - 1, leftPos + panel.getX() + panel.getWidth() + 1, topPos + panel.getY() + panel.getHeight() + 1, 0xFF8A8A8A);
 
         if (this.template != null) {
             renderPanel();
@@ -212,9 +213,8 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
             if (renderBlockState.getRenderShape() == RenderShape.MODEL) {
                 BakedModel model = dispatcher.getBlockModel(renderBlockState);
-//                dispatcher.getBlockModelRenderer().renderModelFlat()
-//                        .renderModelFlat(getWorld(), model, renderBlockState, target.getPos(), bufferBuilder, false,
-//                        rand, 0L, be != null ? be.getModelData() : EmptyModelData.INSTANCE);
+//                dispatcher.getModelRenderer().renderModel(getWorld(), model, renderBlockState, target.getPos(), bufferBuilder, false,
+//                        rand, 0L);
             }
 
             if (be != null) {

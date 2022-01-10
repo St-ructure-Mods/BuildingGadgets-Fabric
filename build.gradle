@@ -55,6 +55,13 @@ repositories {
     }
 
     maven { url 'https://jitpack.io' }
+
+    maven {
+        url "https://maven.saps.dev/minecraft"
+        content {
+            includeGroup "dev.ftb.mods"
+        }
+    }
 }
 
 dependencies {
@@ -88,6 +95,10 @@ dependencies {
     modRuntime("io.github.flemmli97:flan:1.18-${flan_version}:fabric") {
         transitive = false //Remove this if you want to have all those optional dependencies
     }
+
+    modImplementation("dev.ftb.mods:ftb-library-fabric:${rootProject.ftblibrary_version}") { transitive = false }
+    modImplementation("dev.ftb.mods:ftb-teams-fabric:${rootProject.ftbteams_version}") { transitive = false }
+    modImplementation("dev.ftb.mods:ftb-chunks-fabric:${rootProject.ftbchunks_version}") { transitive = false }
 
     modCompileOnly "curse.maven:IPN-495267:3543808"
 
