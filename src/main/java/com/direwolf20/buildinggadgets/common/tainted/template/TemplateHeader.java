@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Multiset;
 import com.google.gson.*;
 import net.fabricmc.fabric.api.util.NbtType;
+import net.minecraft.DetectedVersion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -32,9 +33,10 @@ public record TemplateHeader(@Nullable String name, @Nullable String author, @Nu
     public static final String VERSION = "2.1.0";
 
     /**
-     * Must be updated for each new MC version :cry:
+     * ~~Must be updated for each new MC version :cry:~~
+     * Not anymore :smile:
      */
-    public static final String HIGHEST_MC_VERSION = "1.17.1";
+    public static final String HIGHEST_MC_VERSION = DetectedVersion.tryDetectVersion().getName();
 
     /**
      * The lowest possible minecraft version we support. This could be lower but seeing as the mod only uses
