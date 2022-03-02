@@ -20,10 +20,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -176,7 +173,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
 
                 try {
                     if (state.getRenderShape() == RenderShape.MODEL) {
-                        dispatcher.renderSingleBlock(state, stack, mutatedBuffer, 15728640, OverlayTexture.NO_OVERLAY);
+                        dispatcher.renderSingleBlock(state, stack, mutatedBuffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 
                     }
                 } catch (Exception e) {

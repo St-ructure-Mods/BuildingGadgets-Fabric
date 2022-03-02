@@ -5,13 +5,17 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
-public enum OurSounds {
+public class OurSounds {
 
-    BEEP("beep");
+    public static OurSounds BEEP;
+
+    public static void initSounds() {
+        BEEP = new OurSounds("beep");
+    }
 
     private final SoundEvent sound;
 
-    OurSounds(String name) {
+    public OurSounds(String name) {
         ResourceLocation loc = new ResourceLocation(Reference.MODID, name);
         sound = new SoundEvent(loc);
         Registry.register(Registry.SOUND_EVENT, loc, sound);

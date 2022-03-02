@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '0.11-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -87,6 +87,8 @@ dependencies {
     include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-world:${project.cca_version}")
     include modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-level:${project.cca_version}")
 
+    include modImplementation('com.github.Chocohead:Fabric-ASM:39abe596bc')
+
     modRuntimeOnly("dev.architectury:architectury-fabric:${project.architectury_version}")
     modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}")
 
@@ -95,13 +97,15 @@ dependencies {
     modCompileOnly("io.github.flemmli97:flan:1.18-${flan_version}:fabric-api") {
         transitive = false //Remove this if you want to have all those optional dependencies
     }
-    modRuntime("io.github.flemmli97:flan:1.18-${flan_version}:fabric") {
+    modRuntimeOnly("io.github.flemmli97:flan:1.18-${flan_version}:fabric") {
         transitive = false //Remove this if you want to have all those optional dependencies
     }
 
-    modImplementation("dev.ftb.mods:ftb-library-fabric:${rootProject.ftblibrary_version}") { transitive = false }
-    modImplementation("dev.ftb.mods:ftb-teams-fabric:${rootProject.ftbteams_version}") { transitive = false }
-    modImplementation("dev.ftb.mods:ftb-chunks-fabric:${rootProject.ftbchunks_version}") { transitive = false }
+    modRuntimeOnly("curse.maven:LazyDFU-433518:3209972")
+
+    modCompileOnly("dev.ftb.mods:ftb-library-fabric:${rootProject.ftblibrary_version}") { transitive = false }
+    modCompileOnly("dev.ftb.mods:ftb-teams-fabric:${rootProject.ftbteams_version}") { transitive = false }
+    modCompileOnly("dev.ftb.mods:ftb-chunks-fabric:${rootProject.ftbchunks_version}") { transitive = false }
 
     modCompileOnly "curse.maven:IPN-495267:3543808"
 

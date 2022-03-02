@@ -8,6 +8,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.MinecraftServer;
@@ -17,6 +18,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
@@ -218,12 +220,12 @@ public class MockDelegationWorld implements LevelAccessor {
     }
 
     @Override
-    public Biome getBiome(BlockPos pos) {
+    public Holder<Biome> getBiome(BlockPos pos) {
         return delegate.getBiome(pos);
     }
 
     @Override
-    public Biome getUncachedNoiseBiome(int x, int y, int z) {
+    public Holder<Biome> getUncachedNoiseBiome(int x, int y, int z) {
         return null;
     }
 
@@ -235,6 +237,11 @@ public class MockDelegationWorld implements LevelAccessor {
     @Override
     public int getSkyDarken() {
         return delegate.getSkyDarken();
+    }
+
+    @Override
+    public int getBlockTint(BlockPos pos, ColorResolver resolver) {
+        return 0;
     }
 
     @Override

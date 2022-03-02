@@ -38,8 +38,8 @@
     "modmenu": [
       "com.direwolf20.buildinggadgets.common.compat.ModMenuCompat"
     ],
-    "rei": [
-      "com.direwolf20.buildinggadgets.common.compat.REICompat"
+    "mm:early_risers": [
+      "com.direwolf20.buildinggadgets.common.ASMEarlyRiser"
     ]
   },
   "mixins": [

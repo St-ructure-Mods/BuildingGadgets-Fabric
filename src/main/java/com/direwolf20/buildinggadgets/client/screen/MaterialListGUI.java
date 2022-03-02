@@ -3,10 +3,8 @@ package com.direwolf20.buildinggadgets.client.screen;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
-import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateKey;
-import com.direwolf20.buildinggadgets.common.tainted.template.ITemplateProvider;
-import com.direwolf20.buildinggadgets.common.tainted.template.Template;
-import com.direwolf20.buildinggadgets.common.tainted.template.TemplateHeader;
+import com.direwolf20.buildinggadgets.common.tainted.template.*;
+import com.direwolf20.buildinggadgets.common.util.exceptions.TemplateWriteException;
 import com.direwolf20.buildinggadgets.common.util.lang.MaterialListTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.base.Preconditions;
@@ -85,7 +83,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
         });
 
         this.buttonCopyList = new Button(0, buttonY, 0, BUTTON_HEIGHT, MaterialListTranslation.BUTTON_COPY.componentTranslation(), (button) -> {
-            Minecraft.getInstance().keyboardHandler.setClipboard(evaluateTemplateHeader().toJson(false, hasControlDown()));
+            Minecraft.getInstance().keyboardHandler.setClipboard(getJson());
 
             if (Minecraft.getInstance().player != null)
                 Minecraft.getInstance().player.displayClientMessage(new TranslatableComponent(MaterialListTranslation.MESSAGE_COPY_SUCCESS.getTranslationKey()), true);
@@ -101,13 +99,18 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
 
     public TemplateHeader evaluateTemplateHeader() {
         Template template = getTemplateCapability();
+        return template.getHeaderAndForceMaterials(getContext());
+    }
 
-        BuildContext context = BuildContext.builder()
+    public String getJson() {
+        return TemplateIO.GSON.toJson(new TemplateHeader.TemplateHeaderJsonRepresentation(getTemplateCapability(), getContext()));
+    }
+
+    private BuildContext getContext() {
+        return BuildContext.builder()
                 .player(Minecraft.getInstance().player)
                 .stack(getTemplateItem())
                 .build(Minecraft.getInstance().level);
-
-        return template.getHeaderAndForceMaterials(context);
     }
 
     public TemplateHeader getHeader() {

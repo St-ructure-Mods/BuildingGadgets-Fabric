@@ -4,3 +4,4 @@ accessible  method  net/minecraft/client/renderer/RenderType    create  (Ljava/l
 accessible  field   net/minecraft/client/renderer/RenderType$CompositeRenderType    state  Lnet/minecraft/client/renderer/RenderType$CompositeState;
 accessible  field   net/minecraft/client/renderer/RenderType$CompositeState   textureState    Lnet/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard;
 accessible  field   net/minecraft/client/renderer/RenderStateShard$TextureStateShard    texture Ljava/util/Optional;
+extendable  class   net/minecraft/world/item/enchantment/EnchantmentCategory

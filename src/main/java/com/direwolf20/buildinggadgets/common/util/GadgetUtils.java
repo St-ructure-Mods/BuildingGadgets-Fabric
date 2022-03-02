@@ -54,7 +54,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GadgetUtils {
-    private static final Tag<Block> DISALLOWED_BLOCKS = Tag.fromSet(
+    private static final Tag<Block> DISALLOWED_BLOCKS = new Tag<>(
             ImmutableSet.of(
                     Blocks.END_PORTAL, Blocks.NETHER_PORTAL, Blocks.END_PORTAL_FRAME, Blocks.BEDROCK, Blocks.SPAWNER
             ));
@@ -182,7 +182,7 @@ public class GadgetUtils {
         if (!((AbstractGadget) stack.getItem()).isAllowedBlock(state.getBlock()) || state.getBlock() instanceof EffectBlock)
             return InteractionResultHolder.fail(state.getBlock());
 
-        if (DISALLOWED_BLOCKS.contains(state.getBlock())) {
+        if (DISALLOWED_BLOCKS.getValues().contains(state.getBlock())) {
             return InteractionResultHolder.fail(state.getBlock());
         }
 

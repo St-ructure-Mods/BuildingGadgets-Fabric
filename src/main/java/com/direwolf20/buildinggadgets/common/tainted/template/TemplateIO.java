@@ -20,7 +20,7 @@ import java.util.Base64;
 import java.util.Objects;
 
 public final class TemplateIO {
-    private static final Gson GSON = TemplateHeader.appendHeaderSpecification(new GsonBuilder(), false, true).create();
+    public static final Gson GSON = TemplateHeader.appendHeaderSpecification(new GsonBuilder(), false, true).create();
 
     private TemplateIO() {
     }

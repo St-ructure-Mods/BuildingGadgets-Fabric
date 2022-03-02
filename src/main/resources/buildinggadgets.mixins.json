@@ -2,10 +2,12 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.direwolf20.buildinggadgets.common.mixins",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_17",
   "client": [
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+  ]
 }

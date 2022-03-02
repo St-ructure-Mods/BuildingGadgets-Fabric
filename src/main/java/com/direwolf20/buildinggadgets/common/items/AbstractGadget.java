@@ -19,14 +19,14 @@ import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableSortedSet;
-import net.fabricmc.fabric.api.tag.TagFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
@@ -48,14 +48,14 @@ import static com.direwolf20.buildinggadgets.common.util.GadgetUtils.withSuffix;
 
 public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
 
-    private final Tag.Named<Block> whiteList;
-    private final Tag.Named<Block> blackList;
+    private final TagKey<Block> whiteList;
+    private final TagKey<Block> blackList;
 
     public AbstractGadget(Properties builder, ResourceLocation whiteListTag, ResourceLocation blackListTag) {
         super(builder.defaultDurability(0));
 
-        this.whiteList = TagFactory.BLOCK.create(whiteListTag);
-        this.blackList = TagFactory.BLOCK.create(blackListTag);
+        this.whiteList = TagKey.create(Registry.BLOCK_REGISTRY, whiteListTag);
+        this.blackList = TagKey.create(Registry.BLOCK_REGISTRY, blackListTag);
     }
 
     public abstract long getEnergyCapacity();
@@ -69,13 +69,10 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     }
 
     @Override
-    public boolean canBeDepleted() {
-        return getEnergyCapacity() > 0;
-    }
-
-    @Override
     public boolean isBarVisible(ItemStack itemStack) {
-        return getEnergyCapacity() > 0;
+        if(getEnergyCapacity() <= 0)
+            return false;
+        return (getEnergyCapacity() != getStoredEnergy(itemStack));
     }
 
     @Override
@@ -93,11 +90,11 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
         return 0;
     }
 
-    public Tag.Named<Block> getWhiteList() {
+    public TagKey<Block> getWhiteList() {
         return whiteList;
     }
 
-    public Tag.Named<Block> getBlackList() {
+    public TagKey<Block> getBlackList() {
         return blackList;
     }
 
@@ -119,10 +116,10 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     }
 
     public boolean isAllowedBlock(Block block) {
-        if (getWhiteList().getValues().isEmpty()) {
-            return !getBlackList().contains(block);
+        if(Registry.BLOCK.getTag(getWhiteList()).isEmpty()) {
+            return !block.builtInRegistryHolder().is(getBlackList());
         }
-        return getWhiteList().contains(block);
+        return !block.builtInRegistryHolder().is(getWhiteList());
     }
 
     public static ItemStack getGadget(Player player) {

@@ -11,7 +11,6 @@ import com.direwolf20.buildinggadgets.common.containers.TemplateManagerContainer
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketTemplateManagerTemplateCreated;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementTarget;
-import com.direwolf20.buildinggadgets.common.tainted.building.Region;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.IBuildView;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.InventoryHelper;
@@ -80,7 +79,7 @@ import java.util.Random;
 public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerContainer> {
     private static final ResourceLocation background = new ResourceLocation(Reference.MODID, "textures/gui/template_manager.png");
 
-    private final Rect2i panel = new Rect2i((8 - 20), 12, 136, 80);
+    private final Rect2i panel = new Rect2i(8, 23, 136, 80);
     private boolean panelClicked;
     private int clickButton, clickX, clickY;
     private float initRotX, initRotY, initZoom, initPanX, initPanY;
@@ -103,23 +102,20 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
 
         this.container = container;
         this.be = container.getTe();
-    }
-
-    @Override
-    protected boolean hasClickedOutside(double d, double e, int i, int j, int k) {
-        return d < (double) i - 16 || e < (double) j || d >= (double)(i + this.imageWidth + 30) || e >= (double)(j + this.imageHeight + 12);
+        this.imageWidth = 250;
+        this.imageHeight = 192;
     }
 
     @Override
     public void init() {
         super.init();
-        this.nameField = new EditBox(this.font, (this.leftPos - 20) + 8, topPos - 5, imageWidth - 16, this.font.lineHeight + 3, GuiTranslation.TEMPLATE_NAME_TIP.componentTranslation());
+        this.nameField = new EditBox(this.font, this.leftPos + 8, topPos + 6, imageWidth - 90, this.font.lineHeight + 3, GuiTranslation.TEMPLATE_NAME_TIP.componentTranslation());
 
-        int x = (leftPos - 20) + 180;
-        buttonSave = addRenderableWidget(new Button(x, topPos + 17, 60, 20, GuiTranslation.BUTTON_SAVE.componentTranslation(), b -> onSave()));
-        buttonLoad = addRenderableWidget(new Button(x, topPos + 39, 60, 20, GuiTranslation.BUTTON_LOAD.componentTranslation(), b -> onLoad()));
-        buttonCopy = addRenderableWidget(new Button(x, topPos + 66, 60, 20, GuiTranslation.BUTTON_COPY.componentTranslation(), b -> onCopy()));
-        buttonPaste = addRenderableWidget(new Button(x, topPos + 89, 60, 20, GuiTranslation.BUTTON_PASTE.componentTranslation(), b -> onPaste()));
+        int x = leftPos + 182;
+        buttonSave = addRenderableWidget(new Button(x, topPos + 41, 60, 20, GuiTranslation.BUTTON_SAVE.componentTranslation(), b -> onSave()));
+        buttonLoad = addRenderableWidget(new Button(x, topPos + 63, 60, 20, GuiTranslation.BUTTON_LOAD.componentTranslation(), b -> onLoad()));
+        buttonCopy = addRenderableWidget(new Button(x, topPos + 90, 60, 20, GuiTranslation.BUTTON_COPY.componentTranslation(), b -> onCopy()));
+        buttonPaste = addRenderableWidget(new Button(x, topPos + 112, 60, 20, GuiTranslation.BUTTON_PASTE.componentTranslation(), b -> onPaste()));
 
         this.nameField.setMaxLength(50);
         this.nameField.setVisible(true);
@@ -131,12 +127,10 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         super.render(matrices, mouseX, mouseY, partialTicks);
         this.renderTooltip(matrices, mouseX, mouseY);
 
-        drawString(matrices, font, "Preview disabled for now...", leftPos - 10, topPos + 40, 0xFFFFFF);
+        drawString(matrices, font, "Preview disabled for now...", leftPos + 10, topPos + 56, 0xFFFFFF);
         if (this.template != null) {
             renderRequirement(matrices, mouseX, mouseY);
         }
-
-//        validateCache(partialTicks);
     }
 
     @Override
@@ -144,22 +138,22 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         renderBackground(matrices);
 
         RenderSystem.setShaderTexture(0, background);
-        blit(matrices, leftPos - 20, topPos - 12, 0, 0, imageWidth, imageHeight + 25);
-        blit(matrices, (leftPos - 20) + imageWidth, topPos + 8, imageWidth + 3, 30, 71, imageHeight);
+        blit(matrices, leftPos, topPos, 0, 0, 176, 192);
+        blit(matrices, leftPos + 176, topPos + 29, 176, 28, 76, 113);
 
         if (!buttonCopy.isHoveredOrFocused() && !buttonPaste.isHoveredOrFocused()) {
+            int x = (leftPos + imageWidth) - 98;
+            int y = topPos + 49;
+
             if (buttonLoad.isHoveredOrFocused())
-                blit(matrices, (leftPos + imageWidth) - 44, topPos + 38, imageWidth, 0, 17, 24);
+                blit(matrices, x, y, 176, 0, 17, 24);
             else
-                blit(matrices, (leftPos + imageWidth) - 44, topPos + 38, imageWidth + 17, 0, 16, 24);
+                blit(matrices, x, y, 193, 0, 16, 24);
         }
 
         this.nameField.render(matrices, mouseX, mouseY, partialTicks);
         fill(matrices, leftPos + panel.getX() - 1, topPos + panel.getY() - 1, leftPos + panel.getX() + panel.getWidth() + 1, topPos + panel.getY() + panel.getHeight() + 1, 0xFF8A8A8A);
 
-        if (this.template != null) {
-            renderPanel();
-        }
     }
 
     private void validateCache(float partialTicks) {
@@ -264,14 +258,19 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
             return;
 
         Lighting.setupForFlatItems();
+        PoseStack modelViewStack = RenderSystem.getModelViewStack();
+
+        modelViewStack.pushPose();
+        modelViewStack.translate(leftPos - 30, topPos - 5, 200);
+        modelViewStack.scale(.8f, .8f, .8f);
 
         matrices.pushPose();
         matrices.translate(leftPos - 30, topPos - 5, 200);
-        matrices.scale(.8f, .8f, .8f);
 
         String title = "Requirements"; // Todo lang;
         drawString(matrices, getMinecraft().font, title, 5 - (font.width(title)), 0, Color.WHITE.getRGB());
 
+        matrices.popPose();
         // The things you have to do to get anything from this system is just stupid.
         MatchResult list;
 
@@ -309,7 +308,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         }
 
         Lighting.setupFor3DItems();
-        matrices.popPose();
+        modelViewStack.popPose();
     }
 
     private void pasteTemplateToStack(Level world, ItemStack stack, Template newTemplate, boolean replaced) {
@@ -335,7 +334,7 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
         if (BGComponent.TEMPLATE_KEY_COMPONENT.isProvidedBy(stack))
             return false;
 
-        else if (TemplateManagerTileEntity.TEMPLATE_CONVERTIBLES.contains(stack.getItem())) {
+        else if (stack.is(TemplateManagerTileEntity.TEMPLATE_CONVERTIBLES)) {
             container.getSlot(1).set(new ItemStack(OurItems.TEMPLATE_ITEM));
             return true;
         }
@@ -641,9 +640,15 @@ public class TemplateManagerGUI extends AbstractContainerScreen<TemplateManagerC
             if (!tagFromJson.contains("header")) {
                 BuildingGadgets.LOG.error("Attempted to use a 1.12 compound on a newer MC version");
                 getMinecraft().player.displayClientMessage(MessageTranslation.PASTE_FAILED_WRONG_MC_VERSION
-                        .componentTranslation("(1.12.x)", Minecraft.getInstance().getGame().getVersion().getName()).setStyle(Styles.RED), false);
+                        .componentTranslation("(1.12.x)", TemplateHeader.LOWEST_MC_VERSION, TemplateHeader.HIGHEST_MC_VERSION).setStyle(Styles.RED), false);
                 return;
 
+            }
+            if(!tagFromJson.contains("body")) {
+                BuildingGadgets.LOG.error("Attempted to paste Material List as a template");
+                getMinecraft().player.displayClientMessage(MessageTranslation.PASTE_FAILED_MATERIAL_LIST
+                        .componentTranslation().setStyle(Styles.RED), false);
+                return;
             }
         } catch (CommandSyntaxException ignored) {
         }

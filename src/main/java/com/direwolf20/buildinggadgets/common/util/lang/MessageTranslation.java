@@ -36,6 +36,7 @@ public enum MessageTranslation implements ITranslationProvider {
     PASTE_FAILED_TOO_RECENT_VERSION("paste_failed.too_recent_version", 2),
     PASTE_FAILED_CORRUPT_JSON("paste_failed.corrupt_json", 0),
     PASTE_FAILED_INVALID_JSON("paste_failed.invalid_json", 0),
+    PASTE_FAILED_MATERIAL_LIST("paste_failed.material_list", 0),
     PASTE_FAILED_CORRUPT_BODY("paste_failed.corrupt_body", 0),
     PASTE_SUCCESS("paste_success", 0),
     PLACE_ATOP("place.atop"),

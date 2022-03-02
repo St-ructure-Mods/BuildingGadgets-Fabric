@@ -26,7 +26,7 @@ public class TemplateManagerContainer extends BaseContainer {
 
         this.be = (TemplateManagerTileEntity) playerInventory.player.level.getBlockEntity(pos);
         addOwnSlots();
-        addPlayerSlots(playerInventory, -12, 70);
+        addPlayerSlots(playerInventory, 8, 82);
     }
 
     public TemplateManagerContainer(int windowId, Inventory playerInventory, TemplateManagerTileEntity tileEntity) {
@@ -39,15 +39,15 @@ public class TemplateManagerContainer extends BaseContainer {
     }
 
     private void addOwnSlots() {
-        int x = 132;
-        addSlot(new SlotTemplateManager(be, 0, x, 18, TEXTURE_LOC_SLOT_TOOL));
-        addSlot(new SlotTemplateManager(be, 1, x, 63, TEXTURE_LOC_SLOT_TEMPLATE));
+        int x = 152;
+        addSlot(new SlotTemplateManager(be, 0, x, 30, TEXTURE_LOC_SLOT_TOOL));
+        addSlot(new SlotTemplateManager(be, 1, x, 75, TEXTURE_LOC_SLOT_TEMPLATE));
     }
 
     @Override
     public boolean canTakeItemForPickAll(ItemStack itemStack, Slot slot) {
         return (slot.index == 0 && be.isTemplateStack(itemStack)) ||
-               (slot.index == 1 && (be.isTemplateStack(itemStack) || TemplateManagerTileEntity.TEMPLATE_CONVERTIBLES.contains(itemStack.getItem())));
+               (slot.index == 1 && (be.isTemplateStack(itemStack) || itemStack.is(TemplateManagerTileEntity.TEMPLATE_CONVERTIBLES)));
     }
 
     @Override

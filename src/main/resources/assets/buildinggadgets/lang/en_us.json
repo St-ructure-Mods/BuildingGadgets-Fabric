@@ -132,6 +132,7 @@
   "buildinggadgets.message.paste_failed.corrupt_json": "Paste Failed, Corrupt JSON",
   "buildinggadgets.message.paste_failed.corrupt_body": "Paste Failed, Template body is corrupted!",
   "buildinggadgets.message.paste_failed.link_copied": "Paste Failed. Please copy the raw json data, instead of a Link.",
+  "buildinggadgets.message.paste_failed.material_list": "Paste Failed, Attempted to paste Material List!",
   "buildinggadgets.message.paste_success": "Paste from Clipboard successful",
   "buildinggadgets.message.rotated": "Blocks Rotated",
   "buildinggadgets.message.mirrored": "Blocks Mirrored",
@@ -232,5 +233,7 @@
   "text.autoconfig.building_gadgets.option.gadgets.gadgetCopyPaste.maxCopySize": "Max Copy Dimensions",
   "text.autoconfig.building_gadgets.option.gadgets.gadgetCopyPaste.maxBuildSize": "Max Build Dimensions",
   "text.autoconfig.building_gadgets.option.gadgets.undoSize": "Undo list size",
-  "text.autoconfig.building_gadgets.option.gadgets.undoExpiry": "Undo list expiry"
+  "text.autoconfig.building_gadgets.option.gadgets.undoExpiry": "Undo list expiry",
+
+  "enchantment.buildinggadgets.silk_touch": "Gadget Silk Touch"
 }

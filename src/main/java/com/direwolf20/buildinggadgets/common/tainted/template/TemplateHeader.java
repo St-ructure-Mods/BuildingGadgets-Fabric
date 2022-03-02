@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.tainted.template;
 
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
+import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.inventory.materials.MaterialList;
 import com.direwolf20.buildinggadgets.common.util.exceptions.TemplateParseException.IllegalMinecraftVersionException;
 import com.direwolf20.buildinggadgets.common.util.exceptions.TemplateParseException.UnknownTemplateVersionException;
@@ -288,6 +289,14 @@ public record TemplateHeader(@Nullable String name, @Nullable String author, @Nu
          */
         public TemplateHeader build() {
             return new TemplateHeader(name, author, requiredItems, boundingBox);
+        }
+    }
+
+    public static class TemplateHeaderJsonRepresentation {
+        TemplateHeader header;
+
+        public TemplateHeaderJsonRepresentation(Template template, BuildContext context) {
+            this.header = template.getHeaderAndForceMaterials(context);
         }
     }
 }
