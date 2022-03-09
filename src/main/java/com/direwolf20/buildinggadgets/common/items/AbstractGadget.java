@@ -20,7 +20,6 @@ import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableSortedSet;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;

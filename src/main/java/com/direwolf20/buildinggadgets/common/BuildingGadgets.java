@@ -9,17 +9,21 @@ import com.direwolf20.buildinggadgets.common.compat.FLANCompat;
 import com.direwolf20.buildinggadgets.common.compat.FTBChunksCompat;
 import com.direwolf20.buildinggadgets.common.compat.GOMLCompat;
 import com.direwolf20.buildinggadgets.common.config.Config;
+import com.direwolf20.buildinggadgets.common.containers.OurContainers;
+import com.direwolf20.buildinggadgets.common.containers.TemplateManagerContainer;
 import com.direwolf20.buildinggadgets.common.enchants.GadgetSilkTouch;
 import com.direwolf20.buildinggadgets.common.items.GadgetExchanger;
 import com.direwolf20.buildinggadgets.common.items.OurItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tainted.registry.Registries;
+import com.direwolf20.buildinggadgets.common.tileentities.OurTileEntities;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.Registry;
@@ -74,6 +78,8 @@ public final class BuildingGadgets implements ModInitializer {
         Registries.registerTileDataSerializers();
         PacketHandler.registerMessages();
         OurSounds.initSounds();
+        OurTileEntities.initBE();
+        OurContainers.TEMPLATE_MANAGER_CONTAINER_TYPE = ScreenHandlerRegistry.registerExtended(BuildingGadgets.id("template_manager_container"), TemplateManagerContainer::new);
 
         Registry.register(Registry.ENCHANTMENT, id("silk_touch"), GadgetSilkTouch.GADGET_SILKTOUCH);
 

@@ -7,6 +7,11 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public final class OurTileEntities {
-    public static final BlockEntityType<EffectBlockTileEntity> EFFECT_BLOCK_TILE_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, BuildingGadgets.id("effect_block_tile"), FabricBlockEntityTypeBuilder.create(EffectBlockTileEntity::new, OurBlocks.EFFECT_BLOCK).build());
-    public static final BlockEntityType<TemplateManagerTileEntity> TEMPLATE_MANAGER_TILE_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, BuildingGadgets.id("template_manager_tile"), FabricBlockEntityTypeBuilder.create(TemplateManagerTileEntity::new, OurBlocks.TEMPLATE_MANGER_BLOCK).build());
+    public static BlockEntityType<EffectBlockTileEntity> EFFECT_BLOCK_TILE_ENTITY;
+    public static BlockEntityType<TemplateManagerTileEntity> TEMPLATE_MANAGER_TILE_ENTITY;
+
+    public static void initBE() {
+        EFFECT_BLOCK_TILE_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, BuildingGadgets.id("effect_block_tile"), FabricBlockEntityTypeBuilder.create(EffectBlockTileEntity::new, OurBlocks.EFFECT_BLOCK).build());
+        TEMPLATE_MANAGER_TILE_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, BuildingGadgets.id("template_manager_tile"), FabricBlockEntityTypeBuilder.create(TemplateManagerTileEntity::new, OurBlocks.TEMPLATE_MANGER_BLOCK).build());
+    }
 }
