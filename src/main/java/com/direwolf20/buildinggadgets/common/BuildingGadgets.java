@@ -23,6 +23,8 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.Commands;
@@ -79,7 +81,7 @@ public final class BuildingGadgets implements ModInitializer {
         PacketHandler.registerMessages();
         OurSounds.initSounds();
         OurTileEntities.initBE();
-        OurContainers.TEMPLATE_MANAGER_CONTAINER_TYPE = ScreenHandlerRegistry.registerExtended(BuildingGadgets.id("template_manager_container"), TemplateManagerContainer::new);
+        OurContainers.TEMPLATE_MANAGER_CONTAINER_TYPE = Registry.register(Registry.MENU, BuildingGadgets.id("template_manager_container"), new ExtendedScreenHandlerType<>(TemplateManagerContainer::new));
 
         Registry.register(Registry.ENCHANTMENT, id("silk_touch"), GadgetSilkTouch.GADGET_SILKTOUCH);
 

@@ -138,10 +138,10 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         if (renderBuffer != null && tickTrack < 300) {
             if (tickTrack % 30 == 0) {
                 try {
-                    Vec3 projectedView2 = projectedView;
-                    Vec3 startPosView = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
-                    projectedView2 = projectedView2.subtract(startPosView);
-                    renderBuffer.sort((float) projectedView2.x(), (float) projectedView2.y(), (float) projectedView2.z());
+                    //Vec3 projectedView2 = projectedView;
+                    //Vec3 startPosView = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
+                    //projectedView2 = projectedView2.subtract(startPosView);
+                    //renderBuffer.sort((float) projectedView2.x(), (float) projectedView2.y(), (float) projectedView2.z());
                 } catch (Exception ignored) {
                 }
             }
@@ -184,10 +184,10 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
             }
             stack.popPose(); //Load after loop
         });
-        Vec3 projectedView2 = getMc().gameRenderer.getMainCamera().getPosition();
-        Vec3 startPosView = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
-        projectedView2 = projectedView2.subtract(startPosView);
-        renderBuffer.sort((float) projectedView2.x(), (float) projectedView2.y(), (float) projectedView2.z());
+        //Vec3 projectedView2 = getMc().gameRenderer.getMainCamera().getPosition();
+        //Vec3 startPosView = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
+        //projectedView2 = projectedView2.subtract(startPosView);
+        //renderBuffer.sort((float) projectedView2.x(), (float) projectedView2.y(), (float) projectedView2.z());
         matrix.translate(startPos.getX(), startPos.getY(), startPos.getZ());
         renderBuffer.render(matrix.last().pose()); //Actually draw whats in the buffer
     }
