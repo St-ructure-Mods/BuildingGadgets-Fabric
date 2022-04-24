@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.client.renders;
 
 import com.direwolf20.buildinggadgets.client.renderer.OurRenderTypes;
+import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.items.AbstractGadget;
 import com.direwolf20.buildinggadgets.common.items.GadgetBuilding;
@@ -27,9 +28,11 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.apache.logging.log4j.Level;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +43,7 @@ import static com.direwolf20.buildinggadgets.common.util.GadgetUtils.getToolBloc
 public class BuildRender extends BaseRenderer {
     private final boolean isExchanger;
     private static final BlockState DEFAULT_EFFECT_BLOCK = OurBlocks.EFFECT_BLOCK.defaultBlockState();
+    private BlockState errorState;
 
     public BuildRender(boolean isExchanger) {
         this.isExchanger = isExchanger;
@@ -60,8 +64,12 @@ public class BuildRender extends BaseRenderer {
         BlockData data = getToolBlock(heldItem);
         BlockState renderBlockState = data.getState();
 
-        if (renderBlockState == BaseRenderer.AIR) {
+        if (errorState == renderBlockState || renderBlockState == BaseRenderer.AIR) {
             return;
+        }
+
+        if(errorState != null) {
+            errorState = null;
         }
 
         // Get the coordinates from the anchor. If the anchor isn't present then build the collector.
@@ -99,8 +107,14 @@ public class BuildRender extends BaseRenderer {
                 matrix.scale(1.001f, 1.001f, 1.001f);
             }
 
-            OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
-            dispatcher.renderSingleBlock(renderBlockState, matrix, mutatedBuffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            try{
+                OurRenderTypes.MultiplyAlphaRenderTypeBuffer mutatedBuffer = new OurRenderTypes.MultiplyAlphaRenderTypeBuffer(Minecraft.getInstance().renderBuffers().bufferSource(), .55f);
+                dispatcher.renderSingleBlock(renderBlockState, matrix, mutatedBuffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            }
+            catch (Exception e) {
+                BuildingGadgets.LOG.log(Level.ERROR, "Failed to render blockstate with gadget, not rendering blockstate");
+                errorState = renderBlockState;
+            }
 
             matrix.popPose();
             buffer.endBatch();
