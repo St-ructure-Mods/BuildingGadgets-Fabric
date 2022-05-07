@@ -19,6 +19,7 @@ import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableSortedSet;
+import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
@@ -116,10 +117,12 @@ public abstract class AbstractGadget extends Item implements SimpleBatteryItem {
     }
 
     public boolean isAllowedBlock(Block block) {
+        if(block.defaultBlockState().is(ConventionalBlockTags.MOVEMENT_RESTRICTED))
+            return false;
         if(!Registry.BLOCK.getTagOrEmpty(getWhiteList()).iterator().hasNext()) {
-            return !block.builtInRegistryHolder().is(getBlackList());
+            return !block.defaultBlockState().is(getBlackList());
         }
-        return block.builtInRegistryHolder().is(getWhiteList());
+        return block.defaultBlockState().is(getWhiteList());
     }
 
     public static ItemStack getGadget(Player player) {
