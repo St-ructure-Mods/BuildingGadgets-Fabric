@@ -18,6 +18,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvent;
 
@@ -30,7 +31,7 @@ public class BuildingGadgetsClient implements ClientModInitializer {
         KeyBindings.initialize();
         WorldRenderEvents.AFTER_SETUP.register(EventRenderWorldLast::renderAfterSetup);
         WorldRenderEvents.AFTER_TRANSLUCENT.register(EventRenderWorldLast::renderWorldLastEvent);
-        ScreenRegistry.register(OurContainers.TEMPLATE_MANAGER_CONTAINER_TYPE, TemplateManagerGUI::new);
+        MenuScreens.register(OurContainers.TEMPLATE_MANAGER_CONTAINER_TYPE, TemplateManagerGUI::new);
         ClientTickEvents.END_CLIENT_TICK.register(EventKeyInput::handleEventInput);
         BlockEntityRendererRegistry.register(OurTileEntities.EFFECT_BLOCK_TILE_ENTITY, EffectBlockTER::new);
 

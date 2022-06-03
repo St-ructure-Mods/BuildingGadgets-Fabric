@@ -18,6 +18,7 @@ import com.google.common.collect.ImmutableMultiset;
 import net.fabricmc.fabric.impl.client.rendering.fluid.FluidRenderHandlerRegistryImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,6 +31,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
@@ -213,11 +215,7 @@ public class GadgetDestruction extends AbstractGadget {
     }
 
     public static boolean isFluidBlock(Level world, BlockPos pos) {
-        if (world.getFluidState(pos).isEmpty()) {
-            return false;
-        }
-
-        return FluidRenderHandlerRegistryImpl.INSTANCE.get(world.getFluidState(pos).getType()) != null;
+        return world.getFluidState(pos).getType() != Fluids.EMPTY;
     }
 
     public static boolean isValidBlock(Level world, BlockPos voidPos, Player player, BlockState currentBlock) {
