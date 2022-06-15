@@ -20,15 +20,17 @@ import com.direwolf20.buildinggadgets.common.util.lang.TooltipTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.mojang.datafixers.types.templates.Tag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -54,10 +56,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GadgetUtils {
-    private static final Tag<Block> DISALLOWED_BLOCKS = new Tag<>(
-            ImmutableSet.of(
+    private static final ImmutableList<Block> DISALLOWED_BLOCKS = ImmutableList.of(
                     Blocks.END_PORTAL, Blocks.NETHER_PORTAL, Blocks.END_PORTAL_FRAME, Blocks.BEDROCK, Blocks.SPAWNER
-            ));
+            );
 
     private static final ImmutableList<String> LINK_STARTS = ImmutableList.of("http", "www");
 
@@ -182,7 +183,7 @@ public class GadgetUtils {
         if (!((AbstractGadget) stack.getItem()).isAllowedBlock(state.getBlock()) || state.getBlock() instanceof EffectBlock)
             return InteractionResultHolder.fail(state.getBlock());
 
-        if (DISALLOWED_BLOCKS.getValues().contains(state.getBlock())) {
+        if (DISALLOWED_BLOCKS.contains(state.getBlock())) {
             return InteractionResultHolder.fail(state.getBlock());
         }
 

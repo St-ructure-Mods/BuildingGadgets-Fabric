@@ -11,7 +11,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 
@@ -131,8 +130,8 @@ public class GuiSliderInt extends AbstractSliderButton {
     public Collection<AbstractWidget> getComponents() {
         return ImmutableSet.of(
             this,
-            new GuiButtonIncrement(this, x - height, y, height, height, new TextComponent("-"), b -> increment.accept(this, -1)),
-            new GuiButtonIncrement(this, x + width, y, height, height, new TextComponent("+"), b -> increment.accept(this, 1)
+            new GuiButtonIncrement(this, x - height, y, height, height, Component.literal("-"), b -> increment.accept(this, -1)),
+            new GuiButtonIncrement(this, x + width, y, height, height, Component.literal("+"), b -> increment.accept(this, 1)
         ));
     }
 

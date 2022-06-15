@@ -7,7 +7,6 @@ import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.enchants.GadgetSilkTouch;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.ExchangingModes;
-import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.network.S2C.LookupResult;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
@@ -33,12 +32,10 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -48,7 +45,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.Level;
@@ -124,8 +120,8 @@ public class GadgetExchanger extends AbstractGadget {
         ExchangingModes mode = getToolMode(stack);
         tooltip.add(TooltipTranslation.GADGET_MODE
                 .componentTranslation((mode == ExchangingModes.SURFACE && getConnectedArea(stack)
-                        ? TooltipTranslation.GADGET_CONNECTED.format(new TranslatableComponent(mode.getTranslationKey()).getString())
-                        : new TranslatableComponent(mode.getTranslationKey())))
+                        ? TooltipTranslation.GADGET_CONNECTED.format(Component.translatable(mode.getTranslationKey()).getString())
+                        : Component.translatable(mode.getTranslationKey())))
                 .setStyle(Styles.AQUA));
 
         tooltip.add(TooltipTranslation.GADGET_BLOCK

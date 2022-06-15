@@ -12,7 +12,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -46,7 +45,7 @@ public class TemplateManagerTileEntity extends BlockEntity implements ExtendedSc
     @Override
     @NotNull
     public Component getDisplayName() {
-        return new TextComponent("Template Manager GUI");
+        return Component.literal("Template Manager GUI");
     }
 
     @Nullable

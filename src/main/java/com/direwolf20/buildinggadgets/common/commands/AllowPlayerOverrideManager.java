@@ -8,7 +8,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
@@ -72,8 +73,8 @@ final class AllowPlayerOverrideManager {
 
     int executeList(CommandContext<CommandSourceStack> context) {
         for (Map.Entry<UUID, Boolean> entry : allowPlayerOverrideCache.asMap().entrySet()) {
-            TranslatableComponent component = listTranslation.componentTranslation(entry.getKey(), entry.getValue());
-            component = (TranslatableComponent) (entry.getValue() ? component.setStyle(Styles.BLUE) : component.setStyle(Styles.DK_GREEN));
+            MutableComponent component = listTranslation.componentTranslation(entry.getKey(), entry.getValue());
+            component = (entry.getValue() ? component.setStyle(Styles.BLUE) : component.setStyle(Styles.DK_GREEN));
             context.getSource().sendSuccess(component, true);
         }
         return 1;

@@ -10,8 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +34,7 @@ public class DestructionGUI extends Screen {
     private final ItemStack destructionTool;
 
     public DestructionGUI(ItemStack tool) {
-        super(new TextComponent("Destruction Gui?!?"));
+        super(Component.literal("Destruction Gui?!?"));
         this.destructionTool = tool;
     }
 
@@ -46,7 +45,7 @@ public class DestructionGUI extends Screen {
         int x = width / 2;
         int y = height / 2;
 
-        this.addRenderableWidget(confirm = new Button((x - 30) + 32, y + 65, 60, 20, new TranslatableComponent(GuiMod.getLangKeySingle("confirm")), b -> {
+        this.addRenderableWidget(confirm = new Button((x - 30) + 32, y + 65, 60, 20, Component.translatable(GuiMod.getLangKeySingle("confirm")), b -> {
             if (Minecraft.getInstance().player == null) {
                 return;
             }
@@ -58,7 +57,7 @@ public class DestructionGUI extends Screen {
                 Minecraft.getInstance().player.displayClientMessage(MessageTranslation.DESTRCUT_TOO_LARGE.componentTranslation(BuildingGadgets.getConfig().gadgets.gadgetDestruction.destroySize), true);
         }));
 
-        this.addRenderableWidget(new Button((x - 30) - 32, y + 65, 60, 20, new TranslatableComponent(GuiMod.getLangKeySingle("cancel")), b -> onClose()));
+        this.addRenderableWidget(new Button((x - 30) - 32, y + 65, 60, 20, Component.translatable(GuiMod.getLangKeySingle("cancel")), b -> onClose()));
 
         sliders.clear();
         sliders.add(depth = new GuiDestructionSlider(x - (GuiDestructionSlider.width / 2), y - (GuiDestructionSlider.height / 2), GuiTranslation.SINGLE_DEPTH.format() + ":", GadgetDestruction.getToolValue(destructionTool, "depth")));
@@ -142,7 +141,7 @@ public class DestructionGUI extends Screen {
 
         GuiDestructionSlider(int x, int y, String prefix, int current) {
             super(
-                    x, y, width, height, new TextComponent(String.format("%s ", prefix)), min, max, current, Color.DARK_GRAY, (GuiSliderInt slider, Integer amount) -> {
+                    x, y, width, height, Component.literal(String.format("%s ", prefix)), min, max, current, Color.DARK_GRAY, (GuiSliderInt slider, Integer amount) -> {
                         slider.setValueInt(Mth.clamp(slider.getValueInt() + amount, min, max));
                         slider.applyValue();
                     }

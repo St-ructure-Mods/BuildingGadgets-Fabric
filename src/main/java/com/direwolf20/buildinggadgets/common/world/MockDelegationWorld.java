@@ -14,6 +14,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
@@ -41,6 +42,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.LevelTickAccess;
 import org.jetbrains.annotations.Nullable;
@@ -79,6 +81,11 @@ public class MockDelegationWorld implements LevelAccessor {
 
     @Override
     public void levelEvent(@Nullable Player p_217378_1_, int p_217378_2_, BlockPos p_217378_3_, int p_217378_4_) {
+
+    }
+
+    @Override
+    public void gameEvent(GameEvent gameEvent, Vec3 vec3, GameEvent.Context context) {
 
     }
 
@@ -198,7 +205,7 @@ public class MockDelegationWorld implements LevelAccessor {
 
 
     @Override
-    public Random getRandom() {
+    public RandomSource getRandom() {
         return delegate.getRandom();
     }
 
@@ -397,11 +404,6 @@ public class MockDelegationWorld implements LevelAccessor {
 
     protected BlockInfo createInfo(BlockPos pos, BlockState state) {
         return new BlockInfo(pos, state);
-    }
-
-    @Override
-    public float getBrightness(BlockPos pos) {
-        return delegate.getBrightness(pos);
     }
 
     @Override

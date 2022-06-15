@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +26,7 @@ public class GuiIncrementer extends AbstractWidget {
     private final DireButton plusButton;
 
     public GuiIncrementer(int x, int y, int min, int max, @Nullable IIncrementerChanged onChange) {
-        super(x, y, WIDTH, 20, TextComponent.EMPTY);
+        super(x, y, WIDTH, 20, Component.empty());
 
         this.x = x;
         this.y = y;
@@ -35,9 +35,9 @@ public class GuiIncrementer extends AbstractWidget {
         this.value = 0;
         this.onChange = onChange;
 
-        this.minusButton = new DireButton(this.x, this.y - 1, 12, 17, new TextComponent("-"), (button) -> this.updateValue(true));
+        this.minusButton = new DireButton(this.x, this.y - 1, 12, 17, Component.literal("-"), (button) -> this.updateValue(true));
         this.field = new GuiTextFieldBase(Minecraft.getInstance().font, x + 13, y, 40).setDefaultInt(this.value).restrictToNumeric();
-        this.plusButton = new DireButton(this.x + 40 + 14, this.y - 1, 12, 17, new TextComponent("+"), (button) -> this.updateValue(false));
+        this.plusButton = new DireButton(this.x + 40 + 14, this.y - 1, 12, 17, Component.literal("+"), (button) -> this.updateValue(false));
 
         this.field.setValue(String.valueOf(this.value));
     }

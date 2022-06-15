@@ -5,7 +5,6 @@ import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.BuildingModes;
-import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.network.S2C.LookupResult;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
@@ -28,12 +27,10 @@ import com.google.common.collect.ImmutableMultiset;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -103,8 +100,8 @@ public class GadgetBuilding extends AbstractGadget {
 
         tooltip.add(TooltipTranslation.GADGET_MODE
                 .componentTranslation((mode == BuildingModes.SURFACE && getConnectedArea(stack)
-                        ? TooltipTranslation.GADGET_CONNECTED.format(new TranslatableComponent(mode.getTranslationKey()).getString())
-                        : new TranslatableComponent(mode.getTranslationKey())))
+                        ? TooltipTranslation.GADGET_CONNECTED.format(Component.translatable(mode.getTranslationKey()).getString())
+                        : Component.translatable(mode.getTranslationKey())))
                 .setStyle(Styles.AQUA));
 
         tooltip.add(TooltipTranslation.GADGET_BLOCK

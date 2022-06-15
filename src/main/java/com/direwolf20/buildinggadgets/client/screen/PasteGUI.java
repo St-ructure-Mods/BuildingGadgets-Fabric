@@ -15,7 +15,7 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class PasteGUI extends Screen {
     private final ItemStack copyPasteTool;
 
     PasteGUI(ItemStack tool) {
-        super(new TextComponent(""));
+        super(Component.literal(""));
         this.copyPasteTool = tool;
     }
 

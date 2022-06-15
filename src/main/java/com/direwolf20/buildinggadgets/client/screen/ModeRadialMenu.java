@@ -22,9 +22,7 @@ import com.direwolf20.buildinggadgets.common.util.lang.Styles;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -34,13 +32,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
@@ -70,7 +63,7 @@ public class ModeRadialMenu extends Screen {
     private final List<Button> conditionalButtons = new ArrayList<>();
 
     public ModeRadialMenu(ItemStack stack) {
-        super(new TextComponent(""));
+        super(Component.literal(""));
 
         if (stack.getItem() instanceof AbstractGadget)
             setSocketable(stack);
@@ -148,7 +141,7 @@ public class ModeRadialMenu extends Screen {
             }
             if (!isDestruction) {
                 int widthSlider = 82;
-                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(new TextComponent(": ")), 1, BuildingGadgets.getConfig().gadgets.maxRange,
+                GuiSliderInt sliderRange = new GuiSliderInt(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, GuiTranslation.SINGLE_RANGE.componentTranslation().append(Component.literal(": ")), 1, BuildingGadgets.getConfig().gadgets.maxRange,
                         GadgetUtils.getToolRange(tool), Color.DARK_GRAY, (slider, integer) -> {
                     slider.setValueInt(Mth.clamp(slider.getValueInt() + integer, 1, BuildingGadgets.getConfig().gadgets.maxRange));
                 });

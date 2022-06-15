@@ -41,6 +41,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
     private MultiVBORenderer renderBuffer;
     private int tickTrack = 0;
     private UUID lastRendered = null;
+    private ShaderInstance instance;
 
     @Override
     public void onTemplateUpdate(ITemplateProvider provider, ITemplateKey key, Template template) {
@@ -125,8 +126,11 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
                     }
                 }
                 UUID id = provider.getId(key);
-                if (!id.equals(lastRendered))
+                if (!id.equals(lastRendered)) {
                     renderBuffer = null;
+                    System.gc();
+                }
+
                 renderTargets(matrices, cameraView, context, targets, startPos);
                 lastRendered = id;
             });
@@ -217,10 +221,9 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
                 Objects.requireNonNull(rt);
                 Objects.requireNonNull(builder);
 
-                builder.end();
                 VertexBuffer vbo = new VertexBuffer();
-
-                vbo.upload(builder);
+                vbo.bind();
+                vbo.upload(builder.end());
                 return vbo;
             });
 
@@ -254,9 +257,8 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
         }
 
         public void render(Matrix4f modelViewMatrix) {
-
+            RenderSystem.setShader(GameRenderer::getPositionTexLightmapColorShader);
             buffers.forEach((rt, vbo) -> {
-                RenderSystem.setShader(GameRenderer::getPositionTexColorNormalShader);
 
                 rt.setupRenderState();
                 vbo.bind();
@@ -265,6 +267,7 @@ public class CopyPasteRender extends BaseRenderer implements IUpdateListener {
             });
         }
 
+        @Override
         public void close() {
             for (VertexBuffer value : buffers.values()) {
                 value.close();

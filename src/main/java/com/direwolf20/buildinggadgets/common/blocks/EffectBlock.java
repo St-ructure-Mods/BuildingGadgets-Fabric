@@ -130,7 +130,7 @@ public class EffectBlock extends BaseEntityBlock {
     public EffectBlock() {
         super(Block.Properties.of(EFFECT_BLOCK_MATERIAL)
                 .strength(20f)
-                .noDrops());
+                .noLootTable());
     }
 
     @Nullable

@@ -4,7 +4,6 @@ import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.tainted.building.view.BuildContext;
 import com.direwolf20.buildinggadgets.common.tainted.template.*;
-import com.direwolf20.buildinggadgets.common.util.exceptions.TemplateWriteException;
 import com.direwolf20.buildinggadgets.common.util.lang.MaterialListTranslation;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference;
 import com.google.common.base.Preconditions;
@@ -18,7 +17,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -86,7 +84,7 @@ public class MaterialListGUI extends Screen implements ITemplateProvider.IUpdate
             Minecraft.getInstance().keyboardHandler.setClipboard(getJson());
 
             if (Minecraft.getInstance().player != null)
-                Minecraft.getInstance().player.displayClientMessage(new TranslatableComponent(MaterialListTranslation.MESSAGE_COPY_SUCCESS.getTranslationKey()), true);
+                Minecraft.getInstance().player.displayClientMessage(Component.translatable(MaterialListTranslation.MESSAGE_COPY_SUCCESS.getTranslationKey()), true);
         });
 
         // Buttons will be placed left to right in this order

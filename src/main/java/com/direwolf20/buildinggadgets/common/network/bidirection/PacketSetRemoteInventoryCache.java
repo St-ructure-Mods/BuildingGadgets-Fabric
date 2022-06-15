@@ -52,7 +52,7 @@ public class PacketSetRemoteInventoryCache {
 
                 InventoryLinker.getLinkedInventory(player.level, player.getItemInHand(hand)).ifPresent(inventory -> {
                     try (Transaction transaction = Transaction.openOuter()) {
-                        for (StorageView<ItemVariant> view : inventory.iterable(transaction)) {
+                        for (StorageView<ItemVariant> view : inventory) {
                             if (!view.isResourceBlank()) {
                                 ItemVariant resource = view.getResource();
                                 items.add(resource, (int) view.getAmount());

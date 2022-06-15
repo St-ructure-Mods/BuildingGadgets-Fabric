@@ -14,7 +14,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class CopyGUI extends Screen {
     private final List<GuiIncrementer> fields = new ArrayList<>();
 
     public CopyGUI(ItemStack tool) {
-        super(new TextComponent(""));
+        super(Component.literal(""));
         this.copyPasteTool = tool;
     }
 

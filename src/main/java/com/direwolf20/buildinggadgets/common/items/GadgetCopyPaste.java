@@ -378,7 +378,7 @@ public class GadgetCopyPaste extends AbstractGadget {
             Template newTemplate = new Template(map,
                     TemplateHeader.builder(region)
                             .name("Copy " + getAndIncrementCopyCounter(stack))
-                            .author(player.getName().getContents())
+                            .author(player.getName().getString())
                             .build());
             onCopyFinished(newTemplate.normalize(), stack, player);
         }, buildView, BuildingGadgets.getConfig().gadgets.gadgetCopyPaste.copySteps);
