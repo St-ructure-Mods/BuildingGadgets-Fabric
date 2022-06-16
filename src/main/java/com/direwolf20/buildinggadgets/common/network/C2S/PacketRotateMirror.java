@@ -24,7 +24,7 @@ public class PacketRotateMirror implements ServerPlayNetworking.PlayChannelHandl
         boolean hasOperation = operation != null;
         buf.writeBoolean(hasOperation);
         if (hasOperation) {
-            buf.writeInt(operation.ordinal());
+            buf.writeEnum(operation);
         }
         ClientPlayNetworking.send(PacketHandler.PacketRotateMirror, buf);
     }
