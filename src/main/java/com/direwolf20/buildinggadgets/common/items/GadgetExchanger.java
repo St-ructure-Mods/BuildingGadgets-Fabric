@@ -7,8 +7,8 @@ import com.direwolf20.buildinggadgets.common.blocks.OurBlocks;
 import com.direwolf20.buildinggadgets.common.enchants.GadgetSilkTouch;
 import com.direwolf20.buildinggadgets.common.items.modes.AbstractMode;
 import com.direwolf20.buildinggadgets.common.items.modes.ExchangingModes;
+import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketRotateMirror;
-import com.direwolf20.buildinggadgets.common.network.S2C.LookupResult;
 import com.direwolf20.buildinggadgets.common.tainted.building.BlockData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.ITileEntityData;
 import com.direwolf20.buildinggadgets.common.tainted.building.tilesupport.TileSupport;
@@ -28,10 +28,10 @@ import com.direwolf20.buildinggadgets.common.world.MockBuilderWorld;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Multiset;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -143,18 +143,11 @@ public class GadgetExchanger extends AbstractGadget {
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
-        BlockHitResult posLookingAt = VectorHelper.getLookingAt(player, itemstack);
 
         player.startUsingItem(hand);
 
         if (!world.isClientSide) {
-            boolean lookingAtInventory = ItemStorage.SIDED.find(world, posLookingAt.getBlockPos(), posLookingAt.getDirection()) != null;
             if (player.isShiftKeyDown()) {
-                if (lookingAtInventory) {
-                    LookupResult.sendToClient((ServerPlayer) player, lookingAtInventory);
-                    return InteractionResultHolder.pass(itemstack);
-                }
-
                 InteractionResultHolder<Block> result = selectBlock(itemstack, player);
                 if (!result.getResult().consumesAction()) {
                     player.displayClientMessage(MessageTranslation.INVALID_BLOCK.componentTranslation(Registry.BLOCK.getKey(result.getObject())).setStyle(Styles.AQUA), true);
@@ -169,6 +162,10 @@ public class GadgetExchanger extends AbstractGadget {
         } else {
             if (!player.isShiftKeyDown()) {
                 BaseRenderer.updateInventoryCache();
+            } else {
+                if (Screen.hasControlDown()) {
+                    PacketBindTool.send();
+                }
             }
         }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);

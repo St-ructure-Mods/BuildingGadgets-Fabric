@@ -3,14 +3,12 @@ package com.direwolf20.buildinggadgets.common.items;
 import com.direwolf20.buildinggadgets.client.renders.BaseRenderer;
 import com.direwolf20.buildinggadgets.client.screen.GuiMod;
 import com.direwolf20.buildinggadgets.client.screen.tooltip.TemplateData;
-import com.direwolf20.buildinggadgets.client.screen.tooltip.TemplateTooltip;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.commands.ForceUnloadedCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideBuildSizeCommand;
 import com.direwolf20.buildinggadgets.common.commands.OverrideCopySizeCommand;
 import com.direwolf20.buildinggadgets.common.component.BGComponent;
 import com.direwolf20.buildinggadgets.common.network.C2S.PacketBindTool;
-import com.direwolf20.buildinggadgets.common.network.S2C.LookupResult;
 import com.direwolf20.buildinggadgets.common.network.Target;
 import com.direwolf20.buildinggadgets.common.tainted.building.PlacementChecker;
 import com.direwolf20.buildinggadgets.common.tainted.building.Region;
@@ -33,11 +31,9 @@ import com.direwolf20.buildinggadgets.common.util.ref.NBTKeys;
 import com.direwolf20.buildinggadgets.common.util.ref.Reference.TagReference;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSortedSet;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -47,7 +43,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -275,11 +270,10 @@ public class GadgetCopyPaste extends AbstractGadget {
         player.startUsingItem(hand);
 
         BlockHitResult posLookingAt = VectorHelper.getLookingAt(player, stack);
+        boolean lookingAtInventory = ItemStorage.SIDED.find(world, posLookingAt.getBlockPos(), posLookingAt.getDirection()) != null;
 
         if (!world.isClientSide()) {
-            boolean lookingAtInventory = ItemStorage.SIDED.find(world, posLookingAt.getBlockPos(), posLookingAt.getDirection()) != null;
             if (player.isShiftKeyDown() && lookingAtInventory) {
-                LookupResult.sendToClient((ServerPlayer) player, lookingAtInventory);
                 return InteractionResultHolder.pass(stack);
             }
 
@@ -291,6 +285,11 @@ public class GadgetCopyPaste extends AbstractGadget {
                 getActivePos(player, stack).ifPresent(pos -> build(stack, world, player, pos, hand));
             }
         } else {
+            if (player.isShiftKeyDown() && Screen.hasControlDown() && lookingAtInventory) {
+                PacketBindTool.send();
+                return InteractionResultHolder.pass(stack);
+            }
+
             if (getToolMode(stack) == ToolMode.COPY) {
                 if (player.isShiftKeyDown() && world.getBlockState(posLookingAt.getBlockPos()) == Blocks.AIR.defaultBlockState()) {
                     GuiMod.COPY.openScreen(player);

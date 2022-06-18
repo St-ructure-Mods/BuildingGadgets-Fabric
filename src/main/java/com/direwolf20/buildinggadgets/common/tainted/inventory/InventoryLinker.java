@@ -57,9 +57,7 @@ public class InventoryLinker {
             return Optional.empty();
         }
 
-        //TODO: Horrible hack i hope can make this better
-        Storage<ItemVariant> storage = null;
-        if(world.getBlockEntity(link.blockPos) instanceof Container) storage = InventoryStorage.of((Container) world.getBlockEntity(link.blockPos), link.face);
+        Storage<ItemVariant> storage = ItemStorage.SIDED.find(world, link.blockPos, link.face);
 
         if (storage == null) {
             // Unlink if the storage no longer exists
